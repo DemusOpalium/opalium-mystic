@@ -3,6 +3,7 @@ package de.opalium.dasloch;
 import de.opalium.dasloch.command.DasLochCommand;
 import de.opalium.dasloch.command.LegendGiveCommand;
 import de.opalium.dasloch.command.MysticGiveCommand;
+import de.opalium.dasloch.command.MysticWellCommand;
 import de.opalium.dasloch.config.EnchantsConfig;
 import de.opalium.dasloch.config.ItemsConfig;
 import de.opalium.dasloch.config.WellConfig;
@@ -67,6 +68,8 @@ public class DasLochPlugin extends JavaPlugin {
     }
 
     private void registerCommands() {
+        MysticWellCommand wellCommand = new MysticWellCommand(itemsConfig, lifeTokenService, itemFactory, mysticWellService, vaultService);
+
         PluginCommand legend = getCommand("legendgive");
         if (legend != null) {
             LegendGiveCommand executor = new LegendGiveCommand(itemsConfig, itemFactory);
@@ -79,9 +82,14 @@ public class DasLochPlugin extends JavaPlugin {
             mystic.setExecutor(executor);
             mystic.setTabCompleter(executor);
         }
+        PluginCommand mysticWell = getCommand("mysticwell");
+        if (mysticWell != null) {
+            mysticWell.setExecutor(wellCommand);
+            mysticWell.setTabCompleter(wellCommand);
+        }
         PluginCommand dasloch = getCommand("dasloch");
         if (dasloch != null) {
-            dasloch.setExecutor(new DasLochCommand(this, itemsConfig, lifeTokenService));
+            dasloch.setExecutor(new DasLochCommand(this, itemsConfig, lifeTokenService, wellCommand));
         }
     }
 
