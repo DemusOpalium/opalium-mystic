@@ -4,6 +4,7 @@ import de.opalium.dasloch.DasLochPlugin;
 import de.opalium.dasloch.enchant.EnchantDefinition;
 import de.opalium.dasloch.item.ItemCategory;
 import de.opalium.dasloch.item.MysticItemService;
+import org.bukkit.entity.Entity;
 import java.util.Map;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
