@@ -29,6 +29,12 @@ public final class VaultService {
         }
     }
 
+    public void withdraw(Player player, double amount) {
+        if (economy != null) {
+            economy.withdrawPlayer(player, amount);
+        }
+    }
+
     public double getBalance(Player player) {
         return economy == null ? 0 : economy.getBalance(player);
     }

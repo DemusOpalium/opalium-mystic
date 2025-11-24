@@ -20,3 +20,13 @@ commands:
     description: Gives a configured mystic item to a player
     usage: /<command> <id> <player>
     permission: dasloch.mystic
+  mysticwell:
+    description: Access the mystic well for rolling mystic items
+    aliases: [well]
+    usage: /<command> [roll <tier> [player]]
+    permission: dasloch.well
+
+permissions:
+  dasloch.well:
+    description: Allows access to the mystic well command
+    default: true
