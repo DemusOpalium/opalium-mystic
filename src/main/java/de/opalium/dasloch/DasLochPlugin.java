@@ -13,10 +13,16 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public final class DasLochPlugin extends JavaPlugin {
 
+    private boolean debugEnabled;
+
     @Override
     public void onEnable() {
         getLogger().info("DasLoch plugin enabling...");
+        saveDefaultConfig();
+        reloadPluginConfig();
+        registerListeners();
         registerCommands();
+        getLogger().info("DasLoch plugin enabled.");
     }
 
     @Override
@@ -31,27 +37,68 @@ public final class DasLochPlugin extends JavaPlugin {
             return;
         }
 
-        DasLochCommand handler = new DasLochCommand();
+        DasLochCommand handler = new DasLochCommand(this);
         command.setExecutor(handler);
         command.setTabCompleter(handler);
+        getLogger().info("Registered /dasloch command handler.");
+    }
+
+    private void registerListeners() {
+        getLogger().info("No listeners to register yet.");
+    }
+
+    void reloadPluginConfig() {
+        reloadConfig();
+        debugEnabled = getConfig().getBoolean("debug", false);
+    }
+
+    boolean isDebugEnabled() {
+        return debugEnabled;
+    }
+
+    void setDebugEnabled(boolean debugEnabled) {
+        this.debugEnabled = debugEnabled;
+        getConfig().set("debug", debugEnabled);
+        saveConfig();
     }
 
     private static final class DasLochCommand implements CommandExecutor, TabCompleter {
 
+        private final DasLochPlugin plugin;
+
+        private DasLochCommand(DasLochPlugin plugin) {
+            this.plugin = plugin;
+        }
+
         @Override
         public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
             if (args.length == 0) {
-                sender.sendMessage(ChatColor.YELLOW + "Usage: /" + label + " <reload|debug>");
+                sender.sendMessage(ChatColor.YELLOW + "Usage: /" + label + " <reload|debug> [on|off]");
                 return true;
             }
 
             String subcommand = args[0].toLowerCase();
             switch (subcommand) {
                 case "reload":
-                    sender.sendMessage(ChatColor.GREEN + "Reloading configuration... (stub)");
+                    plugin.reloadPluginConfig();
+                    sender.sendMessage(ChatColor.GREEN + "DasLoch configuration reloaded.");
                     return true;
                 case "debug":
-                    sender.sendMessage(ChatColor.AQUA + "Debug information is not implemented yet.");
+                    boolean newValue = !plugin.isDebugEnabled();
+                    if (args.length > 1) {
+                        String value = args[1].toLowerCase();
+                        if (value.equals("on")) {
+                            newValue = true;
+                        } else if (value.equals("off")) {
+                            newValue = false;
+                        } else {
+                            sender.sendMessage(ChatColor.RED + "Invalid value. Use 'on' or 'off'.");
+                            return true;
+                        }
+                    }
+
+                    plugin.setDebugEnabled(newValue);
+                    sender.sendMessage(ChatColor.AQUA + "Debug mode is now " + (newValue ? "enabled" : "disabled") + ".");
                     return true;
                 default:
                     sender.sendMessage(ChatColor.RED + "Unknown subcommand. Use reload or debug.");
@@ -71,6 +118,18 @@ public final class DasLochPlugin extends JavaPlugin {
                 }
                 return suggestions;
             }
+
+            if (args.length == 2 && args[0].equalsIgnoreCase("debug")) {
+                List<String> suggestions = new ArrayList<>();
+                if ("on".startsWith(args[1].toLowerCase())) {
+                    suggestions.add("on");
+                }
+                if ("off".startsWith(args[1].toLowerCase())) {
+                    suggestions.add("off");
+                }
+                return suggestions;
+            }
+
             return Collections.emptyList();
         }
     }
