@@ -72,13 +72,13 @@ public class DasLochPlugin extends JavaPlugin {
 
         PluginCommand legend = getCommand("legendgive");
         if (legend != null) {
-            LegendGiveCommand executor = new LegendGiveCommand(itemsConfig, itemFactory);
+            LegendGiveCommand executor = new LegendGiveCommand(itemService);
             legend.setExecutor(executor);
             legend.setTabCompleter(executor);
         }
         PluginCommand mystic = getCommand("mysticgive");
         if (mystic != null) {
-            MysticGiveCommand executor = new MysticGiveCommand(itemsConfig, itemFactory);
+            MysticGiveCommand executor = new MysticGiveCommand(itemService);
             mystic.setExecutor(executor);
             mystic.setTabCompleter(executor);
         }
