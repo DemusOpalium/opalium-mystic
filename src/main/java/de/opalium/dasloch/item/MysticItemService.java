@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -100,6 +101,26 @@ public final class MysticItemService {
         return Optional.ofNullable(definitions.get(id));
     }
 
+    public Optional<String> getId(ItemStack stack) {
+        ItemMeta meta = stack.getItemMeta();
+        if (meta == null) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(meta.getPersistentDataContainer()
+                .get(keys.itemId(), PersistentDataType.STRING));
+    }
+
+    public List<String> definitionIds(ItemKind kind) {
+        List<String> ids = new ArrayList<>();
+        for (LegendItemDefinition def : new HashSet<>(definitions.values())) {
+            if (def.kind() == kind) {
+                ids.add(def.id());
+            }
+        }
+        Collections.sort(ids);
+        return ids;
+    }
+
     public ItemStack createLegendItem(String id, String owner) {
         return createItem(id, ItemKind.LEGEND, owner);
     }
@@ -172,6 +193,15 @@ public final class MysticItemService {
                 .getOrDefault(keys.livesCurrent(), PersistentDataType.INTEGER, 0);
     }
 
+    public int getMaxLives(ItemStack stack) {
+        ItemMeta meta = stack.getItemMeta();
+        if (meta == null) {
+            return 0;
+        }
+        return meta.getPersistentDataContainer()
+                .getOrDefault(keys.livesMax(), PersistentDataType.INTEGER, 0);
+    }
+
     public int getTokens(ItemStack stack) {
         ItemMeta meta = stack.getItemMeta();
         if (meta == null) {
@@ -199,6 +229,19 @@ public final class MysticItemService {
     public void decrementLife(ItemStack stack) {
         int current = getLives(stack);
         setLives(stack, current - 1);
+    }
+
+    public void addTokens(ItemStack stack, int delta) {
+        ItemMeta meta = stack.getItemMeta();
+        if (meta == null) {
+            return;
+        }
+        int tokens = meta.getPersistentDataContainer()
+                .getOrDefault(keys.tokens(), PersistentDataType.INTEGER, 0);
+        int newValue = Math.max(0, tokens + delta);
+        meta.getPersistentDataContainer().set(keys.tokens(), PersistentDataType.INTEGER, newValue);
+        meta.getPersistentDataContainer().set(keys.prefix(), PersistentDataType.STRING, formatPrefix(newValue));
+        refreshLore(stack, meta);
     }
 
     public int recalcTokens(ItemStack stack) {

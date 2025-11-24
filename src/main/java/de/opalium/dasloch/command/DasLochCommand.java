@@ -1,10 +1,9 @@
 package de.opalium.dasloch.command;
 
 import de.opalium.dasloch.DasLochPlugin;
-import de.opalium.dasloch.config.ItemsConfig;
-import de.opalium.dasloch.model.ItemTemplate;
-import de.opalium.dasloch.service.LifeTokenService;
 import de.opalium.dasloch.command.MysticWellCommand;
+import de.opalium.dasloch.item.ItemKind;
+import de.opalium.dasloch.item.MysticItemService;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -15,14 +14,12 @@ import java.util.Optional;
 
 public class DasLochCommand implements CommandExecutor {
     private final DasLochPlugin plugin;
-    private final ItemsConfig itemsConfig;
-    private final LifeTokenService lifeTokenService;
+    private final MysticItemService itemService;
     private final MysticWellCommand mysticWellCommand;
 
-    public DasLochCommand(DasLochPlugin plugin, ItemsConfig itemsConfig, LifeTokenService lifeTokenService, MysticWellCommand mysticWellCommand) {
+    public DasLochCommand(DasLochPlugin plugin, MysticItemService itemService, MysticWellCommand mysticWellCommand) {
         this.plugin = plugin;
-        this.itemsConfig = itemsConfig;
-        this.lifeTokenService = lifeTokenService;
+        this.itemService = itemService;
         this.mysticWellCommand = mysticWellCommand;
     }
 
@@ -55,17 +52,23 @@ public class DasLochCommand implements CommandExecutor {
             return;
         }
         ItemStack item = player.getInventory().getItemInMainHand();
-        Optional<String> id = lifeTokenService.getId(item);
-        Optional<ItemTemplate> template = id.flatMap(itemsConfig::getTemplate);
         sender.sendMessage("§7Item: " + (item.getType() != null ? item.getType().name() : "NONE"));
+        if (!itemService.isCustomItem(item)) {
+            sender.sendMessage("§cThis is not a DasLoch custom item.");
+            return;
+        }
+
+        Optional<String> id = itemService.getId(item);
+        ItemKind kind = itemService.getKind(item);
+
         sender.sendMessage("§7Template: " + id.orElse("n/a"));
-        sender.sendMessage("§7Type: " + lifeTokenService.getType(item).map(Enum::name).orElse("n/a"));
-        sender.sendMessage("§7Lives: §e" + lifeTokenService.getLives(item) + "§7/§e" + lifeTokenService.getMaxLives(item));
-        sender.sendMessage("§7Tokens: §e" + lifeTokenService.getTokens(item));
-        template.ifPresent(value -> {
-            String markerType = value.getType() == de.opalium.dasloch.model.ItemType.MYSTIC ? "MYST" : "LEGEND";
-            sender.sendMessage("§7Lore marker: §8[#" + markerType + "-" + value.getId() + "]");
-        });
+        sender.sendMessage("§7Type: " + (kind == null ? "n/a" : kind.name()));
+        sender.sendMessage("§7Lives: §e" + itemService.getLives(item) + "§7/§e" + itemService.getMaxLives(item));
+        sender.sendMessage("§7Tokens: §e" + itemService.getTokens(item));
+
+        id.flatMap(itemService::getDefinition).ifPresent(definition ->
+                sender.sendMessage("§7Lore marker: §8[#" + definition.kind().name() + "-" + definition.id() + "]")
+        );
     }
 
     private String[] dropFirst(String[] args) {

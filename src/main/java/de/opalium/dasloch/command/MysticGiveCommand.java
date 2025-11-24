@@ -1,9 +1,7 @@
 package de.opalium.dasloch.command;
 
-import de.opalium.dasloch.config.ItemsConfig;
-import de.opalium.dasloch.model.ItemTemplate;
-import de.opalium.dasloch.model.ItemType;
-import de.opalium.dasloch.service.ItemFactory;
+import de.opalium.dasloch.item.ItemKind;
+import de.opalium.dasloch.item.MysticItemService;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -15,16 +13,13 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class MysticGiveCommand implements CommandExecutor, TabCompleter {
-    private final ItemsConfig itemsConfig;
-    private final ItemFactory itemFactory;
+    private final MysticItemService itemService;
 
-    public MysticGiveCommand(ItemsConfig itemsConfig, ItemFactory itemFactory) {
-        this.itemsConfig = itemsConfig;
-        this.itemFactory = itemFactory;
+    public MysticGiveCommand(MysticItemService itemService) {
+        this.itemService = itemService;
     }
 
     @Override
@@ -35,8 +30,7 @@ public class MysticGiveCommand implements CommandExecutor, TabCompleter {
         }
 
         String itemId = args[0];
-        Optional<ItemTemplate> template = itemsConfig.getTemplate(itemId);
-        if (template.isEmpty() || template.get().getType() != ItemType.MYSTIC) {
+        if (itemService.getDefinition(itemId).map(def -> def.kind() != ItemKind.MYSTIC).orElse(true)) {
             sender.sendMessage("§cUnknown mystic item: " + itemId);
             return true;
         }
@@ -47,20 +41,18 @@ public class MysticGiveCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        ItemStack item = itemFactory.createMysticItem(template.get());
+        ItemStack item = itemService.createMysticItem(itemId);
         target.getInventory().addItem(item);
-        sender.sendMessage("§aGave mystic item " + template.get().getDisplayName() + " to " + target.getName());
+        sender.sendMessage("§aGave mystic item " + itemId + " to " + target.getName());
         return true;
     }
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1) {
-            return itemsConfig.getTemplates().values().stream()
-                .filter(t -> t.getType() == ItemType.MYSTIC)
-                .map(ItemTemplate::getId)
-                .filter(id -> id.toLowerCase().startsWith(args[0].toLowerCase()))
-                .collect(Collectors.toList());
+            return itemService.definitionIds(ItemKind.MYSTIC).stream()
+                    .filter(id -> id.toLowerCase().startsWith(args[0].toLowerCase()))
+                    .collect(Collectors.toList());
         }
         if (args.length == 2) {
             List<String> players = new ArrayList<>();

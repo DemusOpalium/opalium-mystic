@@ -1,17 +1,14 @@
 package de.opalium.dasloch.command;
 
-import de.opalium.dasloch.config.ItemsConfig;
 import de.opalium.dasloch.integration.VaultService;
-import de.opalium.dasloch.model.ItemType;
-import de.opalium.dasloch.service.ItemFactory;
-import de.opalium.dasloch.service.LifeTokenService;
+import de.opalium.dasloch.item.ItemKind;
+import de.opalium.dasloch.item.MysticItemService;
 import de.opalium.dasloch.well.MysticWellService;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional; // <--- WICHTIG: fehlender Import
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -23,22 +20,16 @@ import org.bukkit.inventory.ItemStack;
 
 public class MysticWellCommand implements CommandExecutor, TabCompleter {
 
-    private final ItemsConfig itemsConfig;
-    private final LifeTokenService lifeTokenService;
-    private final ItemFactory itemFactory;
+    private final MysticItemService itemService;
     private final MysticWellService wellService;
     private final VaultService vaultService;
 
     public MysticWellCommand(
-        ItemsConfig itemsConfig,
-        LifeTokenService lifeTokenService,
-        ItemFactory itemFactory,
-        MysticWellService wellService,
-        VaultService vaultService
+            MysticItemService itemService,
+            MysticWellService wellService,
+            VaultService vaultService
     ) {
-        this.itemsConfig = itemsConfig;
-        this.lifeTokenService = lifeTokenService;
-        this.itemFactory = itemFactory;
+        this.itemService = itemService;
         this.wellService = wellService;
         this.vaultService = vaultService;
     }
@@ -93,8 +84,7 @@ public class MysticWellCommand implements CommandExecutor, TabCompleter {
         }
 
         ItemStack held = target.getInventory().getItemInMainHand();
-        Optional<ItemType> type = lifeTokenService.getType(held);
-        if (type.isEmpty() || type.get() != ItemType.MYSTIC) {
+        if (!itemService.isCustomItem(held) || itemService.getKind(held) != ItemKind.MYSTIC) {
             initiator.sendMessage("§c" + target.getName() + " is not holding a mystic item.");
             return true;
         }
@@ -114,11 +104,8 @@ public class MysticWellCommand implements CommandExecutor, TabCompleter {
         }
 
         MysticWellService.RollResult result = wellService.roll(tierId);
-        int newTokens = lifeTokenService.getTokens(held) + result.tokensAwarded();
-        lifeTokenService.setTokens(held, newTokens);
-        lifeTokenService.getId(held)
-            .flatMap(itemsConfig::getTemplate)
-            .ifPresent(template -> itemFactory.refreshLore(held, template));
+        itemService.addTokens(held, result.tokensAwarded());
+        int newTokens = itemService.getTokens(held);
 
         target.getInventory().setItemInMainHand(held);
         target.sendMessage("§aMystic Well Roll: +" + result.tokensAwarded()
