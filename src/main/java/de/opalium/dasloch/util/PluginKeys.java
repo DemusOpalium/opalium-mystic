@@ -12,6 +12,7 @@ public final class PluginKeys {
     private final NamespacedKey tokens;
     private final NamespacedKey prefix;
     private final NamespacedKey enchants;
+    private final NamespacedKey mysticTier;
 
     public PluginKeys(Plugin plugin) {
         this.itemId = new NamespacedKey(plugin, "item_id");
@@ -21,6 +22,7 @@ public final class PluginKeys {
         this.tokens = new NamespacedKey(plugin, "tokens");
         this.prefix = new NamespacedKey(plugin, "prefix");
         this.enchants = new NamespacedKey(plugin, "enchants");
+        this.mysticTier = new NamespacedKey(plugin, "mystic_tier");
     }
 
     public NamespacedKey itemId() {
@@ -49,5 +51,9 @@ public final class PluginKeys {
 
     public NamespacedKey enchants() {
         return enchants;
+    }
+
+    public NamespacedKey mysticTier() {
+        return mysticTier;
     }
 }
