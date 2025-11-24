@@ -1,11 +1,9 @@
 package de.opalium.dasloch.command;
 
 import de.opalium.dasloch.DasLochPlugin;
-import de.opalium.dasloch.enchant.EnchantDefinition;
-import de.opalium.dasloch.enchant.EnchantRegistry;
+import de.opalium.dasloch.command.MysticWellCommand;
 import de.opalium.dasloch.item.ItemKind;
 import de.opalium.dasloch.item.MysticItemService;
-import de.opalium.dasloch.util.PluginKeys;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -22,20 +20,11 @@ import java.util.StringJoiner;
 public class DasLochCommand implements CommandExecutor {
     private final DasLochPlugin plugin;
     private final MysticItemService itemService;
-    private final PluginKeys keys;
-    private final EnchantRegistry enchantRegistry;
     private final MysticWellCommand mysticWellCommand;
 
-    public DasLochCommand(
-            DasLochPlugin plugin,
-            MysticItemService itemService,
-            EnchantRegistry enchantRegistry,
-            MysticWellCommand mysticWellCommand
-    ) {
+    public DasLochCommand(DasLochPlugin plugin, MysticItemService itemService, MysticWellCommand mysticWellCommand) {
         this.plugin = plugin;
         this.itemService = itemService;
-        this.keys = itemService.keys();
-        this.enchantRegistry = enchantRegistry;
         this.mysticWellCommand = mysticWellCommand;
     }
 
@@ -68,38 +57,23 @@ public class DasLochCommand implements CommandExecutor {
             return;
         }
         ItemStack item = player.getInventory().getItemInMainHand();
-        ItemMeta meta = item.getItemMeta();
-        if (meta == null) {
-            sender.sendMessage("§cNo item metadata found.");
+        sender.sendMessage("§7Item: " + (item.getType() != null ? item.getType().name() : "NONE"));
+        if (!itemService.isCustomItem(item)) {
+            sender.sendMessage("§cThis is not a DasLoch custom item.");
             return;
         }
 
-        PersistentDataContainer container = meta.getPersistentDataContainer();
-        Optional<String> id = Optional.ofNullable(container.get(keys.itemId(), PersistentDataType.STRING));
-        String kindRaw = container.get(keys.itemType(), PersistentDataType.STRING);
-        ItemKind kind = null;
-        if (kindRaw != null) {
-            try {
-                kind = ItemKind.fromString(kindRaw);
-            } catch (IllegalArgumentException ignored) {
-                // fall back to null
-            }
-        }
-        int livesCurrent = container.getOrDefault(keys.livesCurrent(), PersistentDataType.INTEGER, 0);
-        int livesMax = container.getOrDefault(keys.livesMax(), PersistentDataType.INTEGER, 0);
-        int tokens = container.getOrDefault(keys.tokens(), PersistentDataType.INTEGER, 0);
-        String mysticTier = container.getOrDefault(keys.mysticTier(), PersistentDataType.STRING, "");
-        String prefix = container.getOrDefault(keys.prefix(), PersistentDataType.STRING, "");
-        Map<String, Integer> enchants = itemService.readEnchants(item);
+        Optional<String> id = itemService.getId(item);
+        ItemKind kind = itemService.getKind(item);
 
-        sender.sendMessage("§7Item: " + (item.getType() != null ? item.getType().name() : "NONE"));
-        sender.sendMessage("§7Item ID: §e" + id.orElse("n/a"));
-        sender.sendMessage("§7Kind: §e" + (kind != null ? kind.name() : "n/a"));
-        sender.sendMessage("§7Lives: §e" + livesCurrent + "§7/§e" + livesMax);
-        sender.sendMessage("§7Tokens: §e" + tokens);
-        sender.sendMessage("§7Mystic Tier: §e" + (!mysticTier.isEmpty() ? mysticTier : "n/a"));
-        sender.sendMessage("§7Prefix: §r" + (!prefix.isEmpty() ? prefix : "§7n/a"));
-        sender.sendMessage(formatEnchants(enchants));
+        sender.sendMessage("§7Template: " + id.orElse("n/a"));
+        sender.sendMessage("§7Type: " + (kind == null ? "n/a" : kind.name()));
+        sender.sendMessage("§7Lives: §e" + itemService.getLives(item) + "§7/§e" + itemService.getMaxLives(item));
+        sender.sendMessage("§7Tokens: §e" + itemService.getTokens(item));
+
+        id.flatMap(itemService::getDefinition).ifPresent(definition ->
+                sender.sendMessage("§7Lore marker: §8[#" + definition.kind().name() + "-" + definition.id() + "]")
+        );
     }
 
     private String[] dropFirst(String[] args) {

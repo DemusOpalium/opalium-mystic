@@ -1,7 +1,9 @@
 package de.opalium.dasloch.command;
 
+import de.opalium.dasloch.integration.VaultService;
 import de.opalium.dasloch.item.ItemKind;
 import de.opalium.dasloch.item.MysticItemService;
+import de.opalium.dasloch.well.MysticWellService;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,11 +21,17 @@ import org.bukkit.inventory.ItemStack;
 public class MysticWellCommand implements CommandExecutor, TabCompleter {
 
     private final MysticItemService itemService;
+    private final MysticWellService wellService;
+    private final VaultService vaultService;
 
     public MysticWellCommand(
-        MysticItemService itemService
+            MysticItemService itemService,
+            MysticWellService wellService,
+            VaultService vaultService
     ) {
         this.itemService = itemService;
+        this.wellService = wellService;
+        this.vaultService = vaultService;
     }
 
     @Override
@@ -71,7 +79,7 @@ public class MysticWellCommand implements CommandExecutor, TabCompleter {
 
     private boolean rollForPlayer(Player target, String tierId, CommandSender initiator) {
         ItemStack held = target.getInventory().getItemInMainHand();
-        if (itemService.getKind(held) != ItemKind.MYSTIC) {
+        if (!itemService.isCustomItem(held) || itemService.getKind(held) != ItemKind.MYSTIC) {
             initiator.sendMessage("§c" + target.getName() + " is not holding a mystic item.");
             return true;
         }
@@ -82,6 +90,14 @@ public class MysticWellCommand implements CommandExecutor, TabCompleter {
                     + ". Check the tier or gold requirements.");
             return true;
         }
+
+        if (cost > 0) {
+            vaultService.withdraw(target, cost);
+        }
+
+        MysticWellService.RollResult result = wellService.roll(tierId);
+        itemService.addTokens(held, result.tokensAwarded());
+        int newTokens = itemService.getTokens(held);
 
         target.getInventory().setItemInMainHand(held);
         int newTokens = itemService.getTokens(held);

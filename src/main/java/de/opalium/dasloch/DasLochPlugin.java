@@ -5,17 +5,13 @@ import de.opalium.dasloch.command.LegendGiveCommand;
 import de.opalium.dasloch.command.MysticGiveCommand;
 import de.opalium.dasloch.command.MysticWellCommand;
 import de.opalium.dasloch.config.EnchantsConfig;
-import de.opalium.dasloch.config.ItemsConfig;
 import de.opalium.dasloch.config.WellConfig;
 import de.opalium.dasloch.enchant.EnchantRegistry;
 import de.opalium.dasloch.integration.PlaceholderHook;
 import de.opalium.dasloch.integration.VaultService;
 import de.opalium.dasloch.item.MysticItemService;
 import de.opalium.dasloch.listener.CombatListener;
-import de.opalium.dasloch.listener.ItemLifecycleListener;
 import de.opalium.dasloch.service.EnchantParser;
-import de.opalium.dasloch.service.ItemFactory;
-import de.opalium.dasloch.service.LifeTokenService;
 import de.opalium.dasloch.well.MysticWellService;
 import java.io.File;
 import org.bukkit.command.PluginCommand;
@@ -27,11 +23,8 @@ import java.io.IOException;
 import java.util.logging.Level;
 
 public class DasLochPlugin extends JavaPlugin {
-    private ItemsConfig itemsConfig;
     private EnchantsConfig enchantsConfig;
     private WellConfig wellConfig;
-    private LifeTokenService lifeTokenService;
-    private ItemFactory itemFactory;
     private EnchantParser enchantParser;
     private MysticWellService mysticWellService;
     private EnchantRegistry enchantRegistry;
@@ -41,13 +34,10 @@ public class DasLochPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         saveDefaultConfig();
-        this.itemsConfig = new ItemsConfig(this);
         this.enchantsConfig = new EnchantsConfig(this);
         this.wellConfig = new WellConfig(this);
-        this.lifeTokenService = new LifeTokenService(this);
-        this.itemFactory = new ItemFactory(lifeTokenService);
-        this.enchantParser = new EnchantParser(enchantsConfig);
         this.vaultService = new VaultService(this);
+        this.enchantParser = new EnchantParser(enchantsConfig);
 
         reloadAll();
         registerCommands();
@@ -57,7 +47,6 @@ public class DasLochPlugin extends JavaPlugin {
 
     public void reloadAll() {
         try {
-            itemsConfig.load();
             enchantsConfig.load();
             wellConfig.load();
             reloadConfig();
@@ -68,7 +57,7 @@ public class DasLochPlugin extends JavaPlugin {
     }
 
     private void registerCommands() {
-        MysticWellCommand wellCommand = new MysticWellCommand(itemService);
+        MysticWellCommand wellCommand = new MysticWellCommand(itemService, mysticWellService, vaultService);
 
         PluginCommand legend = getCommand("legendgive");
         if (legend != null) {
@@ -89,15 +78,12 @@ public class DasLochPlugin extends JavaPlugin {
         }
         PluginCommand dasloch = getCommand("dasloch");
         if (dasloch != null) {
-            dasloch.setExecutor(new DasLochCommand(this, itemService, enchantRegistry, wellCommand));
+            dasloch.setExecutor(new DasLochCommand(this, itemService, wellCommand));
         }
     }
 
     private void registerListeners() {
         PluginManager plugins = getServer().getPluginManager();
-        plugins.registerEvents(
-            new ItemLifecycleListener(itemsConfig, lifeTokenService, itemFactory), this
-        );
         plugins.registerEvents(new CombatListener(this), this);
     }
 
@@ -125,24 +111,12 @@ public class DasLochPlugin extends JavaPlugin {
         return YamlConfiguration.loadConfiguration(file);
     }
 
-    public ItemsConfig getItemsConfig() {
-        return itemsConfig;
-    }
-
     public EnchantsConfig getEnchantsConfig() {
         return enchantsConfig;
     }
 
     public WellConfig getWellConfig() {
         return wellConfig;
-    }
-
-    public LifeTokenService getLifeTokenService() {
-        return lifeTokenService;
-    }
-
-    public ItemFactory getItemFactory() {
-        return itemFactory;
     }
 
     public EnchantParser getEnchantParser() {
