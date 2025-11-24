@@ -1,0 +1,45 @@
+# Mystic Well configuration for gold costs and roll probabilities.
+# costs: gold required per upgrade tier (unmodified by perks).
+# token_range: inclusive range of token increments per roll.
+# rare_limits: how many rare enchants can appear on this roll.
+# probability: weighted chance for an enchant rarity to appear.
+
+base_costs:
+  tier_1: 1000   # Tier I: entry cost for fresh Mystic items
+  tier_2: 4000   # Tier II: follow-up cost after first roll
+  tier_3: 8000   # Tier III: expensive final roll; consumes sacrifice items externally
+
+tiers:
+  I:
+    token_range: [1, 2]
+    rare_limits:
+      rare: 0
+    probability:
+      common: 0.75
+      regular: 0.25
+      rare: 0.0
+    comments: "Tier I rolls small token values and avoids rare enchants."
+
+  II:
+    token_range: [1, 2]
+    rare_limits:
+      rare: 1
+    probability:
+      common: 0.55
+      regular: 0.35
+      rare: 0.10
+    comments: "Tier II introduces rare enchants with a single slot."
+
+  III:
+    token_range: [1, 4]
+    rare_limits:
+      rare: 3
+    probability:
+      common: 0.35
+      regular: 0.30
+      rare: 0.35
+    comments: "Tier III allows up to three rare enchants and high token spikes for Legendary rolls."
+
+modifiers:
+  demon_faction_discount: 0.5  # Costs halved for Demon faction III perk
+  hidden_jewel_bonus_tokens: 2 # Bonus tokens for hidden jewel start items
