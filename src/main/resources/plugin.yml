@@ -1,0 +1,14 @@
+name: DasLoch
+version: ${version}
+main: de.opalium.dasloch.DasLochPlugin
+api-version: '1.21'
+authors:
+  - Opalium
+softdepend:
+  - Vault
+  - PlaceholderAPI
+commands:
+  dasloch:
+    description: Main command for DasLoch plugin utilities
+    usage: /<command> <reload|debug>
+    permission: dasloch.use

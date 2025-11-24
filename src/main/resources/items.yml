@@ -1,83 +1,72 @@
-# Sample Legend & Mystic item definitions
-# Material: Bukkit enum material for the item
-# display_name: Player-facing name with color codes handled elsewhere
-# custom_model_data: Placeholder ID for resource pack lookup
-# lives: default and maximum lives before the item shatters
-# tokens: starting token sum before Mystic Well upgrades
+items:
+  emerald_forge_blade:
+    category: SWORD          # interne Kategorie (SWORD/BOW/PANTS/ARMOR)
+    type: LEGEND             # LEGEND oder MYSTIC (frei definierbar)
+    material: DIAMOND_SWORD  # Bukkit-Materialname
+    display-name: "§aEmerald Forge Blade"
+    custom-model-data: 1001  # optional, 0 oder weglassen falls nicht genutzt
+    base-lives: 50           # Start-Lives
+    max-lives: 100           # Hardcap-Lives für dieses Item
+    lore:
+      - "§7Eine antike Klinge, geschmiedet in"
+      - "§7den Tiefen des Smaragdbruchs."
+      - ""
+      - "§8[#LEGEND-emerald_forge_blade]"
+      - "§7Lives: §e%lives_current%§7/§e%lives_max%"
+      - "§7Tokens: §e%tokens%"
+      - "%prefix_line%"      # vom Plugin ersetzt, z.B. '§6Legendary'
 
-legend:
-  archangel_chestplate:
-    material: DIAMOND_CHESTPLATE
-    display_name: "Archangel Chestplate"
-    custom_model_data: 1101
-    lives:
-      start: 30
-      max: 60
-    tokens: 0
-    notes: "Angel faction reward; not enchantable but tagged as legend for lifecycle tracking."
-
-  armageddon_boots:
-    material: LEATHER_BOOTS
-    display_name: "Armageddon Boots"
-    custom_model_data: 1102
-    lives:
-      start: 20
-      max: 40
-    tokens: 0
-    notes: "Demon faction footwear with dark protection; non-enchantable."
-
-mystic:
-  sword:
-    id: mystic_sword
-    material: GOLDEN_SWORD
-    display_name: "Mystic Sword"
-    custom_model_data: 2001
-    lives:
-      start: 45
-      max: 100
-    tokens: 0
-    applicable_enchants: [universal, sword]
-
-  bow:
-    id: mystic_bow
+  nightleech_bow:
+    category: BOW
+    type: LEGEND
     material: BOW
-    display_name: "Mystic Bow"
-    custom_model_data: 2002
-    lives:
-      start: 40
-      max: 100
-    tokens: 0
-    applicable_enchants: [universal, bow]
+    display-name: "§5Nightleech Bow"
+    custom-model-data: 1002
+    base-lives: 40
+    max-lives: 80
+    lore:
+      - "§7Ein Bogen, der im Dunkeln"
+      - "§7das Leben seiner Ziele stiehlt."
+      - ""
+      - "§8[#LEGEND-nightleech_bow]"
+      - "§7Lives: §e%lives_current%§7/§e%lives_max%"
+      - "§7Tokens: §e%tokens%"
+      - "%prefix_line%"
 
-  pants:
-    id: fresh_pants
+  mystic_sword:
+    category: SWORD
+    type: MYSTIC
+    material: GOLDEN_SWORD
+    display-name: "§dMystic Sword"
+    custom-model-data: 1101
+    base-lives: 10
+    max-lives: 50
+    lore:
+      - "§7Ein instabiles Schwert, das auf"
+      - "§7mystische Upgrades wartet."
+      - ""
+      - "§8[#MYST-mystic_sword]"
+      - "§7Lives: §e%lives_current%§7/§e%lives_max%"
+      - "§7Tokens: §e%tokens%"
+      - "%prefix_line%"
+
+  mystic_pants:
+    category: PANTS
+    type: MYSTIC
     material: LEATHER_LEGGINGS
-    display_name: "Fresh Pants"
-    custom_model_data: 2003
-    lives:
-      start: 50
-      max: 100
-    tokens: 0
-    variants:
-      - color: AQUA
-        id: aqua_pants
-        display_name: "Aqua Pants"
-      - color: BLACK
-        id: dark_pants
-        display_name: "Dark Pants"
-      - color: RED
-        id: rage_pants
-        display_name: "Rage Pants"
-    applicable_enchants: [universal, pants]
-
-  golden_helmet:
-    id: golden_helmet
-    material: GOLDEN_HELMET
-    display_name: "Golden Helmet"
-    custom_model_data: 2004
-    lives:
-      start: 30
-      max: 60
-    tokens: 0
-    applicable_enchants: [helm]
-    notes: "Specialized head slot mystic with helmet-only enchant pool."
+    display-name: "§dMystic Pants"
+    custom-model-data: 1102
+    base-lives: 15
+    max-lives: 60
+    dye-color:
+      red: 120
+      green: 40
+      blue: 150          # optional: Plugin kann Leder färben
+    lore:
+      - "§7Leuchtende Hosen, durchtränkt"
+      - "§7mit unruhiger Energie."
+      - ""
+      - "§8[#MYST-mystic_pants]"
+      - "§7Lives: §e%lives_current%§7/§e%lives_max%"
+      - "§7Tokens: §e%tokens%"
+      - "%prefix_line%"
