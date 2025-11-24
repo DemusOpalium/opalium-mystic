@@ -29,6 +29,17 @@ public final class VaultService {
         }
     }
 
+    public boolean withdraw(Player player, double amount) {
+        if (economy == null) {
+            return false;
+        }
+        if (!economy.has(player, amount)) {
+            return false;
+        }
+        economy.withdrawPlayer(player, amount);
+        return true;
+    }
+
     public double getBalance(Player player) {
         return economy == null ? 0 : economy.getBalance(player);
     }

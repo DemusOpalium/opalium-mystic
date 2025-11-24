@@ -3,15 +3,19 @@ package de.opalium.dasloch.item;
 import de.opalium.dasloch.DasLochPlugin;
 import de.opalium.dasloch.enchant.EnchantDefinition;
 import de.opalium.dasloch.enchant.EnchantRegistry;
+import de.opalium.dasloch.integration.VaultService;
 import de.opalium.dasloch.util.PluginKeys;
 import de.opalium.dasloch.well.MysticWellService;
+import de.opalium.dasloch.well.MysticWellTier;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.StringJoiner;
+import java.util.concurrent.ThreadLocalRandom;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -91,7 +95,7 @@ public final class MysticItemService {
         }
         ItemStack stack = new ItemStack(def.material());
         ItemMeta meta = stack.getItemMeta();
-        meta.setDisplayName(def.displayName());
+        meta.setDisplayName(formatItemName(def, 0));
         if (def.customModelData() > 0) {
             meta.setCustomModelData(def.customModelData());
         }
@@ -105,6 +109,7 @@ public final class MysticItemService {
         meta.getPersistentDataContainer().set(keys.livesMax(), PersistentDataType.INTEGER, def.maxLives());
         meta.getPersistentDataContainer().set(keys.tokens(), PersistentDataType.INTEGER, 0);
         meta.getPersistentDataContainer().set(keys.prefix(), PersistentDataType.STRING, formatPrefix(0));
+        meta.getPersistentDataContainer().set(keys.mysticTier(), PersistentDataType.STRING, "");
         meta.setLore(applyLore(def, def.baseLives(), def.maxLives(), 0, owner));
         stack.setItemMeta(meta);
         return stack;
@@ -169,9 +174,9 @@ public final class MysticItemService {
         Map<String, Integer> enchantTiers = readEnchants(stack);
         int tokens = enchantTiers.entrySet().stream()
                 .mapToInt(entry -> {
-                    EnchantDefinition def = enchantRegistry.get(entry.getKey());
-                    return def == null ? 0 : def.tokensForTier(entry.getValue());
-                })
+            EnchantDefinition def = enchantRegistry.get(entry.getKey());
+            return def == null ? 0 : def.tokensForTier(entry.getValue());
+        })
                 .sum();
         ItemMeta meta = stack.getItemMeta();
         if (meta != null) {
@@ -225,11 +230,12 @@ public final class MysticItemService {
         int maxLives = meta.getPersistentDataContainer().getOrDefault(keys.livesMax(), PersistentDataType.INTEGER, lives);
         int tokens = meta.getPersistentDataContainer().getOrDefault(keys.tokens(), PersistentDataType.INTEGER, 0);
         meta.setLore(applyLore(def, lives, maxLives, tokens, null));
+        meta.setDisplayName(formatItemName(def, tokens));
         stack.setItemMeta(meta);
     }
 
     public String formatPrefix(int tokens) {
-        if (tokens >= 9) {
+        if (tokens >= 8) {
             return "§6Legendary";
         }
         if (tokens >= 5) {
@@ -280,5 +286,142 @@ public final class MysticItemService {
             damageable.setDamage(0);
             stack.setItemMeta(meta);
         }
+    }
+
+    public boolean tryDeductGold(Player player, String tier) {
+        int cost = wellService.baseCosts().getOrDefault(costKey(tier), 0);
+        VaultService vaultService = plugin.getVaultService();
+        if (cost <= 0 || !vaultService.hasEconomy()) {
+            return true;
+        }
+        return vaultService.withdraw(player, cost);
+    }
+
+    public boolean rollMystic(Player player, ItemStack stack, String requestedTier) {
+        if (!isCustomItem(stack) || getKind(stack) != ItemKind.MYSTIC) {
+            return false;
+        }
+
+        ItemMeta meta = stack.getItemMeta();
+        if (meta == null) {
+            return false;
+        }
+
+        String tier = normalizeTier(requestedTier);
+        if (tier == null || !canApplyTier(meta, tier)) {
+            return false;
+        }
+
+        MysticWellTier wellTier = wellService.tier(tier);
+        if (wellTier == null) {
+            return false;
+        }
+        if (!tryDeductGold(player, tier)) {
+            return false;
+        }
+
+        MysticWellService.RollResult result = wellService.roll(tier);
+        LegendItemDefinition definition = definitions.get(meta.getPersistentDataContainer().get(keys.itemId(), PersistentDataType.STRING));
+        if (definition == null || definition.kind() != ItemKind.MYSTIC) {
+            return false;
+        }
+
+        applyEnchantRoll(definition.category(), result, wellTier, stack);
+        meta.getPersistentDataContainer().set(keys.mysticTier(), PersistentDataType.STRING, tier);
+        stack.setItemMeta(meta);
+        recalcTokens(stack);
+        return true;
+    }
+
+    private void applyEnchantRoll(ItemCategory category, MysticWellService.RollResult rollResult, MysticWellTier tier, ItemStack stack) {
+        EnchantDefinition.Rarity rarity = parseRarity(rollResult.rarityRolled());
+        Map<String, Integer> existing = new HashMap<>(readEnchants(stack));
+        int rareLimit = tier.rareLimits().getOrDefault("rare", Integer.MAX_VALUE);
+        int rareCount = (int) existing.keySet().stream()
+                .map(enchantRegistry::get)
+                .filter(def -> def != null && def.rarity() == EnchantDefinition.Rarity.RARE)
+                .count();
+        if (rarity == EnchantDefinition.Rarity.RARE && rareCount >= rareLimit) {
+            rarity = EnchantDefinition.Rarity.COMMON;
+        }
+
+        List<EnchantDefinition> candidates = enchantRegistry.all().values().stream()
+                .filter(def -> def.applicable().contains(category))
+                .filter(def -> def.rarity() == rarity)
+                .toList();
+
+        if (candidates.isEmpty()) {
+            return;
+        }
+
+        EnchantDefinition selected = candidates.get(ThreadLocalRandom.current().nextInt(candidates.size()));
+        int rolledTier = Math.max(1, Math.min(rollResult.tokensAwarded(), selected.maxTier()));
+        if (existing.containsKey(selected.id())) {
+            int newTier = Math.min(selected.maxTier(), existing.get(selected.id()) + rolledTier);
+            existing.put(selected.id(), newTier);
+        } else if (existing.size() >= 3) {
+            String target = existing.entrySet().stream()
+                    .min(Comparator.comparingInt(Map.Entry::getValue))
+                    .map(Map.Entry::getKey)
+                    .orElse(null);
+            if (target != null) {
+                EnchantDefinition targetDef = enchantRegistry.get(target);
+                if (targetDef != null) {
+                    int newTier = Math.min(targetDef.maxTier(), existing.get(target) + rolledTier);
+                    existing.put(target, newTier);
+                }
+            }
+        } else {
+            existing.put(selected.id(), rolledTier);
+        }
+        writeEnchants(stack, existing);
+    }
+
+    private EnchantDefinition.Rarity parseRarity(String rarity) {
+        if (rarity == null) {
+            return EnchantDefinition.Rarity.COMMON;
+        }
+        return rarity.equalsIgnoreCase("rare") ? EnchantDefinition.Rarity.RARE : EnchantDefinition.Rarity.COMMON;
+    }
+
+    private boolean canApplyTier(ItemMeta meta, String requestedTier) {
+        String current = meta.getPersistentDataContainer().getOrDefault(keys.mysticTier(), PersistentDataType.STRING, "");
+        if ("III".equalsIgnoreCase(current)) {
+            return false;
+        }
+        return switch (requestedTier) {
+            case "I" -> current.isEmpty();
+            case "II" -> "I".equalsIgnoreCase(current);
+            case "III" -> "II".equalsIgnoreCase(current);
+            default -> false;
+        };
+    }
+
+    private String normalizeTier(String tier) {
+        if (tier == null) {
+            return null;
+        }
+        return switch (tier.toUpperCase()) {
+            case "T1", "TIER_1", "1", "I" -> "I";
+            case "T2", "TIER_2", "2", "II" -> "II";
+            case "T3", "TIER_3", "3", "III" -> "III";
+            default -> null;
+        };
+    }
+
+    private String costKey(String tier) {
+        return switch (tier) {
+            case "I" -> "tier_1";
+            case "II" -> "tier_2";
+            case "III" -> "tier_3";
+            default -> tier.toLowerCase();
+        };
+    }
+
+    private String formatItemName(LegendItemDefinition def, int tokens) {
+        if (def.kind() == ItemKind.MYSTIC) {
+            return formatPrefix(tokens) + " " + def.displayName();
+        }
+        return def.displayName();
     }
 }
