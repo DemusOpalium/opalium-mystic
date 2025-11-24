@@ -12,3 +12,11 @@ commands:
     description: Main command for DasLoch plugin utilities
     usage: /<command> <reload|debug>
     permission: dasloch.use
+  legendgive:
+    description: Gives a configured legend item to a player
+    usage: /<command> <id> <player>
+    permission: dasloch.legend
+  mysticgive:
+    description: Gives a configured mystic item to a player
+    usage: /<command> <id> <player>
+    permission: dasloch.mystic
