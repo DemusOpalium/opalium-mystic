@@ -1,9 +1,8 @@
 package de.opalium.dasloch.command;
 
-import de.opalium.dasloch.config.ItemsConfig;
-import de.opalium.dasloch.model.ItemTemplate;
-import de.opalium.dasloch.model.ItemType;
-import de.opalium.dasloch.service.ItemFactory;
+import de.opalium.dasloch.item.ItemKind;
+import de.opalium.dasloch.item.LegendItemDefinition;
+import de.opalium.dasloch.item.MysticItemService;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -19,12 +18,10 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class LegendGiveCommand implements CommandExecutor, TabCompleter {
-    private final ItemsConfig itemsConfig;
-    private final ItemFactory itemFactory;
+    private final MysticItemService itemService;
 
-    public LegendGiveCommand(ItemsConfig itemsConfig, ItemFactory itemFactory) {
-        this.itemsConfig = itemsConfig;
-        this.itemFactory = itemFactory;
+    public LegendGiveCommand(MysticItemService itemService) {
+        this.itemService = itemService;
     }
 
     @Override
@@ -35,8 +32,8 @@ public class LegendGiveCommand implements CommandExecutor, TabCompleter {
         }
 
         String itemId = args[0];
-        Optional<ItemTemplate> template = itemsConfig.getTemplate(itemId);
-        if (template.isEmpty() || template.get().getType() != ItemType.LEGEND) {
+        Optional<LegendItemDefinition> definition = itemService.getDefinition(itemId);
+        if (definition.isEmpty() || definition.get().kind() != ItemKind.LEGEND) {
             sender.sendMessage("§cUnknown legend item: " + itemId);
             return true;
         }
@@ -47,18 +44,17 @@ public class LegendGiveCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        ItemStack item = itemFactory.createLegendItem(template.get(), target);
+        ItemStack item = itemService.createLegendItem(itemId, target.getName());
         target.getInventory().addItem(item);
-        sender.sendMessage("§aGave legend item " + template.get().getDisplayName() + " to " + target.getName());
+        sender.sendMessage("§aGave legend item " + definition.get().displayName() + " to " + target.getName());
         return true;
     }
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1) {
-            return itemsConfig.getTemplates().values().stream()
-                .filter(t -> t.getType() == ItemType.LEGEND)
-                .map(ItemTemplate::getId)
+            return itemService.getDefinitionsOfKind(ItemKind.LEGEND).stream()
+                .map(LegendItemDefinition::id)
                 .filter(id -> id.toLowerCase().startsWith(args[0].toLowerCase()))
                 .collect(Collectors.toList());
         }

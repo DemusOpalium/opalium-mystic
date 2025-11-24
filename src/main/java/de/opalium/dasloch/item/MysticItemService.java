@@ -100,6 +100,12 @@ public final class MysticItemService {
         return Optional.ofNullable(definitions.get(id));
     }
 
+    public List<LegendItemDefinition> getDefinitionsOfKind(ItemKind kind) {
+        return definitions.values().stream()
+                .filter(def -> def.kind() == kind)
+                .toList();
+    }
+
     public ItemStack createLegendItem(String id, String owner) {
         return createItem(id, ItemKind.LEGEND, owner);
     }
