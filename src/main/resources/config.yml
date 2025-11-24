@@ -1,0 +1,3 @@
+# General plugin configuration for DasLoch
+# Toggle verbose debug logging for troubleshooting.
+debug: false
