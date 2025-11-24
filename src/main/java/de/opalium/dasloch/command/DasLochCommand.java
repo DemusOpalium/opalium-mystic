@@ -1,28 +1,41 @@
 package de.opalium.dasloch.command;
 
 import de.opalium.dasloch.DasLochPlugin;
-import de.opalium.dasloch.config.ItemsConfig;
-import de.opalium.dasloch.model.ItemTemplate;
-import de.opalium.dasloch.service.LifeTokenService;
-import de.opalium.dasloch.command.MysticWellCommand;
+import de.opalium.dasloch.enchant.EnchantDefinition;
+import de.opalium.dasloch.enchant.EnchantRegistry;
+import de.opalium.dasloch.item.ItemKind;
+import de.opalium.dasloch.item.MysticItemService;
+import de.opalium.dasloch.util.PluginKeys;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
+import java.util.Map;
 import java.util.Optional;
+import java.util.StringJoiner;
 
 public class DasLochCommand implements CommandExecutor {
     private final DasLochPlugin plugin;
-    private final ItemsConfig itemsConfig;
-    private final LifeTokenService lifeTokenService;
+    private final MysticItemService itemService;
+    private final PluginKeys keys;
+    private final EnchantRegistry enchantRegistry;
     private final MysticWellCommand mysticWellCommand;
 
-    public DasLochCommand(DasLochPlugin plugin, ItemsConfig itemsConfig, LifeTokenService lifeTokenService, MysticWellCommand mysticWellCommand) {
+    public DasLochCommand(
+            DasLochPlugin plugin,
+            MysticItemService itemService,
+            EnchantRegistry enchantRegistry,
+            MysticWellCommand mysticWellCommand
+    ) {
         this.plugin = plugin;
-        this.itemsConfig = itemsConfig;
-        this.lifeTokenService = lifeTokenService;
+        this.itemService = itemService;
+        this.keys = itemService.keys();
+        this.enchantRegistry = enchantRegistry;
         this.mysticWellCommand = mysticWellCommand;
     }
 
@@ -55,17 +68,38 @@ public class DasLochCommand implements CommandExecutor {
             return;
         }
         ItemStack item = player.getInventory().getItemInMainHand();
-        Optional<String> id = lifeTokenService.getId(item);
-        Optional<ItemTemplate> template = id.flatMap(itemsConfig::getTemplate);
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null) {
+            sender.sendMessage("§cNo item metadata found.");
+            return;
+        }
+
+        PersistentDataContainer container = meta.getPersistentDataContainer();
+        Optional<String> id = Optional.ofNullable(container.get(keys.itemId(), PersistentDataType.STRING));
+        String kindRaw = container.get(keys.itemType(), PersistentDataType.STRING);
+        ItemKind kind = null;
+        if (kindRaw != null) {
+            try {
+                kind = ItemKind.fromString(kindRaw);
+            } catch (IllegalArgumentException ignored) {
+                // fall back to null
+            }
+        }
+        int livesCurrent = container.getOrDefault(keys.livesCurrent(), PersistentDataType.INTEGER, 0);
+        int livesMax = container.getOrDefault(keys.livesMax(), PersistentDataType.INTEGER, 0);
+        int tokens = container.getOrDefault(keys.tokens(), PersistentDataType.INTEGER, 0);
+        String mysticTier = container.getOrDefault(keys.mysticTier(), PersistentDataType.STRING, "");
+        String prefix = container.getOrDefault(keys.prefix(), PersistentDataType.STRING, "");
+        Map<String, Integer> enchants = itemService.readEnchants(item);
+
         sender.sendMessage("§7Item: " + (item.getType() != null ? item.getType().name() : "NONE"));
-        sender.sendMessage("§7Template: " + id.orElse("n/a"));
-        sender.sendMessage("§7Type: " + lifeTokenService.getType(item).map(Enum::name).orElse("n/a"));
-        sender.sendMessage("§7Lives: §e" + lifeTokenService.getLives(item) + "§7/§e" + lifeTokenService.getMaxLives(item));
-        sender.sendMessage("§7Tokens: §e" + lifeTokenService.getTokens(item));
-        template.ifPresent(value -> {
-            String markerType = value.getType() == de.opalium.dasloch.model.ItemType.MYSTIC ? "MYST" : "LEGEND";
-            sender.sendMessage("§7Lore marker: §8[#" + markerType + "-" + value.getId() + "]");
-        });
+        sender.sendMessage("§7Item ID: §e" + id.orElse("n/a"));
+        sender.sendMessage("§7Kind: §e" + (kind != null ? kind.name() : "n/a"));
+        sender.sendMessage("§7Lives: §e" + livesCurrent + "§7/§e" + livesMax);
+        sender.sendMessage("§7Tokens: §e" + tokens);
+        sender.sendMessage("§7Mystic Tier: §e" + (!mysticTier.isEmpty() ? mysticTier : "n/a"));
+        sender.sendMessage("§7Prefix: §r" + (!prefix.isEmpty() ? prefix : "§7n/a"));
+        sender.sendMessage(formatEnchants(enchants));
     }
 
     private String[] dropFirst(String[] args) {
@@ -75,5 +109,22 @@ public class DasLochCommand implements CommandExecutor {
         String[] copy = new String[args.length - 1];
         System.arraycopy(args, 1, copy, 0, copy.length);
         return copy;
+    }
+
+    private String formatEnchants(Map<String, Integer> enchants) {
+        if (enchants.isEmpty()) {
+            return "§7Enchants: §8none";
+        }
+
+        StringJoiner joiner = new StringJoiner("§7, ", "§7Enchants: §e", "");
+        for (Map.Entry<String, Integer> entry : enchants.entrySet()) {
+            EnchantDefinition def = enchantRegistry.get(entry.getKey());
+            String label = entry.getKey();
+            if (def != null) {
+                label += " (§f" + def.displayName() + "§e)";
+            }
+            joiner.add(label + " §7T" + entry.getValue());
+        }
+        return joiner.toString();
     }
 }

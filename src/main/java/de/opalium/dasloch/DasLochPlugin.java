@@ -89,7 +89,7 @@ public class DasLochPlugin extends JavaPlugin {
         }
         PluginCommand dasloch = getCommand("dasloch");
         if (dasloch != null) {
-            dasloch.setExecutor(new DasLochCommand(this, itemsConfig, lifeTokenService, wellCommand));
+            dasloch.setExecutor(new DasLochCommand(this, itemService, enchantRegistry, wellCommand));
         }
     }
 
