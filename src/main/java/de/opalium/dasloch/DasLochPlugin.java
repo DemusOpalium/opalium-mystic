@@ -6,12 +6,20 @@ import de.opalium.dasloch.command.MysticGiveCommand;
 import de.opalium.dasloch.config.EnchantsConfig;
 import de.opalium.dasloch.config.ItemsConfig;
 import de.opalium.dasloch.config.WellConfig;
+import de.opalium.dasloch.enchant.EnchantRegistry;
+import de.opalium.dasloch.integration.PlaceholderHook;
+import de.opalium.dasloch.integration.VaultService;
+import de.opalium.dasloch.item.MysticItemService;
+import de.opalium.dasloch.listener.CombatListener;
 import de.opalium.dasloch.listener.ItemLifecycleListener;
 import de.opalium.dasloch.service.EnchantParser;
 import de.opalium.dasloch.service.ItemFactory;
 import de.opalium.dasloch.service.LifeTokenService;
-import de.opalium.dasloch.service.MysticWellService;
+import de.opalium.dasloch.well.MysticWellService;
+import java.io.File;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
@@ -25,6 +33,9 @@ public class DasLochPlugin extends JavaPlugin {
     private ItemFactory itemFactory;
     private EnchantParser enchantParser;
     private MysticWellService mysticWellService;
+    private EnchantRegistry enchantRegistry;
+    private MysticItemService itemService;
+    private VaultService vaultService;
 
     @Override
     public void onEnable() {
@@ -35,13 +46,12 @@ public class DasLochPlugin extends JavaPlugin {
         this.lifeTokenService = new LifeTokenService(this);
         this.itemFactory = new ItemFactory(lifeTokenService);
         this.enchantParser = new EnchantParser(enchantsConfig);
-        this.mysticWellService = new MysticWellService(wellConfig, enchantsConfig);
+        this.vaultService = new VaultService(this);
 
         reloadAll();
         registerCommands();
-        getServer().getPluginManager().registerEvents(
-            new ItemLifecycleListener(itemsConfig, lifeTokenService, itemFactory), this
-        );
+        registerListeners();
+        registerPlaceholderApi();
     }
 
     public void reloadAll() {
@@ -50,6 +60,7 @@ public class DasLochPlugin extends JavaPlugin {
             enchantsConfig.load();
             wellConfig.load();
             reloadConfig();
+            reloadServices();
         } catch (IOException ex) {
             getLogger().log(Level.SEVERE, "Failed to load configuration", ex);
         }
@@ -72,6 +83,38 @@ public class DasLochPlugin extends JavaPlugin {
         if (dasloch != null) {
             dasloch.setExecutor(new DasLochCommand(this, itemsConfig, lifeTokenService));
         }
+    }
+
+    private void registerListeners() {
+        PluginManager plugins = getServer().getPluginManager();
+        plugins.registerEvents(
+            new ItemLifecycleListener(itemsConfig, lifeTokenService, itemFactory), this
+        );
+        plugins.registerEvents(new CombatListener(this), this);
+    }
+
+    private void registerPlaceholderApi() {
+        if (getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            new PlaceholderHook(this).register();
+        }
+    }
+
+    private void reloadServices() throws IOException {
+        YamlConfiguration itemConfig = loadConfig("items.yml");
+        YamlConfiguration enchantConfig = loadConfig("enchants.yml");
+        YamlConfiguration wellConfig = loadConfig("well.yml");
+
+        this.enchantRegistry = new EnchantRegistry(enchantConfig);
+        this.mysticWellService = new MysticWellService(wellConfig);
+        this.itemService = new MysticItemService(this, itemConfig, enchantRegistry, mysticWellService);
+    }
+
+    private YamlConfiguration loadConfig(String name) throws IOException {
+        File file = new File(getDataFolder(), name);
+        if (!file.exists()) {
+            saveResource(name, false);
+        }
+        return YamlConfiguration.loadConfiguration(file);
     }
 
     public ItemsConfig getItemsConfig() {
@@ -100,5 +143,17 @@ public class DasLochPlugin extends JavaPlugin {
 
     public MysticWellService getMysticWellService() {
         return mysticWellService;
+    }
+
+    public EnchantRegistry getEnchantRegistry() {
+        return enchantRegistry;
+    }
+
+    public MysticItemService getItemService() {
+        return itemService;
+    }
+
+    public VaultService getVaultService() {
+        return vaultService;
     }
 }
