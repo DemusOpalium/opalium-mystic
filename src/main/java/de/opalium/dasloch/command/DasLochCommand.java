@@ -9,8 +9,13 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
+import java.util.Map;
 import java.util.Optional;
+import java.util.StringJoiner;
 
 public class DasLochCommand implements CommandExecutor {
     private final DasLochPlugin plugin;
@@ -78,5 +83,22 @@ public class DasLochCommand implements CommandExecutor {
         String[] copy = new String[args.length - 1];
         System.arraycopy(args, 1, copy, 0, copy.length);
         return copy;
+    }
+
+    private String formatEnchants(Map<String, Integer> enchants) {
+        if (enchants.isEmpty()) {
+            return "§7Enchants: §8none";
+        }
+
+        StringJoiner joiner = new StringJoiner("§7, ", "§7Enchants: §e", "");
+        for (Map.Entry<String, Integer> entry : enchants.entrySet()) {
+            EnchantDefinition def = enchantRegistry.get(entry.getKey());
+            String label = entry.getKey();
+            if (def != null) {
+                label += " (§f" + def.displayName() + "§e)";
+            }
+            joiner.add(label + " §7T" + entry.getValue());
+        }
+        return joiner.toString();
     }
 }

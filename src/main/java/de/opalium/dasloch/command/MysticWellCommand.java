@@ -78,24 +78,16 @@ public class MysticWellCommand implements CommandExecutor, TabCompleter {
     }
 
     private boolean rollForPlayer(Player target, String tierId, CommandSender initiator) {
-        if (wellService.tier(tierId) == null) {
-            initiator.sendMessage("§cUnknown mystic well tier: " + tierId);
-            return true;
-        }
-
         ItemStack held = target.getInventory().getItemInMainHand();
         if (!itemService.isCustomItem(held) || itemService.getKind(held) != ItemKind.MYSTIC) {
             initiator.sendMessage("§c" + target.getName() + " is not holding a mystic item.");
             return true;
         }
 
-        int cost = wellService.baseCosts().getOrDefault(resolveCostKey(tierId), 0);
-        if (!vaultService.hasEconomy()) {
-            initiator.sendMessage("§cVault economy is not available.");
-            return true;
-        }
-        if (vaultService.getBalance(target) < cost) {
-            initiator.sendMessage("§c" + target.getName() + " lacks the required gold: " + cost);
+        int previousTokens = itemService.getTokens(held);
+        if (!itemService.rollMystic(target, held, tierId)) {
+            initiator.sendMessage("§cCould not roll mystic well for " + target.getName()
+                    + ". Check the tier or gold requirements.");
             return true;
         }
 
@@ -108,23 +100,15 @@ public class MysticWellCommand implements CommandExecutor, TabCompleter {
         int newTokens = itemService.getTokens(held);
 
         target.getInventory().setItemInMainHand(held);
-        target.sendMessage("§aMystic Well Roll: +" + result.tokensAwarded()
-                + " Tokens (§e" + newTokens + "§a total), rarity: §e"
-                + result.rarityRolled());
+        int newTokens = itemService.getTokens(held);
+        int delta = Math.max(0, newTokens - previousTokens);
+        target.sendMessage("§aMystic Well Roll: +" + delta
+                + " Tokens (§e" + newTokens + "§a total)");
         if (!initiator.equals(target)) {
             initiator.sendMessage("§aApplied mystic well roll for " + target.getName()
                     + " (Tier " + tierId.toUpperCase(Locale.ROOT) + ")");
         }
         return true;
-    }
-
-    private String resolveCostKey(String tierId) {
-        return switch (tierId.toUpperCase(Locale.ROOT)) {
-            case "I", "1", "TIER1", "TIER_1" -> "tier_1";
-            case "II", "2", "TIER2", "TIER_2" -> "tier_2";
-            case "III", "3", "TIER3", "TIER_3" -> "tier_3";
-            default -> tierId.toLowerCase(Locale.ROOT);
-        };
     }
 
     @Override
