@@ -1,31 +1,44 @@
 package de.opalium.dasloch.command;
 
 import de.opalium.dasloch.DasLochPlugin;
-import de.opalium.dasloch.command.MysticWellCommand;
-import de.opalium.dasloch.item.ItemKind;
+import de.opalium.dasloch.config.ItemsConfig;
+import de.opalium.dasloch.enchant.EnchantDefinition;
+import de.opalium.dasloch.enchant.EnchantRegistry;
 import de.opalium.dasloch.item.MysticItemService;
+import de.opalium.dasloch.model.ItemTemplate;
+import de.opalium.dasloch.model.ItemType;
+import de.opalium.dasloch.service.LifeTokenService;
+import java.util.Map;
+import java.util.Optional;
+import java.util.StringJoiner;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
-
-import java.util.Map;
-import java.util.Optional;
-import java.util.StringJoiner;
 
 public class DasLochCommand implements CommandExecutor {
-    private final DasLochPlugin plugin;
-    private final MysticItemService itemService;
-    private final MysticWellCommand mysticWellCommand;
 
-    public DasLochCommand(DasLochPlugin plugin, MysticItemService itemService, MysticWellCommand mysticWellCommand) {
+    private final DasLochPlugin plugin;
+    private final ItemsConfig itemsConfig;
+    private final LifeTokenService lifeTokenService;
+    private final MysticWellCommand mysticWellCommand;
+    private final EnchantRegistry enchantRegistry;
+    private final MysticItemService itemService;
+
+    public DasLochCommand(
+            DasLochPlugin plugin,
+            ItemsConfig itemsConfig,
+            LifeTokenService lifeTokenService,
+            MysticWellCommand mysticWellCommand
+    ) {
         this.plugin = plugin;
-        this.itemService = itemService;
+        this.itemsConfig = itemsConfig;
+        this.lifeTokenService = lifeTokenService;
         this.mysticWellCommand = mysticWellCommand;
+        // Zugriff auf Registry und Mystic-Item-Service über das Plugin
+        this.enchantRegistry = plugin.getEnchantRegistry();
+        this.itemService = plugin.getItemService();
     }
 
     @Override
@@ -33,7 +46,7 @@ public class DasLochCommand implements CommandExecutor {
         if (args.length == 0) {
             sender.sendMessage("§e/dasloch reload §7- reload configs");
             sender.sendMessage("§e/dasloch debug §7- inspect item in hand");
-            sender.sendMessage("§e/dasloch well roll <tier> <player> §7- roll the mystic well for a player");
+            sender.sendMessage("§e/dasloch well roll <tier> [player] §7- roll the mystic well for a player");
             return true;
         }
 
@@ -56,24 +69,32 @@ public class DasLochCommand implements CommandExecutor {
             sender.sendMessage("§cDebug can only be run in-game.");
             return;
         }
+
         ItemStack item = player.getInventory().getItemInMainHand();
         sender.sendMessage("§7Item: " + (item.getType() != null ? item.getType().name() : "NONE"));
-        if (!itemService.isCustomItem(item)) {
+
+        // Prüfen, ob das ein LifeToken/Mystic/Legend-Item ist
+        Optional<ItemType> type = lifeTokenService.getType(item);
+        if (type.isEmpty()) {
             sender.sendMessage("§cThis is not a DasLoch custom item.");
             return;
         }
 
-        Optional<String> id = itemService.getId(item);
-        ItemKind kind = itemService.getKind(item);
+        Optional<String> id = lifeTokenService.getId(item);
 
         sender.sendMessage("§7Template: " + id.orElse("n/a"));
-        sender.sendMessage("§7Type: " + (kind == null ? "n/a" : kind.name()));
-        sender.sendMessage("§7Lives: §e" + itemService.getLives(item) + "§7/§e" + itemService.getMaxLives(item));
-        sender.sendMessage("§7Tokens: §e" + itemService.getTokens(item));
+        sender.sendMessage("§7Type: " + type.get().name());
+        sender.sendMessage("§7Lives: §e" + lifeTokenService.getLives(item)
+                + "§7/§e" + lifeTokenService.getMaxLives(item));
+        sender.sendMessage("§7Tokens: §e" + lifeTokenService.getTokens(item));
 
-        id.flatMap(itemService::getDefinition).ifPresent(definition ->
-                sender.sendMessage("§7Lore marker: §8[#" + definition.kind().name() + "-" + definition.id() + "]")
-        );
+        // Template / Lore-Marker anzeigen, falls vorhanden
+        id.flatMap(itemsConfig::getTemplate)
+                .ifPresent(template -> sender.sendMessage(formatTemplateInfo(template)));
+
+        // Enchants über MysticItemService auslesen und hübsch formatieren
+        Map<String, Integer> enchants = itemService.readEnchants(item);
+        sender.sendMessage(formatEnchants(enchants));
     }
 
     private String[] dropFirst(String[] args) {
@@ -85,6 +106,14 @@ public class DasLochCommand implements CommandExecutor {
         return copy;
     }
 
+    private String formatTemplateInfo(ItemTemplate template) {
+        return "§7Lore marker: §8[#"
+                + template.type().name()
+                + "-"
+                + template.id()
+                + "]";
+    }
+
     private String formatEnchants(Map<String, Integer> enchants) {
         if (enchants.isEmpty()) {
             return "§7Enchants: §8none";
@@ -92,12 +121,15 @@ public class DasLochCommand implements CommandExecutor {
 
         StringJoiner joiner = new StringJoiner("§7, ", "§7Enchants: §e", "");
         for (Map.Entry<String, Integer> entry : enchants.entrySet()) {
-            EnchantDefinition def = enchantRegistry.get(entry.getKey());
-            String label = entry.getKey();
+            String key = entry.getKey();
+            int tier = entry.getValue();
+
+            EnchantDefinition def = enchantRegistry.get(key);
+            String label = key;
             if (def != null) {
                 label += " (§f" + def.displayName() + "§e)";
             }
-            joiner.add(label + " §7T" + entry.getValue());
+            joiner.add(label + " §7T" + tier);
         }
         return joiner.toString();
     }
