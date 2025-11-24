@@ -6,10 +6,13 @@ import de.opalium.dasloch.model.ItemType;
 import de.opalium.dasloch.service.ItemFactory;
 import de.opalium.dasloch.service.LifeTokenService;
 import de.opalium.dasloch.well.MysticWellService;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional; // <--- WICHTIG: fehlender Import
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -118,9 +121,12 @@ public class MysticWellCommand implements CommandExecutor, TabCompleter {
             .ifPresent(template -> itemFactory.refreshLore(held, template));
 
         target.getInventory().setItemInMainHand(held);
-        target.sendMessage("§aMystic Well Roll: +" + result.tokensAwarded() + " Tokens (§e" + newTokens + "§a total), rarity: §e" + result.rarityRolled());
+        target.sendMessage("§aMystic Well Roll: +" + result.tokensAwarded()
+                + " Tokens (§e" + newTokens + "§a total), rarity: §e"
+                + result.rarityRolled());
         if (!initiator.equals(target)) {
-            initiator.sendMessage("§aApplied mystic well roll for " + target.getName() + " (Tier " + tierId.toUpperCase(Locale.ROOT) + ")");
+            initiator.sendMessage("§aApplied mystic well roll for " + target.getName()
+                    + " (Tier " + tierId.toUpperCase(Locale.ROOT) + ")");
         }
         return true;
     }
