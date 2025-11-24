@@ -36,7 +36,12 @@ public final class MysticItemService {
     private final EnchantRegistry enchantRegistry;
     private final MysticWellService wellService;
 
-    public MysticItemService(DasLochPlugin plugin, YamlConfiguration config, EnchantRegistry enchantRegistry, MysticWellService wellService) {
+    public MysticItemService(
+            DasLochPlugin plugin,
+            YamlConfiguration config,
+            EnchantRegistry enchantRegistry,
+            MysticWellService wellService
+    ) {
         this.plugin = plugin;
         this.keys = new PluginKeys(plugin);
         this.enchantRegistry = enchantRegistry;
@@ -69,9 +74,24 @@ public final class MysticItemService {
             Color color = null;
             ConfigurationSection dye = section.getConfigurationSection("dye-color");
             if (dye != null) {
-                color = Color.fromRGB(dye.getInt("red"), dye.getInt("green"), dye.getInt("blue"));
+                color = Color.fromRGB(
+                        dye.getInt("red"),
+                        dye.getInt("green"),
+                        dye.getInt("blue")
+                );
             }
-            LegendItemDefinition def = new LegendItemDefinition(id, category, type, material, displayName, model, baseLives, maxLives, lore, color);
+            LegendItemDefinition def = new LegendItemDefinition(
+                    id,
+                    category,
+                    type,
+                    material,
+                    displayName,
+                    model,
+                    baseLives,
+                    maxLives,
+                    lore,
+                    color
+            );
             definitions.put(id, def);
         }
     }
@@ -93,6 +113,7 @@ public final class MysticItemService {
         if (def == null || def.kind() != expectedType) {
             return new ItemStack(Material.BARRIER);
         }
+
         ItemStack stack = new ItemStack(def.material());
         ItemMeta meta = stack.getItemMeta();
         meta.setDisplayName(formatItemName(def, 0));
@@ -103,6 +124,7 @@ public final class MysticItemService {
         if (meta instanceof LeatherArmorMeta leather && def.dyeColor() != null) {
             leather.setColor(def.dyeColor());
         }
+
         meta.getPersistentDataContainer().set(keys.itemId(), PersistentDataType.STRING, def.id());
         meta.getPersistentDataContainer().set(keys.itemType(), PersistentDataType.STRING, def.kind().name());
         meta.getPersistentDataContainer().set(keys.livesCurrent(), PersistentDataType.INTEGER, def.baseLives());
@@ -111,6 +133,7 @@ public final class MysticItemService {
         meta.getPersistentDataContainer().set(keys.prefix(), PersistentDataType.STRING, formatPrefix(0));
         meta.getPersistentDataContainer().set(keys.mysticTier(), PersistentDataType.STRING, "");
         meta.setLore(applyLore(def, def.baseLives(), def.maxLives(), 0, owner));
+
         stack.setItemMeta(meta);
         return stack;
     }
@@ -136,7 +159,8 @@ public final class MysticItemService {
             return false;
         }
         ItemMeta meta = stack.getItemMeta();
-        return meta != null && meta.getPersistentDataContainer().has(keys.itemId(), PersistentDataType.STRING);
+        return meta != null && meta.getPersistentDataContainer()
+                .has(keys.itemId(), PersistentDataType.STRING);
     }
 
     public int getLives(ItemStack stack) {
@@ -144,7 +168,8 @@ public final class MysticItemService {
         if (meta == null) {
             return 0;
         }
-        return meta.getPersistentDataContainer().getOrDefault(keys.livesCurrent(), PersistentDataType.INTEGER, 0);
+        return meta.getPersistentDataContainer()
+                .getOrDefault(keys.livesCurrent(), PersistentDataType.INTEGER, 0);
     }
 
     public int getTokens(ItemStack stack) {
@@ -152,7 +177,8 @@ public final class MysticItemService {
         if (meta == null) {
             return 0;
         }
-        return meta.getPersistentDataContainer().getOrDefault(keys.tokens(), PersistentDataType.INTEGER, 0);
+        return meta.getPersistentDataContainer()
+                .getOrDefault(keys.tokens(), PersistentDataType.INTEGER, 0);
     }
 
     public void setLives(ItemStack stack, int lives) {
@@ -160,8 +186,13 @@ public final class MysticItemService {
         if (meta == null) {
             return;
         }
-        int max = meta.getPersistentDataContainer().getOrDefault(keys.livesMax(), PersistentDataType.INTEGER, lives);
-        meta.getPersistentDataContainer().set(keys.livesCurrent(), PersistentDataType.INTEGER, Math.max(0, Math.min(lives, max)));
+        int max = meta.getPersistentDataContainer()
+                .getOrDefault(keys.livesMax(), PersistentDataType.INTEGER, lives);
+        meta.getPersistentDataContainer().set(
+                keys.livesCurrent(),
+                PersistentDataType.INTEGER,
+                Math.max(0, Math.min(lives, max))
+        );
         refreshLore(stack, meta);
     }
 
@@ -174,14 +205,23 @@ public final class MysticItemService {
         Map<String, Integer> enchantTiers = readEnchants(stack);
         int tokens = enchantTiers.entrySet().stream()
                 .mapToInt(entry -> {
-            EnchantDefinition def = enchantRegistry.get(entry.getKey());
-            return def == null ? 0 : def.tokensForTier(entry.getValue());
-        })
+                    EnchantDefinition def = enchantRegistry.get(entry.getKey());
+                    return def == null ? 0 : def.tokensForTier(entry.getValue());
+                })
                 .sum();
+
         ItemMeta meta = stack.getItemMeta();
         if (meta != null) {
-            meta.getPersistentDataContainer().set(keys.tokens(), PersistentDataType.INTEGER, tokens);
-            meta.getPersistentDataContainer().set(keys.prefix(), PersistentDataType.STRING, formatPrefix(tokens));
+            meta.getPersistentDataContainer().set(
+                    keys.tokens(),
+                    PersistentDataType.INTEGER,
+                    tokens
+            );
+            meta.getPersistentDataContainer().set(
+                    keys.prefix(),
+                    PersistentDataType.STRING,
+                    formatPrefix(tokens)
+            );
             refreshLore(stack, meta);
         }
         return tokens;
@@ -189,14 +229,17 @@ public final class MysticItemService {
 
     public Map<String, Integer> readEnchants(ItemStack stack) {
         ItemMeta meta = stack.getItemMeta();
-        if (meta == null || !meta.getPersistentDataContainer().has(keys.enchants(), PersistentDataType.STRING)) {
+        if (meta == null || !meta.getPersistentDataContainer()
+                .has(keys.enchants(), PersistentDataType.STRING)) {
             return Collections.emptyMap();
         }
-        String raw = meta.getPersistentDataContainer().get(keys.enchants(), PersistentDataType.STRING);
+        String raw = meta.getPersistentDataContainer()
+                .get(keys.enchants(), PersistentDataType.STRING);
         Map<String, Integer> values = new HashMap<>();
         if (raw == null || raw.isEmpty()) {
             return values;
         }
+
         String[] parts = raw.split(";");
         for (String part : parts) {
             String[] pair = part.split(":");
@@ -216,19 +259,28 @@ public final class MysticItemService {
         for (Map.Entry<String, Integer> entry : enchantTiers.entrySet()) {
             joiner.add(entry.getKey() + ":" + entry.getValue());
         }
-        meta.getPersistentDataContainer().set(keys.enchants(), PersistentDataType.STRING, joiner.toString());
+        meta.getPersistentDataContainer().set(
+                keys.enchants(),
+                PersistentDataType.STRING,
+                joiner.toString()
+        );
         refreshLore(stack, meta);
     }
 
     private void refreshLore(ItemStack stack, ItemMeta meta) {
-        String id = meta.getPersistentDataContainer().get(keys.itemId(), PersistentDataType.STRING);
+        String id = meta.getPersistentDataContainer()
+                .get(keys.itemId(), PersistentDataType.STRING);
         LegendItemDefinition def = definitions.get(id);
         if (def == null) {
             return;
         }
-        int lives = meta.getPersistentDataContainer().getOrDefault(keys.livesCurrent(), PersistentDataType.INTEGER, 0);
-        int maxLives = meta.getPersistentDataContainer().getOrDefault(keys.livesMax(), PersistentDataType.INTEGER, lives);
-        int tokens = meta.getPersistentDataContainer().getOrDefault(keys.tokens(), PersistentDataType.INTEGER, 0);
+        int lives = meta.getPersistentDataContainer()
+                .getOrDefault(keys.livesCurrent(), PersistentDataType.INTEGER, 0);
+        int maxLives = meta.getPersistentDataContainer()
+                .getOrDefault(keys.livesMax(), PersistentDataType.INTEGER, lives);
+        int tokens = meta.getPersistentDataContainer()
+                .getOrDefault(keys.tokens(), PersistentDataType.INTEGER, 0);
+
         meta.setLore(applyLore(def, lives, maxLives, tokens, null));
         meta.setDisplayName(formatItemName(def, tokens));
         stack.setItemMeta(meta);
@@ -256,7 +308,8 @@ public final class MysticItemService {
         if (meta == null) {
             return null;
         }
-        String id = meta.getPersistentDataContainer().get(keys.itemId(), PersistentDataType.STRING);
+        String id = meta.getPersistentDataContainer()
+                .get(keys.itemId(), PersistentDataType.STRING);
         LegendItemDefinition def = definitions.get(id);
         return def == null ? null : def.category();
     }
@@ -266,7 +319,10 @@ public final class MysticItemService {
         if (meta == null) {
             return null;
         }
-        return ItemKind.fromString(meta.getPersistentDataContainer().getOrDefault(keys.itemType(), PersistentDataType.STRING, "MYSTIC"));
+        return ItemKind.fromString(
+                meta.getPersistentDataContainer()
+                        .getOrDefault(keys.itemType(), PersistentDataType.STRING, "MYSTIC")
+        );
     }
 
     public void damageIfMystic(Player player, ItemStack stack) {
@@ -321,7 +377,9 @@ public final class MysticItemService {
         }
 
         MysticWellService.RollResult result = wellService.roll(tier);
-        LegendItemDefinition definition = definitions.get(meta.getPersistentDataContainer().get(keys.itemId(), PersistentDataType.STRING));
+        LegendItemDefinition definition = definitions.get(
+                meta.getPersistentDataContainer().get(keys.itemId(), PersistentDataType.STRING)
+        );
         if (definition == null || definition.kind() != ItemKind.MYSTIC) {
             return false;
         }
@@ -333,31 +391,48 @@ public final class MysticItemService {
         return true;
     }
 
-    private void applyEnchantRoll(ItemCategory category, MysticWellService.RollResult rollResult, MysticWellTier tier, ItemStack stack) {
+    private void applyEnchantRoll(
+            ItemCategory category,
+            MysticWellService.RollResult rollResult,
+            MysticWellTier tier,
+            ItemStack stack
+    ) {
         EnchantDefinition.Rarity rarity = parseRarity(rollResult.rarityRolled());
         Map<String, Integer> existing = new HashMap<>(readEnchants(stack));
+
         int rareLimit = tier.rareLimits().getOrDefault("rare", Integer.MAX_VALUE);
         int rareCount = (int) existing.keySet().stream()
                 .map(enchantRegistry::get)
                 .filter(def -> def != null && def.rarity() == EnchantDefinition.Rarity.RARE)
                 .count();
+
         if (rarity == EnchantDefinition.Rarity.RARE && rareCount >= rareLimit) {
             rarity = EnchantDefinition.Rarity.COMMON;
         }
 
+        // WICHTIGER FIX: rarity-Kopie für das Lambda
+        final EnchantDefinition.Rarity finalRarity = rarity;
+
         List<EnchantDefinition> candidates = enchantRegistry.all().values().stream()
                 .filter(def -> def.applicable().contains(category))
-                .filter(def -> def.rarity() == rarity)
+                .filter(def -> def.rarity() == finalRarity)
                 .toList();
 
         if (candidates.isEmpty()) {
             return;
         }
 
-        EnchantDefinition selected = candidates.get(ThreadLocalRandom.current().nextInt(candidates.size()));
+        EnchantDefinition selected = candidates.get(
+                ThreadLocalRandom.current().nextInt(candidates.size())
+        );
+
         int rolledTier = Math.max(1, Math.min(rollResult.tokensAwarded(), selected.maxTier()));
+
         if (existing.containsKey(selected.id())) {
-            int newTier = Math.min(selected.maxTier(), existing.get(selected.id()) + rolledTier);
+            int newTier = Math.min(
+                    selected.maxTier(),
+                    existing.get(selected.id()) + rolledTier
+            );
             existing.put(selected.id(), newTier);
         } else if (existing.size() >= 3) {
             String target = existing.entrySet().stream()
@@ -367,13 +442,17 @@ public final class MysticItemService {
             if (target != null) {
                 EnchantDefinition targetDef = enchantRegistry.get(target);
                 if (targetDef != null) {
-                    int newTier = Math.min(targetDef.maxTier(), existing.get(target) + rolledTier);
+                    int newTier = Math.min(
+                            targetDef.maxTier(),
+                            existing.get(target) + rolledTier
+                    );
                     existing.put(target, newTier);
                 }
             }
         } else {
             existing.put(selected.id(), rolledTier);
         }
+
         writeEnchants(stack, existing);
     }
 
@@ -381,11 +460,14 @@ public final class MysticItemService {
         if (rarity == null) {
             return EnchantDefinition.Rarity.COMMON;
         }
-        return rarity.equalsIgnoreCase("rare") ? EnchantDefinition.Rarity.RARE : EnchantDefinition.Rarity.COMMON;
+        return rarity.equalsIgnoreCase("rare")
+                ? EnchantDefinition.Rarity.RARE
+                : EnchantDefinition.Rarity.COMMON;
     }
 
     private boolean canApplyTier(ItemMeta meta, String requestedTier) {
-        String current = meta.getPersistentDataContainer().getOrDefault(keys.mysticTier(), PersistentDataType.STRING, "");
+        String current = meta.getPersistentDataContainer()
+                .getOrDefault(keys.mysticTier(), PersistentDataType.STRING, "");
         if ("III".equalsIgnoreCase(current)) {
             return false;
         }
