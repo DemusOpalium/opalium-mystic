@@ -68,7 +68,7 @@ public class DasLochPlugin extends JavaPlugin {
     }
 
     private void registerCommands() {
-        MysticWellCommand wellCommand = new MysticWellCommand(itemsConfig, lifeTokenService, itemFactory, mysticWellService, vaultService);
+        MysticWellCommand wellCommand = new MysticWellCommand(itemService);
 
         PluginCommand legend = getCommand("legendgive");
         if (legend != null) {

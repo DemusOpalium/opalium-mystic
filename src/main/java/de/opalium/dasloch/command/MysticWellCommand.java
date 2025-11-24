@@ -1,17 +1,12 @@
 package de.opalium.dasloch.command;
 
-import de.opalium.dasloch.config.ItemsConfig;
-import de.opalium.dasloch.integration.VaultService;
-import de.opalium.dasloch.model.ItemType;
-import de.opalium.dasloch.service.ItemFactory;
-import de.opalium.dasloch.service.LifeTokenService;
-import de.opalium.dasloch.well.MysticWellService;
+import de.opalium.dasloch.item.ItemKind;
+import de.opalium.dasloch.item.MysticItemService;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional; // <--- WICHTIG: fehlender Import
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -23,24 +18,12 @@ import org.bukkit.inventory.ItemStack;
 
 public class MysticWellCommand implements CommandExecutor, TabCompleter {
 
-    private final ItemsConfig itemsConfig;
-    private final LifeTokenService lifeTokenService;
-    private final ItemFactory itemFactory;
-    private final MysticWellService wellService;
-    private final VaultService vaultService;
+    private final MysticItemService itemService;
 
     public MysticWellCommand(
-        ItemsConfig itemsConfig,
-        LifeTokenService lifeTokenService,
-        ItemFactory itemFactory,
-        MysticWellService wellService,
-        VaultService vaultService
+        MysticItemService itemService
     ) {
-        this.itemsConfig = itemsConfig;
-        this.lifeTokenService = lifeTokenService;
-        this.itemFactory = itemFactory;
-        this.wellService = wellService;
-        this.vaultService = vaultService;
+        this.itemService = itemService;
     }
 
     @Override
@@ -87,57 +70,29 @@ public class MysticWellCommand implements CommandExecutor, TabCompleter {
     }
 
     private boolean rollForPlayer(Player target, String tierId, CommandSender initiator) {
-        if (wellService.tier(tierId) == null) {
-            initiator.sendMessage("§cUnknown mystic well tier: " + tierId);
-            return true;
-        }
-
         ItemStack held = target.getInventory().getItemInMainHand();
-        Optional<ItemType> type = lifeTokenService.getType(held);
-        if (type.isEmpty() || type.get() != ItemType.MYSTIC) {
+        if (itemService.getKind(held) != ItemKind.MYSTIC) {
             initiator.sendMessage("§c" + target.getName() + " is not holding a mystic item.");
             return true;
         }
 
-        int cost = wellService.baseCosts().getOrDefault(resolveCostKey(tierId), 0);
-        if (!vaultService.hasEconomy()) {
-            initiator.sendMessage("§cVault economy is not available.");
+        int previousTokens = itemService.getTokens(held);
+        if (!itemService.rollMystic(target, held, tierId)) {
+            initiator.sendMessage("§cCould not roll mystic well for " + target.getName()
+                    + ". Check the tier or gold requirements.");
             return true;
         }
-        if (vaultService.getBalance(target) < cost) {
-            initiator.sendMessage("§c" + target.getName() + " lacks the required gold: " + cost);
-            return true;
-        }
-
-        if (cost > 0) {
-            vaultService.withdraw(target, cost);
-        }
-
-        MysticWellService.RollResult result = wellService.roll(tierId);
-        int newTokens = lifeTokenService.getTokens(held) + result.tokensAwarded();
-        lifeTokenService.setTokens(held, newTokens);
-        lifeTokenService.getId(held)
-            .flatMap(itemsConfig::getTemplate)
-            .ifPresent(template -> itemFactory.refreshLore(held, template));
 
         target.getInventory().setItemInMainHand(held);
-        target.sendMessage("§aMystic Well Roll: +" + result.tokensAwarded()
-                + " Tokens (§e" + newTokens + "§a total), rarity: §e"
-                + result.rarityRolled());
+        int newTokens = itemService.getTokens(held);
+        int delta = Math.max(0, newTokens - previousTokens);
+        target.sendMessage("§aMystic Well Roll: +" + delta
+                + " Tokens (§e" + newTokens + "§a total)");
         if (!initiator.equals(target)) {
             initiator.sendMessage("§aApplied mystic well roll for " + target.getName()
                     + " (Tier " + tierId.toUpperCase(Locale.ROOT) + ")");
         }
         return true;
-    }
-
-    private String resolveCostKey(String tierId) {
-        return switch (tierId.toUpperCase(Locale.ROOT)) {
-            case "I", "1", "TIER1", "TIER_1" -> "tier_1";
-            case "II", "2", "TIER2", "TIER_2" -> "tier_2";
-            case "III", "3", "TIER3", "TIER_3" -> "tier_3";
-            default -> tierId.toLowerCase(Locale.ROOT);
-        };
     }
 
     @Override
