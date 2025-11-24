@@ -1,0 +1,83 @@
+# Sample Legend & Mystic item definitions
+# Material: Bukkit enum material for the item
+# display_name: Player-facing name with color codes handled elsewhere
+# custom_model_data: Placeholder ID for resource pack lookup
+# lives: default and maximum lives before the item shatters
+# tokens: starting token sum before Mystic Well upgrades
+
+legend:
+  archangel_chestplate:
+    material: DIAMOND_CHESTPLATE
+    display_name: "Archangel Chestplate"
+    custom_model_data: 1101
+    lives:
+      start: 30
+      max: 60
+    tokens: 0
+    notes: "Angel faction reward; not enchantable but tagged as legend for lifecycle tracking."
+
+  armageddon_boots:
+    material: LEATHER_BOOTS
+    display_name: "Armageddon Boots"
+    custom_model_data: 1102
+    lives:
+      start: 20
+      max: 40
+    tokens: 0
+    notes: "Demon faction footwear with dark protection; non-enchantable."
+
+mystic:
+  sword:
+    id: mystic_sword
+    material: GOLDEN_SWORD
+    display_name: "Mystic Sword"
+    custom_model_data: 2001
+    lives:
+      start: 45
+      max: 100
+    tokens: 0
+    applicable_enchants: [universal, sword]
+
+  bow:
+    id: mystic_bow
+    material: BOW
+    display_name: "Mystic Bow"
+    custom_model_data: 2002
+    lives:
+      start: 40
+      max: 100
+    tokens: 0
+    applicable_enchants: [universal, bow]
+
+  pants:
+    id: fresh_pants
+    material: LEATHER_LEGGINGS
+    display_name: "Fresh Pants"
+    custom_model_data: 2003
+    lives:
+      start: 50
+      max: 100
+    tokens: 0
+    variants:
+      - color: AQUA
+        id: aqua_pants
+        display_name: "Aqua Pants"
+      - color: BLACK
+        id: dark_pants
+        display_name: "Dark Pants"
+      - color: RED
+        id: rage_pants
+        display_name: "Rage Pants"
+    applicable_enchants: [universal, pants]
+
+  golden_helmet:
+    id: golden_helmet
+    material: GOLDEN_HELMET
+    display_name: "Golden Helmet"
+    custom_model_data: 2004
+    lives:
+      start: 30
+      max: 60
+    tokens: 0
+    applicable_enchants: [helm]
+    notes: "Specialized head slot mystic with helmet-only enchant pool."

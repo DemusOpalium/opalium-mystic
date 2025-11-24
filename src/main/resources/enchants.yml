@@ -1,0 +1,107 @@
+# Enchant samples for Mystic items.
+# rarity: common/rare/unique determines roll probabilities in the Mystic Well
+# max_tier: highest attainable tier in the system
+# tokens[tier]: token weight added when this tier is rolled (used for prefixes like Legendary)
+# applies_to: which pools can receive the enchant
+
+universal:
+  sweaty:
+    rarity: common
+    max_tier: 3
+    tokens:
+      1: 1
+      2: 1
+      3: 2
+    description: "Streak XP multiplier with higher caps per tier."
+
+  gold_boost:
+    rarity: common
+    max_tier: 3
+    tokens:
+      1: 1
+      2: 1
+      3: 2
+    description: "Percentage gold increase on kills and assists."
+
+  gold_bump:
+    rarity: common
+    max_tier: 3
+    tokens:
+      1: 1
+      2: 1
+      3: 2
+    description: "Flat gold bonus per kill scaling with tier."
+
+sword:
+  lifesteal:
+    rarity: regular
+    max_tier: 3
+    tokens:
+      1: 1
+      2: 2
+      3: 3
+    description: "Heals the wielder for a small amount per hit."
+
+  executioner:
+    rarity: rare
+    max_tier: 3
+    tokens:
+      1: 2
+      2: 3
+      3: 4
+    description: "Executes targets under a health threshold with true damage."
+
+  gamble:
+    rarity: rare
+    max_tier: 3
+    tokens:
+      1: 2
+      2: 3
+      3: 4
+    description: "Risk-reward strike dealing true damage to attacker or target."
+
+bow:
+  volley:
+    rarity: regular
+    max_tier: 3
+    tokens:
+      1: 1
+      2: 2
+      3: 3
+    description: "Shoots additional arrows on every shot."
+
+  true_shot:
+    rarity: rare
+    max_tier: 3
+    tokens:
+      1: 2
+      2: 3
+      3: 4
+    description: "Converts part of arrow damage into true damage."
+
+pants:
+  last_stand:
+    rarity: regular
+    max_tier: 3
+    tokens:
+      1: 1
+      2: 2
+      3: 3
+    description: "Damage reduction and buffs when at low health."
+
+  solitude:
+    rarity: rare
+    max_tier: 3
+    tokens:
+      1: 2
+      2: 3
+      3: 4
+    description: "Reduces damage taken when few players are nearby."
+
+helm:
+  kings_resolve:
+    rarity: rare
+    max_tier: 1
+    tokens:
+      1: 2
+    description: "Special Golden Helmet effect placeholder to reserve parsing for helm-only enchant pool."
