@@ -1,54 +1,39 @@
 package de.opalium.dasloch.listener;
 
-import de.opalium.dasloch.DasLochPlugin;
-import de.opalium.dasloch.enchant.EnchantDefinition;
-import de.opalium.dasloch.item.ItemCategory;
-import de.opalium.dasloch.item.MysticItemService;
-import java.util.Map;
-import org.bukkit.entity.Player;
+import de.opalium.dasloch.config.ItemsConfig;
+import de.opalium.dasloch.service.ItemFactory;
+import de.opalium.dasloch.service.LifeTokenService;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 
-public final class ItemLifecycleListener implements Listener {
+import java.util.Optional;
 
-    private final DasLochPlugin plugin;
-    private final MysticItemService itemService;
+public class ItemLifecycleListener implements Listener {
+    private final ItemsConfig itemsConfig;
+    private final LifeTokenService lifeTokenService;
+    private final ItemFactory itemFactory;
 
-    public ItemLifecycleListener(DasLochPlugin plugin) {
-        this.plugin = plugin;
-        this.itemService = plugin.getItemService();
+    public ItemLifecycleListener(ItemsConfig itemsConfig, LifeTokenService lifeTokenService, ItemFactory itemFactory) {
+        this.itemsConfig = itemsConfig;
+        this.lifeTokenService = lifeTokenService;
+        this.itemFactory = itemFactory;
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
-    public void onArmorDamage(EntityDamageEvent event) {
-        if (!(event.getEntity() instanceof Player player)) {
-            return;
-        }
-        ItemStack[] armorContents = player.getInventory().getArmorContents();
-        int reduction = 0;
-        for (ItemStack armor : armorContents) {
-            if (armor == null || !itemService.isCustomItem(armor)) {
+    @EventHandler
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        for (ItemStack item : event.getEntity().getInventory().getContents()) {
+            if (item == null) {
                 continue;
             }
-            Map<String, Integer> enchants = itemService.readEnchants(armor);
-            for (Map.Entry<String, Integer> entry : enchants.entrySet()) {
-                EnchantDefinition def = plugin.getEnchantRegistry().get(entry.getKey());
-                if (def == null || !def.applicable().contains(ItemCategory.PANTS)) {
-                    continue;
-                }
-                int tier = entry.getValue();
-                Integer threshold = def.effects().lastStandThresholdHearts();
-                if (threshold > 0 && player.getHealth() <= threshold) {
-                    reduction = Math.max(reduction, def.effects().lastStandReductionPercent().getOrDefault(tier, 0));
-                }
+            Optional<String> id = lifeTokenService.getId(item);
+            if (id.isEmpty()) {
+                continue;
             }
-        }
-        if (reduction > 0) {
-            double newDamage = event.getDamage() * (1 - reduction / 100.0);
-            event.setDamage(newDamage);
+            int currentLives = lifeTokenService.getLives(item);
+            lifeTokenService.setLives(item, currentLives - 1);
+            itemsConfig.getTemplate(id.get()).ifPresent(template -> itemFactory.refreshLore(item, template));
         }
     }
 }
