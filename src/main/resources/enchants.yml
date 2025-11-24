@@ -1,0 +1,103 @@
+enchants:
+  lifesteal:
+    display-name: "§cLifesteal"
+    rarity: RARE              # COMMON oder RARE
+    applicable:
+      - SWORD
+    max-tier: 3
+    token-values:
+      "1": 2
+      "2": 3
+      "3": 4
+    effects:
+      on-melee-hit:
+        heal-percent:
+          "1": 4   # in Prozent des verursachten Schadens
+          "2": 7
+          "3": 10
+
+  gold_boost:
+    display-name: "§6Gold Boost"
+    rarity: COMMON
+    applicable:
+      - SWORD
+      - BOW
+      - PANTS
+    max-tier: 3
+    token-values:
+      "1": 1
+      "2": 2
+      "3": 3
+    effects:
+      on-kill:
+        extra-gold:
+          "1": 10
+          "2": 20
+          "3": 35
+
+  xp_boost:
+    display-name: "§bXP Boost"
+    rarity: COMMON
+    applicable:
+      - SWORD
+      - BOW
+      - PANTS
+    max-tier: 2
+    token-values:
+      "1": 1
+      "2": 2
+    effects:
+      on-kill:
+        extra-xp-percent:
+          "1": 15
+          "2": 30
+
+  sweaty:
+    display-name: "§eSweaty"
+    rarity: COMMON
+    applicable:
+      - SWORD
+    max-tier: 3
+    token-values:
+      "1": 1
+      "2": 2
+      "3": 3
+    effects:
+      passive:
+        streak-bonus-percent:
+          "1": 3
+          "2": 6
+          "3": 10
+
+  fletching:
+    display-name: "§aFletching"
+    rarity: COMMON
+    applicable:
+      - BOW
+    max-tier: 3
+    token-values:
+      "1": 1
+      "2": 2
+      "3": 3
+    effects:
+      on-bow-hit:
+        extra-damage-percent:
+          "1": 5
+          "2": 9
+          "3": 13
+
+  last_stand:
+    display-name: "§4Last Stand"
+    rarity: RARE
+    applicable:
+      - PANTS
+    max-tier: 2
+    token-values:
+      "1": 3
+      "2": 4
+    effects:
+      on-damage-taken:
+        threshold-hearts: 6        # aktiviert wenn Spieler ≤ 6 Herzen hat
+        damage-reduction-percent:
+          "1": 20
+          "2": 35

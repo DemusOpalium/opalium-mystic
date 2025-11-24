@@ -1,0 +1,72 @@
+items:
+  emerald_forge_blade:
+    category: SWORD          # interne Kategorie (SWORD/BOW/PANTS/ARMOR)
+    type: LEGEND             # LEGEND oder MYSTIC (frei definierbar)
+    material: DIAMOND_SWORD  # Bukkit-Materialname
+    display-name: "§aEmerald Forge Blade"
+    custom-model-data: 1001  # optional, 0 oder weglassen falls nicht genutzt
+    base-lives: 50           # Start-Lives
+    max-lives: 100           # Hardcap-Lives für dieses Item
+    lore:
+      - "§7Eine antike Klinge, geschmiedet in"
+      - "§7den Tiefen des Smaragdbruchs."
+      - ""
+      - "§8[#LEGEND-emerald_forge_blade]"
+      - "§7Lives: §e%lives_current%§7/§e%lives_max%"
+      - "§7Tokens: §e%tokens%"
+      - "%prefix_line%"      # vom Plugin ersetzt, z.B. '§6Legendary'
+
+  nightleech_bow:
+    category: BOW
+    type: LEGEND
+    material: BOW
+    display-name: "§5Nightleech Bow"
+    custom-model-data: 1002
+    base-lives: 40
+    max-lives: 80
+    lore:
+      - "§7Ein Bogen, der im Dunkeln"
+      - "§7das Leben seiner Ziele stiehlt."
+      - ""
+      - "§8[#LEGEND-nightleech_bow]"
+      - "§7Lives: §e%lives_current%§7/§e%lives_max%"
+      - "§7Tokens: §e%tokens%"
+      - "%prefix_line%"
+
+  mystic_sword:
+    category: SWORD
+    type: MYSTIC
+    material: GOLDEN_SWORD
+    display-name: "§dMystic Sword"
+    custom-model-data: 1101
+    base-lives: 10
+    max-lives: 50
+    lore:
+      - "§7Ein instabiles Schwert, das auf"
+      - "§7mystische Upgrades wartet."
+      - ""
+      - "§8[#MYST-mystic_sword]"
+      - "§7Lives: §e%lives_current%§7/§e%lives_max%"
+      - "§7Tokens: §e%tokens%"
+      - "%prefix_line%"
+
+  mystic_pants:
+    category: PANTS
+    type: MYSTIC
+    material: LEATHER_LEGGINGS
+    display-name: "§dMystic Pants"
+    custom-model-data: 1102
+    base-lives: 15
+    max-lives: 60
+    dye-color:
+      red: 120
+      green: 40
+      blue: 150          # optional: Plugin kann Leder färben
+    lore:
+      - "§7Leuchtende Hosen, durchtränkt"
+      - "§7mit unruhiger Energie."
+      - ""
+      - "§8[#MYST-mystic_pants]"
+      - "§7Lives: §e%lives_current%§7/§e%lives_max%"
+      - "§7Tokens: §e%tokens%"
+      - "%prefix_line%"
