@@ -4,7 +4,7 @@ PaperMC 1.21.10 • Java 21 • Gradle (Kotlin DSL)
 Ziel:
 Ein modular aufgebautes Plugin für den Server „Opalium Haven“, das Legend- und Mystic-Items bereitstellt. 
 Die Items besitzen Enchants, Token, Prefixes und ein Life-System. 
-Kompatibel mit Vault/Economy. Kein Hypixel/Pit Code, keine Hypixel-Namen.
+Kompatibel mit Vault/Economy.
 
 Nostalgia-Tops sind NICHT Teil des Plugins – das bleibt weiterhin ein Skript-System.
 
