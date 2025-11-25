@@ -1,6 +1,6 @@
 package de.opalium.dasloch.config;
 
-import de.opalium.dasloch.model.EnchantDefinition;
+import de.opalium.dasloch.enchant.EnchantDefinition;
 import de.opalium.dasloch.model.MysticWellTier;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -41,6 +41,7 @@ public class WellConfig {
                 if (section == null) {
                     continue;
                 }
+
                 int tokenMin = section.getIntegerList("token_range").stream().findFirst().orElse(1);
                 int tokenMax = section.getIntegerList("token_range").stream().skip(1).findFirst().orElse(tokenMin);
 
@@ -62,10 +63,17 @@ public class WellConfig {
                     }
                 }
 
-                MysticWellTier tier = new MysticWellTier(tierName, tokenMin, tokenMax, rareLimits, probabilities);
+                MysticWellTier tier = new MysticWellTier(
+                        tierName,
+                        tokenMin,
+                        tokenMax,
+                        rareLimits,
+                        probabilities
+                );
                 loadedTiers.put(tierName.toUpperCase(), tier);
             }
         }
+
         this.tiers = Collections.unmodifiableMap(loadedTiers);
     }
 
