@@ -1,7 +1,7 @@
 package de.opalium.dasloch.service;
 
 import de.opalium.dasloch.config.EnchantsConfig;
-import de.opalium.dasloch.model.EnchantDefinition;
+import de.opalium.dasloch.enchant.EnchantDefinition;
 import de.opalium.dasloch.model.ItemCategory;
 import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemStack;
