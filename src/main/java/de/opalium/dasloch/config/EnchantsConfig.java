@@ -1,7 +1,7 @@
 package de.opalium.dasloch.config;
 
-import de.opalium.dasloch.enchant.EnchantDefinition;   // FIX – neues Package
-import de.opalium.dasloch.item.ItemCategory;            // FIX – item package
+import de.opalium.dasloch.enchant.EnchantDefinition;
+import de.opalium.dasloch.item.ItemCategory;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.*;
 
 public class EnchantsConfig {
+
     private final JavaPlugin plugin;
     private Map<String, EnchantDefinition> enchants = Collections.emptyMap();
 
@@ -19,82 +20,62 @@ public class EnchantsConfig {
     }
 
     public void load() throws IOException {
+
         File file = new File(plugin.getDataFolder(), "enchants.yml");
         if (!file.exists()) {
             plugin.saveResource("enchants.yml", false);
         }
 
-        YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
-        ConfigurationSection section = config.getConfigurationSection("enchants");
+        YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
+        ConfigurationSection root = cfg.getConfigurationSection("enchants");
 
-        if (section == null) {
-            this.enchants = Collections.emptyMap();
+        if (root == null) {
+            enchants = Collections.emptyMap();
             return;
         }
 
-        Map<String, EnchantDefinition> loaded = new HashMap<>();
+        Map<String, EnchantDefinition> map = new HashMap<>();
 
-        for (String id : section.getKeys(false)) {
-            ConfigurationSection enchantSection = section.getConfigurationSection(id);
-            if (enchantSection == null) continue;
+        for (String id : root.getKeys(false)) {
 
-            String displayName = enchantSection.getString("display-name", id);
+            ConfigurationSection sec = root.getConfigurationSection(id);
+            if (sec == null) continue;
 
-            // neue Rarity-Methode wird hier korrekt genutzt
+            String display = sec.getString("display-name", id);
+
             EnchantDefinition.Rarity rarity =
-                    EnchantDefinition.Rarity.fromString(
-                            enchantSection.getString("rarity", "COMMON")
-                    );
+                    EnchantDefinition.Rarity.fromString(sec.getString("rarity", "COMMON"));
 
-            // applicable-Kategorien laden
-            Set<ItemCategory> categories = new HashSet<>();
-            for (String cat : enchantSection.getStringList("applicable")) {
-                categories.add(ItemCategory.fromString(cat));
+            Set<ItemCategory> applicable = new HashSet<>();
+            for (String s : sec.getStringList("applicable")) {
+                applicable.add(ItemCategory.fromString(s));
             }
 
-            // Tiers
-            int maxTier = enchantSection.getInt("max-tier", 1);
+            int maxTier = sec.getInt("max-tier", 1);
 
-            // Token-Werte laden
             Map<Integer, Integer> tokenValues = new HashMap<>();
-            ConfigurationSection tokenSection = enchantSection.getConfigurationSection("token-values");
-
-            if (tokenSection != null) {
-                for (String tierKey : tokenSection.getKeys(false)) {
-                    try {
-                        tokenValues.put(
-                                Integer.parseInt(tierKey),
-                                tokenSection.getInt(tierKey)
-                        );
-                    } catch (NumberFormatException ignored) {}
+            ConfigurationSection tokenSec = sec.getConfigurationSection("token-values");
+            if (tokenSec != null) {
+                for (String t : tokenSec.getKeys(false)) {
+                    tokenValues.put(Integer.parseInt(t), tokenSec.getInt(t));
                 }
             }
 
-            // Effekte laden
-            EnchantEffectsConfig effectsConfig = new EnchantEffectsConfig(enchantSection);
-            var effects = effectsConfig.loadEffects();
-
-            // Finales Enchant-Objekt
-            EnchantDefinition definition = new EnchantDefinition(
+            // → effects bleibt vorerst NULL
+            EnchantDefinition def = new EnchantDefinition(
                     id,
-                    displayName,
-                    null,       // description (optional)
-                    null,       // lore (optional)
+                    display,
                     rarity,
-                    categories,
+                    applicable,
                     maxTier,
                     tokenValues,
-                    effects
+                    null
             );
 
-            loaded.put(id.toLowerCase(), definition);
+            map.put(id.toLowerCase(), def);
         }
 
-        this.enchants = Collections.unmodifiableMap(loaded);
-    }
-
-    public Optional<EnchantDefinition> getEnchant(String id) {
-        return Optional.ofNullable(enchants.get(id.toLowerCase()));
+        enchants = Collections.unmodifiableMap(map);
     }
 
     public Map<String, EnchantDefinition> getEnchants() {
