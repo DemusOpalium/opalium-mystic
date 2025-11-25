@@ -3,6 +3,16 @@ package de.opalium.dasloch.enchant;
 import java.util.Collections;
 import java.util.Map;
 
+/**
+ * Konfigurierbare Effektwerte für einen Enchant, pro Tier.
+ *
+ * Alle Maps sind: Tier -> Wert
+ * Beispiel:
+ *  healPercentOnHit:
+ *    1 -> 2   (2 % Heal bei Tier I)
+ *    2 -> 4
+ *    3 -> 6
+ */
 public final class EnchantEffects {
 
     private final Map<Integer, Integer> healPercentOnHit;
