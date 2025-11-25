@@ -13,37 +13,40 @@ public final class EnchantEffects {
     private final int lastStandThresholdHearts;
     private final Map<Integer, Integer> lastStandReductionPercent;
 
-    public EnchantEffects(Map<Integer, Integer> healPercentOnHit, Map<Integer, Integer> goldOnKill,
-                          Map<Integer, Integer> xpOnKillPercent, Map<Integer, Integer> streakBonusPercent,
-                          Map<Integer, Integer> bowExtraDamagePercent, int lastStandThresholdHearts,
+    public EnchantEffects(Map<Integer, Integer> healPercentOnHit,
+                          Map<Integer, Integer> goldOnKill,
+                          Map<Integer, Integer> xpOnKillPercent,
+                          Map<Integer, Integer> streakBonusPercent,
+                          Map<Integer, Integer> bowExtraDamagePercent,
+                          int lastStandThresholdHearts,
                           Map<Integer, Integer> lastStandReductionPercent) {
-        this.healPercentOnHit = healPercentOnHit;
-        this.goldOnKill = goldOnKill;
-        this.xpOnKillPercent = xpOnKillPercent;
-        this.streakBonusPercent = streakBonusPercent;
-        this.bowExtraDamagePercent = bowExtraDamagePercent;
+        this.healPercentOnHit = safe(healPercentOnHit);
+        this.goldOnKill = safe(goldOnKill);
+        this.xpOnKillPercent = safe(xpOnKillPercent);
+        this.streakBonusPercent = safe(streakBonusPercent);
+        this.bowExtraDamagePercent = safe(bowExtraDamagePercent);
         this.lastStandThresholdHearts = lastStandThresholdHearts;
-        this.lastStandReductionPercent = lastStandReductionPercent;
+        this.lastStandReductionPercent = safe(lastStandReductionPercent);
     }
 
     public Map<Integer, Integer> healPercentOnHit() {
-        return safe(healPercentOnHit);
+        return healPercentOnHit;
     }
 
     public Map<Integer, Integer> goldOnKill() {
-        return safe(goldOnKill);
+        return goldOnKill;
     }
 
     public Map<Integer, Integer> xpOnKillPercent() {
-        return safe(xpOnKillPercent);
+        return xpOnKillPercent;
     }
 
     public Map<Integer, Integer> streakBonusPercent() {
-        return safe(streakBonusPercent);
+        return streakBonusPercent;
     }
 
     public Map<Integer, Integer> bowExtraDamagePercent() {
-        return safe(bowExtraDamagePercent);
+        return bowExtraDamagePercent;
     }
 
     public int lastStandThresholdHearts() {
@@ -51,10 +54,10 @@ public final class EnchantEffects {
     }
 
     public Map<Integer, Integer> lastStandReductionPercent() {
-        return safe(lastStandReductionPercent);
+        return lastStandReductionPercent;
     }
 
     private Map<Integer, Integer> safe(Map<Integer, Integer> map) {
-        return map == null ? Collections.emptyMap() : map;
+        return map == null ? Collections.emptyMap() : Collections.unmodifiableMap(map);
     }
 }
