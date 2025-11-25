@@ -83,7 +83,7 @@ public final class EnchantDefinition {
 
     /**
      * Erweiterter Konstruktor mit Beschreibung und Lore.
-     * Kann später vom YAML-Loader genutzt werden.
+     * Kann vom YAML-Loader genutzt werden.
      */
     public EnchantDefinition(
             String id,
@@ -144,7 +144,7 @@ public final class EnchantDefinition {
         return tokenValues.getOrDefault(tier, 0);
     }
 
-    // ===== Zusätzliche, moderne Getter (falls du sie nutzen willst) =====
+    // ===== Zusätzliche Getter =====
 
     public String getId() {
         return id;
