@@ -2,7 +2,7 @@ package de.opalium.dasloch.service;
 
 import de.opalium.dasloch.config.EnchantsConfig;
 import de.opalium.dasloch.config.WellConfig;
-import de.opalium.dasloch.model.EnchantDefinition;
+import de.opalium.dasloch.enchant.EnchantDefinition;
 import de.opalium.dasloch.model.ItemCategory;
 import de.opalium.dasloch.model.MysticWellRollResult;
 import de.opalium.dasloch.model.MysticWellTier;
