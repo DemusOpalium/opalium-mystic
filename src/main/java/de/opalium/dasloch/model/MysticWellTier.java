@@ -1,5 +1,6 @@
 package de.opalium.dasloch.model;
 
+import de.opalium.dasloch.enchant.EnchantDefinition;
 import java.util.Map;
 
 public class MysticWellTier {
