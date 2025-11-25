@@ -21,16 +21,19 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class DasLochPlugin extends JavaPlugin {
 
+    // Config-Wrapper
     private ItemsConfig itemsConfig;
     private EnchantsConfig enchantsConfig;
     private WellConfig wellConfig;
 
+    // Services / Factories
     private LifeTokenService lifeTokenService;
     private ItemFactory itemFactory;
     private EnchantParser enchantParser;
@@ -51,7 +54,7 @@ public class DasLochPlugin extends JavaPlugin {
         this.enchantsConfig = new EnchantsConfig(this);
         this.wellConfig = new WellConfig(this);
 
-        // Services
+        // Services, die keine YAMLs brauchen
         this.lifeTokenService = new LifeTokenService(this);
         this.itemFactory = new ItemFactory(lifeTokenService);
         this.enchantParser = new EnchantParser(enchantsConfig);
@@ -64,6 +67,9 @@ public class DasLochPlugin extends JavaPlugin {
         registerPlaceholderApi();
     }
 
+    /**
+     * Lädt alle Configs und baut die Services neu.
+     */
     public void reloadAll() {
         try {
             itemsConfig.load();
@@ -78,37 +84,38 @@ public class DasLochPlugin extends JavaPlugin {
 
     /**
      * Registriert alle Befehle des Plugins.
-     * Nutzt durchgängig MysticItemService, damit die Give-Commands
-     * und der Brunnen dieselbe Logik verwenden.
+     * Achtung: Signaturen exakt so, wie sie deine Klassen verlangen.
      */
     private void registerCommands() {
         // Zentrale Well-Command-Instanz für /mysticwell und /dasloch well ...
         MysticWellCommand wellCommand = new MysticWellCommand(
-                itemService,          // MysticItemService
-                mysticWellService,    // MysticWellService
-                vaultService          // VaultService
+                itemsConfig,        // ItemsConfig
+                lifeTokenService,   // LifeTokenService
+                itemFactory,        // ItemFactory
+                mysticWellService,  // MysticWellService
+                vaultService        // VaultService
         );
 
         // /dasloch (Basis-Command mit /dasloch reload, /dasloch debug, /dasloch well …)
         PluginCommand dasloch = getCommand("dasloch");
         if (dasloch != null) {
-            dasloch.setExecutor(new DasLochCommand(this, itemService, wellCommand));
+            dasloch.setExecutor(new DasLochCommand(this, itemsConfig, lifeTokenService, wellCommand));
         }
 
-        // /legendgive
+        // /legendgive – erwartet MysticItemService (aus deinen letzten Fehlern)
         PluginCommand legend = getCommand("legendgive");
         if (legend != null) {
             LegendGiveCommand executor = new LegendGiveCommand(itemService);
             legend.setExecutor(executor);
-            legend.setTabCompleter(executor); // falls Tab-Completion implementiert
+            legend.setTabCompleter(executor);
         }
 
-        // /mysticgive
+        // /mysticgive – erwartet ebenfalls MysticItemService
         PluginCommand mystic = getCommand("mysticgive");
         if (mystic != null) {
             MysticGiveCommand executor = new MysticGiveCommand(itemService);
             mystic.setExecutor(executor);
-            mystic.setTabCompleter(executor); // falls Tab-Completion implementiert
+            mystic.setTabCompleter(executor);
         }
 
         // /mysticwell (direkter Zugriff auf den Brunnen)
@@ -122,7 +129,10 @@ public class DasLochPlugin extends JavaPlugin {
     private void registerListeners() {
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new CombatListener(this), this);
-        pm.registerEvents(new ItemLifecycleListener(itemsConfig, lifeTokenService, itemFactory), this);
+        pm.registerEvents(
+                new ItemLifecycleListener(itemsConfig, lifeTokenService, itemFactory),
+                this
+        );
     }
 
     private void registerPlaceholderApi() {
@@ -133,48 +143,57 @@ public class DasLochPlugin extends JavaPlugin {
 
     /**
      * Services anhand der frisch geladenen Configs neu aufbauen.
-     * Wird von reloadAll() aufgerufen.
+     * YAMLs werden hier direkt geladen, damit wir EnchantRegistry(YamlConfiguration)
+     * und die Services korrekt füttern können.
      */
     private void reloadServices() {
-        // Enchant-Registry neu erstellen
-        this.enchantRegistry = new EnchantRegistry();
+        try {
+            // Enchants für EnchantRegistry
+            YamlConfiguration enchantsYaml = loadConfig("enchants.yml");
+            this.enchantRegistry = new EnchantRegistry(enchantsYaml);
 
-        // Brunnen-Service
-        this.mysticWellService = new MysticWellService(
-                this,
-                wellConfig.getConfig(),
-                enchantRegistry
-        );
+            // Brunnen-Config
+            YamlConfiguration wellYaml = loadConfig("well.yml");
+            this.mysticWellService = new MysticWellService(
+                    this,
+                    wellYaml,
+                    enchantRegistry
+            );
 
-        // Item-Service (Legends + Mystics)
-        this.itemService = new MysticItemService(
-            this,
-            itemsConfig.getConfig(),
-            enchantRegistry,
-            mysticWellService
-        );
+            // Items-Config für MysticItemService
+            YamlConfiguration itemsYaml = loadConfig("items.yml");
+            this.itemService = new MysticItemService(
+                    this,
+                    itemsYaml,
+                    enchantRegistry,
+                    mysticWellService
+            );
+
+        } catch (IOException e) {
+            getLogger().log(Level.SEVERE, "Failed to reload services", e);
+        }
     }
 
     /**
      * Hilfs-Methode zum Laden einer YAML-Datei aus dem Plugin-Ordner.
-     * (Falls du sie nicht mehr brauchst, kannst du sie auch löschen.)
      */
     private YamlConfiguration loadConfig(String name) throws IOException {
         File file = new File(getDataFolder(), name);
         if (!file.exists()) {
+            // Kopiert die Ressource aus dem JAR, falls vorhanden
             saveResource(name, false);
         }
 
         YamlConfiguration config = new YamlConfiguration();
         try {
             config.load(file);
-        } catch (org.bukkit.configuration.InvalidConfigurationException ex) {
+        } catch (InvalidConfigurationException ex) {
             throw new IOException("Invalid YAML config: " + name, ex);
         }
         return config;
     }
 
-    // Getter für andere Klassen
+    // Getter für andere Klassen (falls du sie brauchst)
 
     public MysticItemService getItemService() {
         return itemService;
