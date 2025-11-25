@@ -116,59 +116,40 @@ public class DasLochPlugin extends JavaPlugin {
         }
     }
 
-    private void registerListeners() {
-        PluginManager pm = getServer().getPluginManager();
+    private void registerCommands() {
+        // Zentrale Well-Command-Instanz für /mysticwell und /dasloch well ...
+        MysticWellCommand wellCommand = new MysticWellCommand(
+                itemService,          // MysticItemService
+                mysticWellService,    // MysticWellService
+                vaultService          // VaultService
+        );
 
-        // Item-Lifecycle (Leben / Tokens etc.)
-        pm.registerEvents(new ItemLifecycleListener(itemsConfig, lifeTokenService, itemFactory), this);
+        // /dasloch
+        PluginCommand dasloch = getCommand("dasloch");
+        if (dasloch != null) {
+            dasloch.setExecutor(new DasLochCommand(this, itemService, wellCommand));
+        }
 
-        // Combat-Effekte (Mystic-Enchants usw.)
-        pm.registerEvents(new CombatListener(this), this);
-    }
+        // /legendgive
+        PluginCommand legend = getCommand("legendgive");
+        if (legend != null) {
+            LegendGiveCommand executor = new LegendGiveCommand(itemService);
+            legend.setExecutor(executor);
+            legend.setTabCompleter(executor); // falls LegendGiveCommand TabCompleter implementiert
+        }
 
-    private void registerPlaceholderApi() {
-        if (getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-            new PlaceholderHook(this).register();
+        // /mysticgive
+        PluginCommand mystic = getCommand("mysticgive");
+        if (mystic != null) {
+            MysticGiveCommand executor = new MysticGiveCommand(itemService);
+            mystic.setExecutor(executor);
+            mystic.setTabCompleter(executor); // falls MysticGiveCommand TabCompleter implementiert
+        }
+
+        // /mysticwell
+        PluginCommand well = getCommand("mysticwell");
+        if (well != null) {
+            well.setExecutor(wellCommand);
+            well.setTabCompleter(wellCommand);
         }
     }
-
-    /**
-     * Lädt die YAML-Konfigs in die eigentlichen Services
-     * (Mystic-Item-System, Well-System, Enchant-Registry).
-     */
-    private void reloadServices() {
-        File itemsFile = new File(getDataFolder(), "items.yml");
-        YamlConfiguration itemsYaml = YamlConfiguration.loadConfiguration(itemsFile);
-
-        File enchantsFile = new File(getDataFolder(), "enchants.yml");
-        YamlConfiguration enchantsYaml = YamlConfiguration.loadConfiguration(enchantsFile);
-
-        File wellFile = new File(getDataFolder(), "well.yml");
-        YamlConfiguration wellYaml = YamlConfiguration.loadConfiguration(wellFile);
-
-        // Enchant-Registry
-        this.enchantRegistry = new EnchantRegistry(enchantsYaml);
-
-        // Mystic-Well-Service (neue Implementation im well-Package)
-        this.mysticWellService = new MysticWellService(wellYaml);
-
-        // Mystic-Item-Service, nutzt Registry + Well
-        this.itemService = new MysticItemService(this, itemsYaml, enchantRegistry, mysticWellService);
-    }
-
-    public MysticWellService getMysticWellService() {
-        return mysticWellService;
-    }
-
-    public VaultService getVaultService() {
-        return vaultService;
-    }
-
-    public EnchantRegistry getEnchantRegistry() {
-        return enchantRegistry;
-    }
-
-    public MysticItemService getItemService() {
-        return itemService;
-    }
-}
