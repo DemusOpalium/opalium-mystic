@@ -396,27 +396,40 @@ public final class MysticItemService {
         return vaultService.withdraw(player, cost);
     }
 
-    public boolean rollMystic(Player player, ItemStack stack, String requestedTier) {
+    /**
+     * Vollständiger Mystic-Roll:
+     * - prüft, ob Mystic-Item
+     * - prüft Tier-Reihenfolge
+     * - zieht Gold ab
+     * - würfelt RollResult
+     * - wendet Enchant an (applyEnchantRoll)
+     * - speichert Tier und Tokens / Prefix
+     * - aktualisiert Name und Lore
+     *
+     * @return RollResult oder null, wenn der Roll nicht ausgeführt wurde
+     */
+    public MysticWellService.RollResult rollMystic(Player player, ItemStack stack, String requestedTier) {
         if (!isCustomItem(stack) || getKind(stack) != ItemKind.MYSTIC) {
-            return false;
+            return null;
         }
 
         ItemMeta meta = stack.getItemMeta();
         if (meta == null) {
-            return false;
+            return null;
         }
 
         String tier = normalizeTier(requestedTier);
         if (tier == null || !canApplyTier(meta, tier)) {
-            return false;
+            return null;
         }
 
         MysticWellTier wellTier = wellService.tier(tier);
         if (wellTier == null) {
-            return false;
+            return null;
         }
+
         if (!tryDeductGold(player, tier)) {
-            return false;
+            return null;
         }
 
         MysticWellService.RollResult result = wellService.roll(tier);
@@ -424,14 +437,14 @@ public final class MysticItemService {
                 meta.getPersistentDataContainer().get(keys.itemId(), PersistentDataType.STRING)
         );
         if (definition == null || definition.kind() != ItemKind.MYSTIC) {
-            return false;
+            return null;
         }
 
         applyEnchantRoll(definition.category(), result, wellTier, stack);
         meta.getPersistentDataContainer().set(keys.mysticTier(), PersistentDataType.STRING, tier);
         stack.setItemMeta(meta);
         recalcTokens(stack);
-        return true;
+        return result;
     }
 
     private void applyEnchantRoll(
@@ -443,7 +456,7 @@ public final class MysticItemService {
         EnchantDefinition.Rarity rarity = parseRarity(rollResult.rarityRolled());
         Map<String, Integer> existing = new HashMap<>(readEnchants(stack));
 
-        // Limit für rare/epic/legendary anhand der well.yml-Konfiguration
+        // Limit für höhere Rarities anhand der well.yml-Konfiguration
         if (exceedsRarityLimit(tier, existing, rarity)) {
             rarity = EnchantDefinition.Rarity.COMMON;
         }
@@ -498,12 +511,12 @@ public final class MysticItemService {
             Map<String, Integer> existing,
             EnchantDefinition.Rarity rarity
     ) {
-        // COMMON & UNCOMMON werden nicht limitiert
-        if (rarity == EnchantDefinition.Rarity.COMMON || rarity == EnchantDefinition.Rarity.UNCOMMON) {
+        // Nur COMMON ist immer erlaubt, alle höheren Rarities können limitiert werden
+        if (rarity == EnchantDefinition.Rarity.COMMON) {
             return false;
         }
 
-        String key = rarity.name().toLowerCase(); // "rare", "epic", "legendary"
+        String key = rarity.name().toLowerCase(); // "rare", "epic", "legendary", ...
         int limit = tier.rareLimits().getOrDefault(key, Integer.MAX_VALUE);
         if (limit == Integer.MAX_VALUE) {
             // kein Limit gesetzt
@@ -522,11 +535,12 @@ public final class MysticItemService {
         if (rarity == null || rarity.isBlank()) {
             return EnchantDefinition.Rarity.COMMON;
         }
+        String normalized = rarity.trim().toUpperCase();
         try {
-            // erwartet z.B. "common", "uncommon", "rare", "epic", "legendary"
-            return EnchantDefinition.Rarity.fromString(rarity);
+            // Erwartet Enum-Namen wie COMMON, RARE, EPIC, LEGENDARY ...
+            return EnchantDefinition.Rarity.valueOf(normalized);
         } catch (IllegalArgumentException ex) {
-            // Fallback bei Tippfehlern in well.yml
+            // Fallback, wenn well.yml etwas Unerwartetes liefert
             return EnchantDefinition.Rarity.COMMON;
         }
     }
