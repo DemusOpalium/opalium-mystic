@@ -57,7 +57,7 @@ public class DasLochPlugin extends JavaPlugin {
         this.enchantParser = new EnchantParser(enchantsConfig);
         this.vaultService = new VaultService(this);
 
-        // Alles laden und registrieren
+        // Alles laden und initialisieren
         reloadAll();
         registerCommands();
         registerListeners();
@@ -76,46 +76,11 @@ public class DasLochPlugin extends JavaPlugin {
         }
     }
 
-    private void registerCommands() {
-        // Zentrale MysticWellCommand-Instanz, die wir auch im /dasloch-Command benutzen
-        MysticWellCommand wellCommand = new MysticWellCommand(
-                itemsConfig,
-                lifeTokenService,
-                itemFactory,
-                mysticWellService,
-                vaultService
-        );
-
-        // /legendgive
-        PluginCommand legend = getCommand("legendgive");
-        if (legend != null) {
-            LegendGiveCommand executor = new LegendGiveCommand(itemFactory);
-            legend.setExecutor(executor);
-            legend.setTabCompleter(executor);
-        }
-
-        // /mysticgive
-        PluginCommand mystic = getCommand("mysticgive");
-        if (mystic != null) {
-            MysticGiveCommand executor = new MysticGiveCommand(itemFactory);
-            mystic.setExecutor(executor);
-            mystic.setTabCompleter(executor);
-        }
-
-        // /mysticwell
-        PluginCommand mysticWell = getCommand("mysticwell");
-        if (mysticWell != null) {
-            mysticWell.setExecutor(wellCommand);
-            mysticWell.setTabCompleter(wellCommand);
-        }
-
-        // /dasloch (Basis-Command mit /dasloch reload, /dasloch debug, /dasloch well …)
-        PluginCommand dasloch = getCommand("dasloch");
-        if (dasloch != null) {
-            dasloch.setExecutor(new DasLochCommand(this, itemsConfig, lifeTokenService, wellCommand));
-        }
-    }
-
+    /**
+     * Registriert alle Befehle des Plugins.
+     * Nutzt durchgängig MysticItemService, damit die Give-Commands
+     * und der Brunnen dieselbe Logik verwenden.
+     */
     private void registerCommands() {
         // Zentrale Well-Command-Instanz für /mysticwell und /dasloch well ...
         MysticWellCommand wellCommand = new MysticWellCommand(
@@ -124,7 +89,7 @@ public class DasLochPlugin extends JavaPlugin {
                 vaultService          // VaultService
         );
 
-        // /dasloch
+        // /dasloch (Basis-Command mit /dasloch reload, /dasloch debug, /dasloch well …)
         PluginCommand dasloch = getCommand("dasloch");
         if (dasloch != null) {
             dasloch.setExecutor(new DasLochCommand(this, itemService, wellCommand));
@@ -135,7 +100,7 @@ public class DasLochPlugin extends JavaPlugin {
         if (legend != null) {
             LegendGiveCommand executor = new LegendGiveCommand(itemService);
             legend.setExecutor(executor);
-            legend.setTabCompleter(executor); // falls LegendGiveCommand TabCompleter implementiert
+            legend.setTabCompleter(executor); // falls Tab-Completion implementiert
         }
 
         // /mysticgive
@@ -143,13 +108,111 @@ public class DasLochPlugin extends JavaPlugin {
         if (mystic != null) {
             MysticGiveCommand executor = new MysticGiveCommand(itemService);
             mystic.setExecutor(executor);
-            mystic.setTabCompleter(executor); // falls MysticGiveCommand TabCompleter implementiert
+            mystic.setTabCompleter(executor); // falls Tab-Completion implementiert
         }
 
-        // /mysticwell
+        // /mysticwell (direkter Zugriff auf den Brunnen)
         PluginCommand well = getCommand("mysticwell");
         if (well != null) {
             well.setExecutor(wellCommand);
             well.setTabCompleter(wellCommand);
         }
     }
+
+    private void registerListeners() {
+        PluginManager pm = getServer().getPluginManager();
+        pm.registerEvents(new CombatListener(this), this);
+        pm.registerEvents(new ItemLifecycleListener(itemsConfig, lifeTokenService, itemFactory), this);
+    }
+
+    private void registerPlaceholderApi() {
+        if (getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            new PlaceholderHook(this).register();
+        }
+    }
+
+    /**
+     * Services anhand der frisch geladenen Configs neu aufbauen.
+     * Wird von reloadAll() aufgerufen.
+     */
+    private void reloadServices() {
+        // Enchant-Registry neu erstellen
+        this.enchantRegistry = new EnchantRegistry();
+
+        // Brunnen-Service
+        this.mysticWellService = new MysticWellService(
+                this,
+                wellConfig.getConfig(),
+                enchantRegistry
+        );
+
+        // Item-Service (Legends + Mystics)
+        this.itemService = new MysticItemService(
+            this,
+            itemsConfig.getConfig(),
+            enchantRegistry,
+            mysticWellService
+        );
+    }
+
+    /**
+     * Hilfs-Methode zum Laden einer YAML-Datei aus dem Plugin-Ordner.
+     * (Falls du sie nicht mehr brauchst, kannst du sie auch löschen.)
+     */
+    private YamlConfiguration loadConfig(String name) throws IOException {
+        File file = new File(getDataFolder(), name);
+        if (!file.exists()) {
+            saveResource(name, false);
+        }
+
+        YamlConfiguration config = new YamlConfiguration();
+        try {
+            config.load(file);
+        } catch (org.bukkit.configuration.InvalidConfigurationException ex) {
+            throw new IOException("Invalid YAML config: " + name, ex);
+        }
+        return config;
+    }
+
+    // Getter für andere Klassen
+
+    public MysticItemService getItemService() {
+        return itemService;
+    }
+
+    public MysticWellService getMysticWellService() {
+        return mysticWellService;
+    }
+
+    public EnchantRegistry getEnchantRegistry() {
+        return enchantRegistry;
+    }
+
+    public EnchantParser getEnchantParser() {
+        return enchantParser;
+    }
+
+    public ItemsConfig getItemsConfig() {
+        return itemsConfig;
+    }
+
+    public EnchantsConfig getEnchantsConfig() {
+        return enchantsConfig;
+    }
+
+    public WellConfig getWellConfig() {
+        return wellConfig;
+    }
+
+    public LifeTokenService getLifeTokenService() {
+        return lifeTokenService;
+    }
+
+    public ItemFactory getItemFactory() {
+        return itemFactory;
+    }
+
+    public VaultService getVaultService() {
+        return vaultService;
+    }
+}
