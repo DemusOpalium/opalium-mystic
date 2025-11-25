@@ -1,6 +1,7 @@
 enchants:
   # ============================
-  # KERN-ENCHANTS (BASIS)
+  # KATEGORIE A – UNIVERSAL CORE ENCHANTS
+  # Basis-Ökonomie + einfache Combat-Effekte
   # ============================
 
   lifesteal:
@@ -16,7 +17,7 @@ enchants:
     effects:
       on-melee-hit:
         heal-percent:
-          "1": 4    # % des verursachten Schadens
+          "1": 4
           "2": 7
           "3": 10
 
@@ -30,8 +31,8 @@ enchants:
     max-tier: 3
     token-values:
       "1": 1
-      "2": 2
-      "3": 3
+      "2": 1
+      "3": 2
     effects:
       on-kill:
         extra-gold:
@@ -64,8 +65,8 @@ enchants:
     max-tier: 3
     token-values:
       "1": 1
-      "2": 2
-      "3": 3
+      "2": 1
+      "3": 2
     effects:
       passive:
         streak-bonus-percent:
@@ -81,8 +82,8 @@ enchants:
     max-tier: 3
     token-values:
       "1": 1
-      "2": 2
-      "3": 3
+      "2": 1
+      "3": 2
     effects:
       on-bow-hit:
         extra-damage-percent:
@@ -97,37 +98,50 @@ enchants:
       - PANTS
     max-tier: 2
     token-values:
-      "1": 3
-      "2": 4
+      "1": 2
+      "2": 3
     effects:
       on-damage-taken:
-        threshold-hearts: 6        # aktiviert, wenn Spieler ≤ 6 Herzen hat
+        threshold-hearts: 6
         damage-reduction-percent:
           "1": 20
           "2": 35
 
-  # ============================
-  # UNIVERSAL – PIT-STYLE ECONOMY
-  # ============================
-
-  xp_bump:
-    display-name: "§bXP Bump"
-    rarity: COMMON
+  strike_gold:
+    display-name: "§6Strike Gold"
+    rarity: RARE
     applicable:
       - SWORD
       - BOW
-      - PANTS
     max-tier: 3
     token-values:
       "1": 1
-      "2": 1
-      "3": 2
+      "2": 2
+      "3": 3
     effects:
       on-kill:
-        extra-xp-percent:
-          "1": 10
-          "2": 20
-          "3": 30
+        extra-gold:
+          "1": 6
+          "2": 12
+          "3": 18
+
+  moctezuma:
+    display-name: "§6Moctezuma"
+    rarity: EPIC
+    applicable:
+      - SWORD
+      - PANTS
+    max-tier: 3
+    token-values:
+      "1": 2
+      "2": 3
+      "3": 4
+    effects:
+      on-kill:
+        extra-gold:
+          "1": 15
+          "2": 25
+          "3": 40
 
   gold_bump:
     display-name: "§6Gold Bump"
@@ -148,102 +162,50 @@ enchants:
           "2": 16
           "3": 24
 
-  moctezuma:
-    display-name: "§6Moctezuma"
-    rarity: EPIC
-    applicable:
-      - SWORD
-      - PANTS
-    max-tier: 3
-    token-values:
-      "1": 2
-      "2": 3
-      "3": 4
-    effects:
-      on-kill:
-        extra-gold:
-          "1": 15
-          "2": 25
-          "3": 40
-
-  strike_gold:
-    display-name: "§6Strike Gold"
-    rarity: RARE
+  xp_bump:
+    display-name: "§bXP Bump"
+    rarity: COMMON
     applicable:
       - SWORD
       - BOW
-    max-tier: 3
-    token-values:
-      "1": 2
-      "2": 2
-      "3": 3
-    effects:
-      on-kill:
-        extra-gold:
-          "1": 6
-          "2": 12
-          "3": 18
-
-  critically_rich:
-    display-name: "§6Critically Rich"
-    rarity: RARE
-    applicable:
-      - SWORD
-      - BOW
-    max-tier: 3
-    token-values:
-      "1": 2
-      "2": 3
-      "3": 3
-    effects:
-      on-kill:
-        extra-gold:
-          "1": 8
-          "2": 16
-          "3": 24
-
-  pants_radar:
-    display-name: "§dPants Radar"
-    rarity: RARE
-    applicable:
       - PANTS
     max-tier: 3
     token-values:
-      "1": 2
-      "2": 3
-      "3": 4
+      "1": 1
+      "2": 1
+      "3": 2
     effects:
       on-kill:
         extra-xp-percent:
           "1": 10
           "2": 20
           "3": 30
-      passive:
-        streak-bonus-percent:
-          "1": 2
-          "2": 4
-          "3": 6
 
   # ============================
-  # SWORD ENCHANTS – PIT-NAMEN
+  # KATEGORIE B – SWORD-SPEZIAL
+  # Damage / Streak / Sustain / Economy
   # ============================
 
-  bounty_reaper:
-    display-name: "§6Bounty Reaper"
+  executioner:
+    display-name: "§4Executioner"
     rarity: RARE
     applicable:
       - SWORD
     max-tier: 3
     token-values:
-      "1": 2
-      "2": 3
-      "3": 4
+      "1": 1
+      "2": 2
+      "3": 3
     effects:
       on-kill:
-        extra-gold:
+        extra-xp-percent:
           "1": 20
           "2": 35
           "3": 50
+        extra-gold:
+          "1": 8
+          "2": 16
+          "3": 24
 
   berzerker:
     display-name: "§4Berzerker"
@@ -254,7 +216,7 @@ enchants:
     token-values:
       "1": 2
       "2": 3
-      "3": 4
+      "3": 3
     effects:
       on-melee-hit:
         heal-percent:
@@ -299,8 +261,8 @@ enchants:
     max-tier: 3
     token-values:
       "1": 2
-      "2": 3
-      "3": 4
+      "2": 2
+      "3": 3
     effects:
       on-melee-hit:
         heal-percent:
@@ -308,8 +270,86 @@ enchants:
           "2": 8
           "3": 12
 
+  speedy_hit:
+    display-name: "§eSpeedy Hit"
+    rarity: UNCOMMON
+    applicable:
+      - SWORD
+    max-tier: 3
+    token-values:
+      "1": 1
+      "2": 2
+      "3": 3
+    effects:
+      passive:
+        streak-bonus-percent:
+          "1": 4
+          "2": 7
+          "3": 10
+
+  gambler:
+    display-name: "§5Gambler"
+    rarity: EPIC
+    applicable:
+      - SWORD
+    max-tier: 3
+    token-values:
+      "1": 2
+      "2": 3
+      "3": 4
+    effects:
+      on-kill:
+        extra-gold:
+          "1": 18
+          "2": 32
+          "3": 50
+        extra-xp-percent:
+          "1": 10
+          "2": 20
+          "3": 35
+
+  healer:
+    display-name: "§aHealer"
+    rarity: RARE
+    applicable:
+      - SWORD
+    max-tier: 3
+    token-values:
+      "1": 1
+      "2": 2
+      "3": 3
+    effects:
+      on-melee-hit:
+        heal-percent:
+          "1": 3
+          "2": 6
+          "3": 9
+      on-kill:
+        extra-xp-percent:
+          "1": 5
+          "2": 10
+          "3": 15
+
+  billionaire:
+    display-name: "§6Billionaire"
+    rarity: LEGENDARY
+    applicable:
+      - SWORD
+    max-tier: 3
+    token-values:
+      "1": 2
+      "2": 3
+      "3": 4
+    effects:
+      on-kill:
+        extra-gold:
+          "1": 25
+          "2": 50
+          "3": 80
+
   # ============================
-  # BOW ENCHANTS
+  # KATEGORIE C – BOW-SPEZIAL
+  # Sniper / Multi-Kill / Economy
   # ============================
 
   focus:
@@ -320,8 +360,8 @@ enchants:
     max-tier: 3
     token-values:
       "1": 1
-      "2": 2
-      "3": 3
+      "2": 1
+      "3": 2
     effects:
       on-bow-hit:
         extra-damage-percent:
@@ -344,9 +384,224 @@ enchants:
           "1": 10
           "2": 20
 
+  volley:
+    display-name: "§eVolley"
+    rarity: UNCOMMON
+    applicable:
+      - BOW
+    max-tier: 3
+    token-values:
+      "1": 1
+      "2": 2
+      "3": 3
+    effects:
+      on-kill:
+        extra-xp-percent:
+          "1": 10
+          "2": 18
+          "3": 28
+
+  explosive:
+    display-name: "§6Explosive"
+    rarity: RARE
+    applicable:
+      - BOW
+    max-tier: 3
+    token-values:
+      "1": 2
+      "2": 3
+      "3": 3
+    effects:
+      on-bow-hit:
+        extra-damage-percent:
+          "1": 8
+          "2": 16
+          "3": 24
+
+  true_shot:
+    display-name: "§dTrue Shot"
+    rarity: EPIC
+    applicable:
+      - BOW
+    max-tier: 3
+    token-values:
+      "1": 2
+      "2": 3
+      "3": 4
+    effects:
+      on-bow-hit:
+        extra-damage-percent:
+          "1": 12
+          "2": 18
+          "3": 25
+
+  lucky_shot:
+    display-name: "§6Lucky Shot"
+    rarity: RARE
+    applicable:
+      - BOW
+    max-tier: 3
+    token-values:
+      "1": 1
+      "2": 2
+      "3": 3
+    effects:
+      on-kill:
+        extra-gold:
+          "1": 10
+          "2": 20
+          "3": 35
+
+  devil_chicks:
+    display-name: "§cDevil Chicks"
+    rarity: EPIC
+    applicable:
+      - BOW
+    max-tier: 3
+    token-values:
+      "1": 2
+      "2": 3
+      "3": 3
+    effects:
+      on-kill:
+        extra-xp-percent:
+          "1": 20
+          "2": 35
+          "3": 50
+
+  robinhood:
+    display-name: "§aRobinhood"
+    rarity: LEGENDARY
+    applicable:
+      - BOW
+    max-tier: 3
+    token-values:
+      "1": 2
+      "2": 3
+      "3": 4
+    effects:
+      on-kill:
+        extra-gold:
+          "1": 18
+          "2": 30
+          "3": 45
+        extra-xp-percent:
+          "1": 15
+          "2": 25
+          "3": 40
+
   # ============================
-  # PERSONALISIERTE VARIANTEN (NUR LORE/NAME),
-  # EFFEKT BLEIBT PIT-KOMPATIBEL (XP/GOLD/LIFESTEAL)
+  # KATEGORIE D – PANTS-SPEZIAL
+  # Tank / Movement / Survival / Streak
+  # ============================
+
+  phoenix:
+    display-name: "§6Phoenix"
+    rarity: EPIC
+    applicable:
+      - PANTS
+    max-tier: 3
+    token-values:
+      "1": 2
+      "2": 3
+      "3": 3
+    effects:
+      on-damage-taken:
+        threshold-hearts: 6
+        damage-reduction-percent:
+          "1": 25
+          "2": 40
+          "3": 55
+
+  assassin:
+    display-name: "§5Assassin"
+    rarity: RARE
+    applicable:
+      - PANTS
+    max-tier: 3
+    token-values:
+      "1": 1
+      "2": 2
+      "3": 3
+    effects:
+      passive:
+        streak-bonus-percent:
+          "1": 4
+          "2": 8
+          "3": 12
+
+  escape_pod:
+    display-name: "§bEscape Pod"
+    rarity: UNCOMMON
+    applicable:
+      - PANTS
+    max-tier: 2
+    token-values:
+      "1": 1
+      "2": 2
+    effects:
+      on-damage-taken:
+        threshold-hearts: 8
+        damage-reduction-percent:
+          "1": 15
+          "2": 25
+
+  martyrdom:
+    display-name: "§cMartyrdom"
+    rarity: RARE
+    applicable:
+      - PANTS
+    max-tier: 3
+    token-values:
+      "1": 2
+      "2": 2
+      "3": 3
+    effects:
+      on-kill:
+        extra-xp-percent:
+          "1": 15
+          "2": 25
+          "3": 40
+
+  retro_gravity:
+    display-name: "§dRetro Gravity"
+    rarity: EPIC
+    applicable:
+      - PANTS
+    max-tier: 3
+    token-values:
+      "1": 2
+      "2": 3
+      "3": 3
+    effects:
+      passive:
+        streak-bonus-percent:
+          "1": 6
+          "2": 10
+          "3": 15
+
+  solitude:
+    display-name: "§5Solitude"
+    rarity: EPIC
+    applicable:
+      - PANTS
+    max-tier: 3
+    token-values:
+      "1": 3
+      "2": 4
+      "3": 5
+    effects:
+      on-damage-taken:
+        threshold-hearts: 10
+        damage-reduction-percent:
+          "1": 40
+          "2": 55
+          "3": 70
+
+  # ============================
+  # KATEGORIE E – SERVER-LEGENDARIES
+  # Personalisierte Enchants (nur Name/Lore anders,
+  # Effekte bleiben im gleichen System)
   # ============================
 
   peaches_moctezuma:
@@ -367,9 +622,9 @@ enchants:
           "2": 28
           "3": 42
 
-  maeggie_sweaty:
+  maeggies_sweaty:
     display-name: "§eMäggies Sweaty"
-    rarity: COMMON
+    rarity: UNCOMMON
     applicable:
       - SWORD
     max-tier: 3
@@ -445,3 +700,54 @@ enchants:
           "1": 2
           "2": 3
           "3": 5
+
+  hidden_legacy:
+    display-name: "§5Hidden Legacy"
+    rarity: LEGENDARY
+    applicable:
+      - SWORD
+      - BOW
+      - PANTS
+    max-tier: 3
+    token-values:
+      "1": 5
+      "2": 6
+      "3": 7
+    effects:
+      on-kill:
+        extra-gold:
+          "1": 40
+          "2": 80
+          "3": 120
+        extra-xp-percent:
+          "1": 30
+          "2": 60
+          "3": 90
+      on-melee-hit:
+        heal-percent:
+          "1": 5
+          "2": 8
+          "3": 12
+
+  the_king:
+    display-name: "§6The King"
+    rarity: LEGENDARY
+    applicable:
+      - PANTS
+    max-tier: 3
+    token-values:
+      "1": 3
+      "2": 4
+      "3": 5
+    effects:
+      passive:
+        streak-bonus-percent:
+          "1": 8
+          "2": 12
+          "3": 18
+      on-damage-taken:
+        threshold-hearts: 8
+        damage-reduction-percent:
+          "1": 20
+          "2": 30
+          "3": 40
