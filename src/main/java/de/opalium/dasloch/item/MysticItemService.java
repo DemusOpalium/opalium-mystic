@@ -443,17 +443,11 @@ public final class MysticItemService {
         EnchantDefinition.Rarity rarity = parseRarity(rollResult.rarityRolled());
         Map<String, Integer> existing = new HashMap<>(readEnchants(stack));
 
-        int rareLimit = tier.rareLimits().getOrDefault("rare", Integer.MAX_VALUE);
-        int rareCount = (int) existing.keySet().stream()
-                .map(enchantRegistry::get)
-                .filter(def -> def != null && def.rarity() == EnchantDefinition.Rarity.RARE)
-                .count();
-
-        if (rarity == EnchantDefinition.Rarity.RARE && rareCount >= rareLimit) {
+        // Limit für rare/epic/legendary anhand der well.yml-Konfiguration
+        if (exceedsRarityLimit(tier, existing, rarity)) {
             rarity = EnchantDefinition.Rarity.COMMON;
         }
 
-        // WICHTIGER FIX: rarity-Kopie für das Lambda
         final EnchantDefinition.Rarity finalRarity = rarity;
 
         List<EnchantDefinition> candidates = enchantRegistry.all().values().stream()
@@ -499,13 +493,42 @@ public final class MysticItemService {
         writeEnchants(stack, existing);
     }
 
+    private boolean exceedsRarityLimit(
+            MysticWellTier tier,
+            Map<String, Integer> existing,
+            EnchantDefinition.Rarity rarity
+    ) {
+        // COMMON & UNCOMMON werden nicht limitiert
+        if (rarity == EnchantDefinition.Rarity.COMMON || rarity == EnchantDefinition.Rarity.UNCOMMON) {
+            return false;
+        }
+
+        String key = rarity.name().toLowerCase(); // "rare", "epic", "legendary"
+        int limit = tier.rareLimits().getOrDefault(key, Integer.MAX_VALUE);
+        if (limit == Integer.MAX_VALUE) {
+            // kein Limit gesetzt
+            return false;
+        }
+
+        long count = existing.keySet().stream()
+                .map(enchantRegistry::get)
+                .filter(def -> def != null && def.rarity() == rarity)
+                .count();
+
+        return count >= limit;
+    }
+
     private EnchantDefinition.Rarity parseRarity(String rarity) {
-        if (rarity == null) {
+        if (rarity == null || rarity.isBlank()) {
             return EnchantDefinition.Rarity.COMMON;
         }
-        return rarity.equalsIgnoreCase("rare")
-                ? EnchantDefinition.Rarity.RARE
-                : EnchantDefinition.Rarity.COMMON;
+        try {
+            // erwartet z.B. "common", "uncommon", "rare", "epic", "legendary"
+            return EnchantDefinition.Rarity.fromString(rarity);
+        } catch (IllegalArgumentException ex) {
+            // Fallback bei Tippfehlern in well.yml
+            return EnchantDefinition.Rarity.COMMON;
+        }
     }
 
     private boolean canApplyTier(ItemMeta meta, String requestedTier) {
