@@ -141,39 +141,30 @@ public class DasLochPlugin extends JavaPlugin {
         }
     }
 
-    /**
-     * Services anhand der frisch geladenen Configs neu aufbauen.
-     * YAMLs werden hier direkt geladen, damit wir EnchantRegistry(YamlConfiguration)
-     * und die Services korrekt füttern können.
-     */
-    private void reloadServices() {
-        try {
-            // Enchants für EnchantRegistry
-            YamlConfiguration enchantsYaml = loadConfig("enchants.yml");
-            this.enchantRegistry = new EnchantRegistry(enchantsYaml);
+private void reloadServices() {
+    try {
+        // Enchants laden
+        YamlConfiguration enchantsYaml = loadConfig("enchants.yml");
+        this.enchantRegistry = new EnchantRegistry(enchantsYaml);
 
-            // Brunnen-Config
-            YamlConfiguration wellYaml = loadConfig("well.yml");
-            this.mysticWellService = new MysticWellService(
-                    this,
-                    wellYaml,
-                    enchantRegistry
-            );
+        // Brunnen laden – Achtung: MysticWellService erwartet NUR (YamlConfiguration)
+        YamlConfiguration wellYaml = loadConfig("well.yml");
+        this.mysticWellService = new MysticWellService(wellYaml);
 
-            // Items-Config für MysticItemService
-            YamlConfiguration itemsYaml = loadConfig("items.yml");
-            this.itemService = new MysticItemService(
-                    this,
-                    itemsYaml,
-                    enchantRegistry,
-                    mysticWellService
-            );
+        // Items laden – MysticItemService erwartet:
+        // (JavaPlugin plugin, YamlConfiguration itemsYaml, EnchantRegistry registry, MysticWellService well)
+        YamlConfiguration itemsYaml = loadConfig("items.yml");
+        this.itemService = new MysticItemService(
+                this,
+                itemsYaml,
+                enchantRegistry,
+                mysticWellService
+        );
 
-        } catch (IOException e) {
-            getLogger().log(Level.SEVERE, "Failed to reload services", e);
-        }
+    } catch (IOException e) {
+        getLogger().log(Level.SEVERE, "Failed to reload services", e);
     }
-
+}
     /**
      * Hilfs-Methode zum Laden einer YAML-Datei aus dem Plugin-Ordner.
      */
