@@ -1,45 +1,64 @@
 # Mystic Well configuration for gold costs and roll probabilities.
-# costs: gold required per upgrade tier (unmodified by perks).
-# token_range: inclusive range of token increments per roll.
-# rare_limits: how many rare enchants can appear on this roll.
-# probability: weighted chance for an enchant rarity to appear.
+# base_costs: Goldkosten pro Brunnen-Tier (ohne Perk-Modifikatoren).
+# token_range: inkl. Min/Max Token, die ein Roll vergibt.
+# rare_limits: maximale Anzahl Enchants einer Rarity pro Item-Reroll.
+# probability: gewichtete Chance, welche Rarity pro Enchant-Slot gerollt wird.
 
 base_costs:
-  tier_1: 1000   # Tier I: entry cost for fresh Mystic items
-  tier_2: 4000   # Tier II: follow-up cost after first roll
-  tier_3: 8000   # Tier III: expensive final roll; consumes sacrifice items externally
+  tier_1: 750    # Tier I: Einstiegskosten für frische Mystic-Items
+  tier_2: 2500   # Tier II: Follow-Up-Kosten nach erstem Roll
+  tier_3: 7500   # Tier III: teurer End-Roll für High-End-Items
 
 tiers:
   I:
     token_range: [1, 2]
     rare_limits:
+      common: 3
+      uncommon: 1
       rare: 0
+      epic: 0
+      legendary: 0
     probability:
-      common: 0.75
-      regular: 0.25
+      common: 0.90
+      uncommon: 0.10
       rare: 0.0
-    comments: "Tier I rolls small token values and avoids rare enchants."
+      epic: 0.0
+      legendary: 0.0
+    comments: "Tier I – nur COMMON/UNCOMMON, keine Rares, Einstieg für neue Mystics."
 
   II:
-    token_range: [1, 2]
+    token_range: [1, 3]
     rare_limits:
+      common: 3
+      uncommon: 2
       rare: 1
+      epic: 0
+      legendary: 0
     probability:
-      common: 0.55
-      regular: 0.35
-      rare: 0.10
-    comments: "Tier II introduces rare enchants with a single slot."
+      common: 0.65
+      uncommon: 0.20
+      rare: 0.15
+      epic: 0.0
+      legendary: 0.0
+    comments: "Tier II – Rares möglich, aber noch keine Epics/Legendaries."
 
   III:
-    token_range: [1, 4]
+    token_range: [2, 4]
     rare_limits:
-      rare: 3
+      common: 3
+      uncommon: 2
+      rare: 2
+      epic: 1
+      legendary: 1
     probability:
-      common: 0.35
-      regular: 0.30
-      rare: 0.35
-    comments: "Tier III allows up to three rare enchants and high token spikes for Legendary rolls."
+      common: 0.45
+      uncommon: 0.25
+      rare: 0.20
+      epic: 0.08
+      legendary: 0.02
+    comments: "Tier III – volle Palette; Epic/Legendary möglich, aber sehr selten."
 
 modifiers:
-  demon_faction_discount: 0.5  # Costs halved for Demon faction III perk
-  hidden_jewel_bonus_tokens: 2 # Bonus tokens for hidden jewel start items
+  demon_faction_discount: 0.5     # Kosten-Halbierung für Demon-Faction-Perk
+  hidden_jewel_bonus_tokens: 2    # Bonus-Token für bestimmte Start-Items
+  default: 1.0                    # Standard-Multiplikator ohne Sonder-Perk
