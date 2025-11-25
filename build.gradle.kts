@@ -31,6 +31,9 @@ dependencies {
 
     // PlaceholderAPI
     compileOnly("me.clip:placeholderapi:2.11.6")
+
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.2")
 }
 
 java {
@@ -47,4 +50,8 @@ tasks.processResources {
     filesMatching("plugin.yml") {
         expand("version" to project.version)
     }
+}
+
+tasks.test {
+    useJUnitPlatform()
 }

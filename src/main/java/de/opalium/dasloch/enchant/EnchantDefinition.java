@@ -103,6 +103,13 @@ public final class EnchantDefinition {
         return tier >= 1 && tier <= maxTier;
     }
 
+    public int tokensForTier(int tier) {
+        if (!isValidTier(tier)) {
+            return 0;
+        }
+        return tokenValues.getOrDefault(tier, 0);
+    }
+
     @Override
     public String toString() {
         return "EnchantDefinition{" +
