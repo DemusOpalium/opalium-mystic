@@ -84,17 +84,10 @@ public class DasLochPlugin extends JavaPlugin {
 
     /**
      * Registriert alle Befehle des Plugins.
-     * Achtung: Signaturen exakt so, wie sie deine Klassen verlangen.
      */
     private void registerCommands() {
         // Zentrale Well-Command-Instanz für /mysticwell und /dasloch well ...
-        MysticWellCommand wellCommand = new MysticWellCommand(
-                itemsConfig,        // ItemsConfig
-                lifeTokenService,   // LifeTokenService
-                itemFactory,        // ItemFactory
-                mysticWellService,  // MysticWellService
-                vaultService        // VaultService
-        );
+        MysticWellCommand wellCommand = new MysticWellCommand(itemService);
 
         // /dasloch (Basis-Command mit /dasloch reload, /dasloch debug, /dasloch well …)
         PluginCommand dasloch = getCommand("dasloch");
@@ -102,7 +95,7 @@ public class DasLochPlugin extends JavaPlugin {
             dasloch.setExecutor(new DasLochCommand(this, itemsConfig, lifeTokenService, wellCommand));
         }
 
-        // /legendgive – erwartet MysticItemService (aus deinen letzten Fehlern)
+        // /legendgive – erwartet MysticItemService
         PluginCommand legend = getCommand("legendgive");
         if (legend != null) {
             LegendGiveCommand executor = new LegendGiveCommand(itemService);
@@ -141,30 +134,31 @@ public class DasLochPlugin extends JavaPlugin {
         }
     }
 
-private void reloadServices() {
-    try {
-        // Enchants laden
-        YamlConfiguration enchantsYaml = loadConfig("enchants.yml");
-        this.enchantRegistry = new EnchantRegistry(enchantsYaml);
+    private void reloadServices() {
+        try {
+            // Enchants laden
+            YamlConfiguration enchantsYaml = loadConfig("enchants.yml");
+            this.enchantRegistry = new EnchantRegistry(enchantsYaml);
 
-        // Brunnen laden – Achtung: MysticWellService erwartet NUR (YamlConfiguration)
-        YamlConfiguration wellYaml = loadConfig("well.yml");
-        this.mysticWellService = new MysticWellService(wellYaml);
+            // Brunnen laden – MysticWellService erwartet nur (YamlConfiguration)
+            YamlConfiguration wellYaml = loadConfig("well.yml");
+            this.mysticWellService = new MysticWellService(wellYaml);
 
-        // Items laden – MysticItemService erwartet:
-        // (JavaPlugin plugin, YamlConfiguration itemsYaml, EnchantRegistry registry, MysticWellService well)
-        YamlConfiguration itemsYaml = loadConfig("items.yml");
-        this.itemService = new MysticItemService(
-                this,
-                itemsYaml,
-                enchantRegistry,
-                mysticWellService
-        );
+            // Items laden – MysticItemService erwartet:
+            // (JavaPlugin plugin, YamlConfiguration itemsYaml, EnchantRegistry registry, MysticWellService well)
+            YamlConfiguration itemsYaml = loadConfig("items.yml");
+            this.itemService = new MysticItemService(
+                    this,
+                    itemsYaml,
+                    enchantRegistry,
+                    mysticWellService
+            );
 
-    } catch (IOException e) {
-        getLogger().log(Level.SEVERE, "Failed to reload services", e);
+        } catch (IOException e) {
+            getLogger().log(Level.SEVERE, "Failed to reload services", e);
+        }
     }
-}
+
     /**
      * Hilfs-Methode zum Laden einer YAML-Datei aus dem Plugin-Ordner.
      */
