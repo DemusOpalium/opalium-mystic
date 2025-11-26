@@ -144,7 +144,9 @@ public final class MysticItemService {
         if (def.customModelData() > 0) {
             meta.setCustomModelData(def.customModelData());
         }
-        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS);
+
+        // Nur Enchants verstecken – Attribute sollen sichtbar bleiben
+        meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 
         if (meta instanceof LeatherArmorMeta leather && def.dyeColor() != null) {
             leather.setColor(def.dyeColor());
@@ -185,14 +187,10 @@ public final class MysticItemService {
 
     /**
      * Zusätzliche Lore-Zeilen für gespeicherte Mystic-Enchants.
-     *
      * Layout:
-     *   [optional Banner]
-     *   §7§oMystische Verzauberungen:
-     *   <rarityColor><symbol> §7<Name> §8[Tier]
-     *     <Tier-1-Lore>
-     *     <Tier-2-Lore>
-     *     <Tier-3-Lore>
+     *   §8§oMystische Verzauberungen:
+     *   <rarityColor><symbol> <rarityColor><Name> §8[Tier]
+     *   + optionale Extra-Lore-Zeilen aus EnchantDefinition.getLore()
      */
     private List<String> buildEnchantLore(Map<String, Integer> enchantTiers) {
         List<String> lines = new ArrayList<>();
@@ -200,26 +198,8 @@ public final class MysticItemService {
             return lines;
         }
 
-        // Vor-Scan: gibt es Legendary oder Tier >= 3?
-        boolean showBanner = false;
-        for (Map.Entry<String, Integer> entry : enchantTiers.entrySet()) {
-            EnchantDefinition def = enchantRegistry.get(entry.getKey());
-            if (def == null) {
-                continue;
-            }
-            int tier = entry.getValue();
-            if (def.rarity() == EnchantDefinition.Rarity.LEGENDARY || tier >= 3) {
-                showBanner = true;
-                break;
-            }
-        }
-
-        if (showBanner) {
-            // Dezentes Ornament – kann später verändert werden
-            lines.add("§8꧁§5✠ §dVerzerrte Runen des Lochs §5✠§8꧂");
-        }
-
-        lines.add("§7§oMystische Verzauberungen:");
+        // Überschrift dezent grau / kursiv
+        lines.add("§8§oMystische Verzauberungen:");
 
         enchantTiers.entrySet().stream()
                 .sorted(Comparator.comparing(Map.Entry::getKey))
@@ -244,41 +224,27 @@ public final class MysticItemService {
                         default -> String.valueOf(tier);
                     };
 
-                    // Name immer grau, Tier dunkelgrau
                     String plainName = ChatColor.stripColor(def.displayName());
                     if (plainName == null || plainName.isEmpty()) {
                         plainName = def.displayName();
                     }
 
-                    String headerLine = rarityColor + symbol + " §7" + plainName + " §8[" + romanTier + "]";
+                    // Symbol + Name in Rarity-Farbe, Tier dunkelgrau
+                    String headerLine = rarityColor + symbol + " " + rarityColor + plainName + " §8[" + romanTier + "]";
                     lines.add(headerLine);
 
-                    // Tier-basierte Lore (staffelt hoch je Stufe)
-                    Map<Integer, String> tierLore = def.tierLore();
-                    if (tierLore != null && !tierLore.isEmpty()) {
-                        for (int i = 1; i <= tier; i++) {
-                            String rawLore = tierLore.get(i);
-                            if (rawLore == null || rawLore.isBlank()) {
+                    // Alle Lore-Zeilen aus der Enchant-Definition unter dem Enchant auflisten
+                    List<String> extraLore = def.getLore();
+                    if (extraLore != null && !extraLore.isEmpty()) {
+                        for (String rawDetail : extraLore) {
+                            if (rawDetail == null || rawDetail.isBlank()) {
                                 continue;
                             }
-                            String detail = rawLore;
+                            String detail = rawDetail;
                             if (!detail.startsWith("§")) {
                                 detail = "§8§o" + detail;
                             }
-                            // leicht eingerückt unter der Titelzeile
-                            lines.add("  " + detail);
-                        }
-                    } else {
-                        // Fallback: erste normale Lore-Zeile, wenn keine tierLore definiert ist
-                        List<String> extraLore = def.getLore();
-                        if (extraLore != null && !extraLore.isEmpty()) {
-                            String detail = extraLore.get(0);
-                            if (detail != null && !detail.isBlank()) {
-                                if (!detail.startsWith("§")) {
-                                    detail = "§8§o" + detail;
-                                }
-                                lines.add("  " + detail);
-                            }
+                            lines.add(detail);
                         }
                     }
                 });
@@ -304,14 +270,14 @@ public final class MysticItemService {
 
     /**
      * Symbolwahl nach Enchant-Typ (heuristisch über die ID).
-     * Kann später noch feiner abgestimmt werden.
      */
     private String symbolForEnchant(EnchantDefinition def) {
         String id = def.id().toLowerCase(Locale.ROOT);
 
-        // Economy / Loot / Gold
-        if (id.contains("gold") || id.contains("coin") || id.contains("loot") || id.contains("bump") || id.contains("boost")) {
-            return "☘";
+        // Economy / Loot / Gold / Boost
+        if (id.contains("gold") || id.contains("coin") || id.contains("loot")
+                || id.contains("bump") || id.contains("boost")) {
+            return "◆";
         }
 
         // XP / Seelen / Spirit
@@ -319,23 +285,26 @@ public final class MysticItemService {
             return "✧";
         }
 
-        // Heilung / Leben / Herz
+        // Heilung / Leben / Heart / Regeneration
         if (id.contains("heal") || id.contains("life") || id.contains("heart") || id.contains("regen")) {
             return "♥";
         }
 
         // Movement / Speed / Sprint
-        if (id.contains("speed") || id.contains("dash") || id.contains("sprint") || id.contains("run") || id.contains("stride")) {
+        if (id.contains("speed") || id.contains("dash") || id.contains("sprint")
+                || id.contains("run") || id.contains("stride")) {
             return "➤";
         }
 
-        // Defensive / Tank / Shield
-        if (id.contains("tank") || id.contains("shield") || id.contains("guard") || id.contains("defense") || id.contains("resist")) {
+        // Defensive / Tank / Shield / Guard
+        if (id.contains("tank") || id.contains("shield") || id.contains("guard")
+                || id.contains("defense") || id.contains("resist")) {
             return "❖";
         }
 
-        // Offensiv / Crit / Blood / Sharp
-        if (id.contains("crit") || id.contains("strike") || id.contains("bleed") || id.contains("sharp") || id.contains("shark")) {
+        // Offensiv / Crit / Strike / Blood
+        if (id.contains("crit") || id.contains("strike") || id.contains("bleed")
+                || id.contains("sharp") || id.contains("shark")) {
             return "✦";
         }
 
@@ -708,38 +677,37 @@ public final class MysticItemService {
         if (candidates.isEmpty()) {
             plugin.getLogger().severe("[MysticWell] Immer noch keine Enchant-Kandidaten! "
                     + "Prüfe enchants.yml und EnchantRegistry-Initialisierung.");
-            return;
-        }
-
-        EnchantDefinition selected = candidates.get(
-                ThreadLocalRandom.current().nextInt(candidates.size())
-        );
-
-        int rolledTier = Math.max(1, Math.min(rollResult.tokensAwarded(), selected.maxTier()));
-
-        if (existing.containsKey(selected.id())) {
-            int newTier = Math.min(
-                    selected.maxTier(),
-                    existing.get(selected.id()) + rolledTier
-            );
-            existing.put(selected.id(), newTier);
-        } else if (existing.size() >= 3) {
-            String target = existing.entrySet().stream()
-                    .min(Comparator.comparingInt(Map.Entry::getValue))
-                    .map(Map.Entry::getKey)
-                    .orElse(null);
-            if (target != null) {
-                EnchantDefinition targetDef = enchantRegistry.get(target);
-                if (targetDef != null) {
-                    int newTier = Math.min(
-                            targetDef.maxTier(),
-                            existing.get(target) + rolledTier
-                    );
-                    existing.put(target, newTier);
-                }
-            }
         } else {
-            existing.put(selected.id(), rolledTier);
+            EnchantDefinition selected = candidates.get(
+                    ThreadLocalRandom.current().nextInt(candidates.size())
+            );
+
+            int rolledTier = Math.max(1, Math.min(rollResult.tokensAwarded(), selected.maxTier()));
+
+            if (existing.containsKey(selected.id())) {
+                int newTier = Math.min(
+                        selected.maxTier(),
+                        existing.get(selected.id()) + rolledTier
+                );
+                existing.put(selected.id(), newTier);
+            } else if (existing.size() >= 3) {
+                String target = existing.entrySet().stream()
+                        .min(Comparator.comparingInt(Map.Entry::getValue))
+                        .map(Map.Entry::getKey)
+                        .orElse(null);
+                if (target != null) {
+                    EnchantDefinition targetDef = enchantRegistry.get(target);
+                    if (targetDef != null) {
+                        int newTier = Math.min(
+                                targetDef.maxTier(),
+                                existing.get(target) + rolledTier
+                        );
+                        existing.put(target, newTier);
+                    }
+                }
+            } else {
+                existing.put(selected.id(), rolledTier);
+            }
         }
 
         writeEnchants(stack, existing);
