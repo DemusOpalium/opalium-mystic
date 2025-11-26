@@ -1,8 +1,10 @@
 package de.opalium.dasloch.item;
 
-import java.util.List;
 import org.bukkit.Color;
 import org.bukkit.Material;
+
+import java.util.List;
+import java.util.Map;
 
 public final class LegendItemDefinition {
 
@@ -16,9 +18,21 @@ public final class LegendItemDefinition {
     private final int maxLives;
     private final List<String> lore;
     private final Color dyeColor;
+    private final Map<String, Integer> baseEnchants;
 
-    public LegendItemDefinition(String id, ItemCategory category, ItemKind kind, Material material, String displayName,
-                                int customModelData, int baseLives, int maxLives, List<String> lore, Color dyeColor) {
+    public LegendItemDefinition(
+            String id,
+            ItemCategory category,
+            ItemKind kind,
+            Material material,
+            String displayName,
+            int customModelData,
+            int baseLives,
+            int maxLives,
+            List<String> lore,
+            Color dyeColor,
+            Map<String, Integer> baseEnchants
+    ) {
         this.id = id;
         this.category = category;
         this.kind = kind;
@@ -29,6 +43,7 @@ public final class LegendItemDefinition {
         this.maxLives = maxLives;
         this.lore = lore;
         this.dyeColor = dyeColor;
+        this.baseEnchants = baseEnchants;
     }
 
     public String id() {
@@ -69,5 +84,13 @@ public final class LegendItemDefinition {
 
     public Color dyeColor() {
         return dyeColor;
+    }
+
+    /**
+     * Feste Mystic-Enchants, die ein Legend-Item beim Erzeugen bereits trägt.
+     * Key = Enchant-ID (z.B. "lifesteal"), Value = Tier.
+     */
+    public Map<String, Integer> baseEnchants() {
+        return baseEnchants;
     }
 }
