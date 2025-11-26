@@ -222,6 +222,7 @@ public final class MysticItemService {
                         default -> String.valueOf(tier);
                     };
 
+                    // Hier wird der Lore-Titel aus enchants.yml genutzt (displayName)
                     lines.add(rarityColor + "✦ " + def.displayName() + " §7[" + romanTier + "]");
                 });
 
@@ -322,6 +323,13 @@ public final class MysticItemService {
                     PersistentDataType.STRING,
                     formatPrefix(tokens)
             );
+
+            String id = meta.getPersistentDataContainer()
+                    .get(keys.itemId(), PersistentDataType.STRING);
+            plugin.getLogger().info("[MysticWell] recalcTokens: itemId=" + id
+                    + " tokens=" + tokens
+                    + " enchantCount=" + enchantTiers.size());
+
             refreshLore(stack, meta);
         }
         return tokens;
@@ -353,20 +361,33 @@ public final class MysticItemService {
         return values;
     }
 
+    /**
+     * Schreibt Mystic-Enchants in den PDC und aktualisiert Lore + Glint.
+     * Zusätzlich mit Log-Ausgabe, damit Debug im Log sichtbar ist.
+     */
     public void writeEnchants(ItemStack stack, Map<String, Integer> enchantTiers) {
         ItemMeta meta = stack.getItemMeta();
         if (meta == null) {
             return;
         }
+
         StringJoiner joiner = new StringJoiner(";");
         for (Map.Entry<String, Integer> entry : enchantTiers.entrySet()) {
             joiner.add(entry.getKey() + ":" + entry.getValue());
         }
+        String stored = joiner.toString();
+
         meta.getPersistentDataContainer().set(
                 keys.enchants(),
                 PersistentDataType.STRING,
-                joiner.toString()
+                stored
         );
+
+        String id = meta.getPersistentDataContainer()
+                .get(keys.itemId(), PersistentDataType.STRING);
+        plugin.getLogger().info("[MysticWell] writeEnchants: itemId=" + id
+                + " raw=\"" + stored + "\" mapSize=" + enchantTiers.size());
+
         refreshLore(stack, meta);
     }
 
@@ -576,6 +597,10 @@ public final class MysticItemService {
         );
 
         int rolledTier = Math.max(1, Math.min(rollResult.tokensAwarded(), selected.maxTier()));
+
+        plugin.getLogger().info("[MysticWell] Selected enchant=" + selected.id()
+                + " rolledTier=" + rolledTier
+                + " existingSizeBefore=" + existing.size());
 
         if (existing.containsKey(selected.id())) {
             int newTier = Math.min(
