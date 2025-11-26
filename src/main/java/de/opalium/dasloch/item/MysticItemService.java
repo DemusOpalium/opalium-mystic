@@ -18,6 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.*;
@@ -148,15 +149,17 @@ public final class MysticItemService {
             leather.setColor(def.dyeColor());
         }
 
-        meta.getPersistentDataContainer().set(keys.itemId(), PersistentDataType.STRING, def.id());
-        meta.getPersistentDataContainer().set(keys.itemType(), PersistentDataType.STRING, def.kind().name());
-        meta.getPersistentDataContainer().set(keys.livesCurrent(), PersistentDataType.INTEGER, def.baseLives());
-        meta.getPersistentDataContainer().set(keys.livesMax(), PersistentDataType.INTEGER, def.maxLives());
-        meta.getPersistentDataContainer().set(keys.tokens(), PersistentDataType.INTEGER, 0);
-        meta.getPersistentDataContainer().set(keys.prefix(), PersistentDataType.STRING, formatPrefix(0));
-        meta.getPersistentDataContainer().set(keys.mysticTier(), PersistentDataType.STRING, "");
+        PersistentDataContainer pdc = meta.getPersistentDataContainer();
+        pdc.set(keys.itemId(), PersistentDataType.STRING, def.id());
+        pdc.set(keys.itemType(), PersistentDataType.STRING, def.kind().name());
+        pdc.set(keys.livesCurrent(), PersistentDataType.INTEGER, def.baseLives());
+        pdc.set(keys.livesMax(), PersistentDataType.INTEGER, def.maxLives());
+        pdc.set(keys.tokens(), PersistentDataType.INTEGER, 0);
+        pdc.set(keys.prefix(), PersistentDataType.STRING, formatPrefix(0));
+        pdc.set(keys.mysticTier(), PersistentDataType.STRING, "");
         // Initial: noch keine Mystic-Enchants
-        meta.getPersistentDataContainer().set(keys.enchants(), PersistentDataType.STRING, "");
+        pdc.set(keys.enchants(), PersistentDataType.STRING, "");
+
         meta.setLore(applyLore(def, def.baseLives(), def.maxLives(), 0, owner));
 
         stack.setItemMeta(meta);
@@ -222,7 +225,6 @@ public final class MysticItemService {
                         default -> String.valueOf(tier);
                     };
 
-                    // Hier wird der Lore-Titel aus enchants.yml genutzt (displayName)
                     lines.add(rarityColor + "✦ " + def.displayName() + " §7[" + romanTier + "]");
                 });
 
@@ -270,9 +272,9 @@ public final class MysticItemService {
         if (meta == null) {
             return;
         }
-        int max = meta.getPersistentDataContainer()
-                .getOrDefault(keys.livesMax(), PersistentDataType.INTEGER, lives);
-        meta.getPersistentDataContainer().set(
+        PersistentDataContainer pdc = meta.getPersistentDataContainer();
+        int max = pdc.getOrDefault(keys.livesMax(), PersistentDataType.INTEGER, lives);
+        pdc.set(
                 keys.livesCurrent(),
                 PersistentDataType.INTEGER,
                 Math.max(0, Math.min(lives, max))
@@ -290,11 +292,11 @@ public final class MysticItemService {
         if (meta == null) {
             return;
         }
-        int tokens = meta.getPersistentDataContainer()
-                .getOrDefault(keys.tokens(), PersistentDataType.INTEGER, 0);
+        PersistentDataContainer pdc = meta.getPersistentDataContainer();
+        int tokens = pdc.getOrDefault(keys.tokens(), PersistentDataType.INTEGER, 0);
         int newValue = Math.max(0, tokens + delta);
-        meta.getPersistentDataContainer().set(keys.tokens(), PersistentDataType.INTEGER, newValue);
-        meta.getPersistentDataContainer().set(keys.prefix(), PersistentDataType.STRING, formatPrefix(newValue));
+        pdc.set(keys.tokens(), PersistentDataType.INTEGER, newValue);
+        pdc.set(keys.prefix(), PersistentDataType.STRING, formatPrefix(newValue));
         refreshLore(stack, meta);
     }
 
@@ -312,26 +314,18 @@ public final class MysticItemService {
                 .sum();
 
         ItemMeta meta = stack.getItemMeta();
+        String itemId = "null";
         if (meta != null) {
-            meta.getPersistentDataContainer().set(
-                    keys.tokens(),
-                    PersistentDataType.INTEGER,
-                    tokens
-            );
-            meta.getPersistentDataContainer().set(
-                    keys.prefix(),
-                    PersistentDataType.STRING,
-                    formatPrefix(tokens)
-            );
-
-            String id = meta.getPersistentDataContainer()
-                    .get(keys.itemId(), PersistentDataType.STRING);
-            plugin.getLogger().info("[MysticWell] recalcTokens: itemId=" + id
-                    + " tokens=" + tokens
-                    + " enchantCount=" + enchantTiers.size());
-
+            PersistentDataContainer pdc = meta.getPersistentDataContainer();
+            itemId = pdc.get(keys.itemId(), PersistentDataType.STRING);
+            pdc.set(keys.tokens(), PersistentDataType.INTEGER, tokens);
+            pdc.set(keys.prefix(), PersistentDataType.STRING, formatPrefix(tokens));
             refreshLore(stack, meta);
         }
+
+        plugin.getLogger().info("[DasLoch] [MysticWell] recalcTokens: itemId=" + itemId
+                + " tokens=" + tokens + " enchantCount=" + enchantTiers.size());
+
         return tokens;
     }
 
@@ -361,32 +355,27 @@ public final class MysticItemService {
         return values;
     }
 
-    /**
-     * Schreibt Mystic-Enchants in den PDC und aktualisiert Lore + Glint.
-     * Zusätzlich mit Log-Ausgabe, damit Debug im Log sichtbar ist.
-     */
     public void writeEnchants(ItemStack stack, Map<String, Integer> enchantTiers) {
         ItemMeta meta = stack.getItemMeta();
         if (meta == null) {
             return;
         }
-
         StringJoiner joiner = new StringJoiner(";");
         for (Map.Entry<String, Integer> entry : enchantTiers.entrySet()) {
             joiner.add(entry.getKey() + ":" + entry.getValue());
         }
-        String stored = joiner.toString();
+        String raw = joiner.toString();
 
-        meta.getPersistentDataContainer().set(
+        PersistentDataContainer pdc = meta.getPersistentDataContainer();
+        pdc.set(
                 keys.enchants(),
                 PersistentDataType.STRING,
-                stored
+                raw
         );
 
-        String id = meta.getPersistentDataContainer()
-                .get(keys.itemId(), PersistentDataType.STRING);
-        plugin.getLogger().info("[MysticWell] writeEnchants: itemId=" + id
-                + " raw=\"" + stored + "\" mapSize=" + enchantTiers.size());
+        String itemId = pdc.get(keys.itemId(), PersistentDataType.STRING);
+        plugin.getLogger().info("[DasLoch] [MysticWell] writeEnchants: itemId=" + itemId
+                + " raw=\"" + raw + "\" mapSize=" + enchantTiers.size());
 
         refreshLore(stack, meta);
     }
@@ -395,18 +384,15 @@ public final class MysticItemService {
      * Erneuert Basis-Lore + Mystic-Enchant-Lore + Glint.
      */
     private void refreshLore(ItemStack stack, ItemMeta meta) {
-        String id = meta.getPersistentDataContainer()
-                .get(keys.itemId(), PersistentDataType.STRING);
+        PersistentDataContainer pdc = meta.getPersistentDataContainer();
+        String id = pdc.get(keys.itemId(), PersistentDataType.STRING);
         LegendItemDefinition def = definitions.get(id);
         if (def == null) {
             return;
         }
-        int lives = meta.getPersistentDataContainer()
-                .getOrDefault(keys.livesCurrent(), PersistentDataType.INTEGER, 0);
-        int maxLives = meta.getPersistentDataContainer()
-                .getOrDefault(keys.livesMax(), PersistentDataType.INTEGER, lives);
-        int tokens = meta.getPersistentDataContainer()
-                .getOrDefault(keys.tokens(), PersistentDataType.INTEGER, 0);
+        int lives = pdc.getOrDefault(keys.livesCurrent(), PersistentDataType.INTEGER, 0);
+        int maxLives = pdc.getOrDefault(keys.livesMax(), PersistentDataType.INTEGER, lives);
+        int tokens = pdc.getOrDefault(keys.tokens(), PersistentDataType.INTEGER, 0);
 
         // Basis-Lore aus items.yml
         List<String> lore = applyLore(def, lives, maxLives, tokens, null);
@@ -528,17 +514,28 @@ public final class MysticItemService {
             return null;
         }
 
-        MysticWellService.RollResult result = wellService.roll(tier);
-        LegendItemDefinition definition = definitions.get(
-                meta.getPersistentDataContainer().get(keys.itemId(), PersistentDataType.STRING)
-        );
+        // Bestimme Definition und führe den Roll aus
+        PersistentDataContainer pdc = meta.getPersistentDataContainer();
+        String itemId = pdc.get(keys.itemId(), PersistentDataType.STRING);
+        LegendItemDefinition definition = definitions.get(itemId);
         if (definition == null || definition.kind() != ItemKind.MYSTIC) {
             return null;
         }
 
+        MysticWellService.RollResult result = wellService.roll(tier);
+
+        // Enchants anwenden (schreibt auch Lore & enchants-PDC)
         applyEnchantRoll(definition.category(), result, wellTier, stack);
-        meta.getPersistentDataContainer().set(keys.mysticTier(), PersistentDataType.STRING, tier);
-        stack.setItemMeta(meta);
+
+        // Jetzt METADATA NOCH EINMAL NEU LESEN, DAMIT ENCHANTS ERHALTEN BLEIBEN
+        ItemMeta updatedMeta = stack.getItemMeta();
+        if (updatedMeta != null) {
+            PersistentDataContainer updatedPdc = updatedMeta.getPersistentDataContainer();
+            updatedPdc.set(keys.mysticTier(), PersistentDataType.STRING, tier);
+            stack.setItemMeta(updatedMeta);
+        }
+
+        // Tokens aus Enchants neu berechnen
         recalcTokens(stack);
         return result;
     }
@@ -597,10 +594,6 @@ public final class MysticItemService {
         );
 
         int rolledTier = Math.max(1, Math.min(rollResult.tokensAwarded(), selected.maxTier()));
-
-        plugin.getLogger().info("[MysticWell] Selected enchant=" + selected.id()
-                + " rolledTier=" + rolledTier
-                + " existingSizeBefore=" + existing.size());
 
         if (existing.containsKey(selected.id())) {
             int newTier = Math.min(
