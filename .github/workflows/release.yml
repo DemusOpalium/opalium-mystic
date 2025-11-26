@@ -1,15 +1,15 @@
-name: Build & Release OpaliumMystic
+name: Auto Release OpaliumMystic
 
 on:
   push:
-    tags:
-      - 'v*'        # z.B. v1.0.0, v1.0.1
+    branches:
+      - main
 
 permissions:
-  contents: write   # <-- NEU: erlaubt Release/Assets zu schreiben
+  contents: write   # nötig für Releases & Assets
 
 jobs:
-  build:
+  build-and-release:
     runs-on: ubuntu-latest
 
     steps:
@@ -28,9 +28,13 @@ jobs:
           gradle-version: 8.7
           arguments: build
 
-      - name: Create GitHub Release and upload JAR
+      - name: Create/Update 'latest' release and upload JAR
         uses: softprops/action-gh-release@v1
         with:
+          tag_name: latest
+          name: "Opalium Mystic – latest"
+          draft: false
+          prerelease: false
           files: build/libs/*.jar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
