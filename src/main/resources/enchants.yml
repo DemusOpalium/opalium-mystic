@@ -20,6 +20,10 @@ enchants:
           "1": 4
           "2": 7
           "3": 10
+    lore:
+      - "§8Die Klinge trinkt dort, wo andere nur schneiden."
+      - "§8Mit jedem Hieb wird fremde Wärme in deinen Puls gezogen."
+      - "§8Wer hier blutet, wacht nicht erholt wieder auf."
 
   gold_boost:
     display-name: "§6Gold Boost"
@@ -39,6 +43,10 @@ enchants:
           "1": 10
           "2": 20
           "3": 35
+    lore:
+      - "§8Jede Leiche hinterlässt eine Spur aus kaltem Metall."
+      - "§8Münzen klirren lauter, wenn sie über frische Stiefelabdrücke rollen."
+      - "§8Reichtum, der nach Eisen, Staub und alten Wunden riecht."
 
   xp_boost:
     display-name: "§bXP Boost"
@@ -56,6 +64,9 @@ enchants:
         extra-xp-percent:
           "1": 15
           "2": 30
+    lore:
+      - "§8Jeder Schrei bleibt als Flüstern hinter deinen Augen zurück."
+      - "§8Erfahrung brennt sich ein wie ein altes Brandmal unter der Haut."
 
   sweaty:
     display-name: "§eSweaty"
@@ -73,6 +84,9 @@ enchants:
           "1": 3
           "2": 6
           "3": 10
+    lore:
+      - "§8Der Griff ist feucht von Angst, Hitze und altem Kampfzittern."
+      - "§8Je länger du schwingst, desto schwerer atmen alle um dich herum."
 
   fletching:
     display-name: "§aFletching"
@@ -90,6 +104,9 @@ enchants:
           "1": 5
           "2": 9
           "3": 13
+    lore:
+      - "§8Federn, in denen der kalte Wind alter Hinrichtungen hängt."
+      - "§8Ein einziger Pfeil reicht, wenn der Aufprall den Atem nimmt."
 
   last_stand:
     display-name: "§4Last Stand"
@@ -106,6 +123,9 @@ enchants:
         damage-reduction-percent:
           "1": 20
           "2": 35
+    lore:
+      - "§8Wenn alles nachgibt, bleibt noch dieser Schritt im Staub."
+      - "§8Du fällst erst, wenn die Stille lauter ist als der Schmerz."
 
   strike_gold:
     display-name: "§6Strike Gold"
@@ -124,6 +144,9 @@ enchants:
           "1": 6
           "2": 12
           "3": 18
+    lore:
+      - "§8Unter jedem getroffenen Rücken liegt eine schlafende Erzader."
+      - "§8Du schlägst nicht nur Fleisch – du triffst den Schacht selbst."
 
   moctezuma:
     display-name: "§6Moctezuma"
@@ -142,6 +165,9 @@ enchants:
           "1": 15
           "2": 25
           "3": 40
+    lore:
+      - "§8Alte Versprechen kleben daran wie eingetrocknete Gelübde."
+      - "§8Gold fließt, solange jemand dafür im Staub liegen bleibt."
 
   gold_bump:
     display-name: "§6Gold Bump"
@@ -161,6 +187,9 @@ enchants:
           "1": 8
           "2": 16
           "3": 24
+    lore:
+      - "§8Kleines Klimpern nach jedem gestoppten Herzschlag."
+      - "§8Viele kurze Schreie ergeben einen langen Kontoauszug."
 
   xp_bump:
     display-name: "§bXP Bump"
@@ -180,6 +209,9 @@ enchants:
           "1": 10
           "2": 20
           "3": 30
+    lore:
+      - "§8Die Fehler der anderen brennen sich in deine Reflexe."
+      - "§8Jede falsche Bewegung dort draußen schärft deine eigene."
 
   # ============================
   # KATEGORIE B – SWORD-SPEZIAL
@@ -206,6 +238,9 @@ enchants:
           "1": 8
           "2": 16
           "3": 24
+    lore:
+      - "§8Du sprichst keine Urteile – du vollstreckst sie nur."
+      - "§8Der letzte Blick im Nacken wird irgendwann zur Routine."
 
   berzerker:
     display-name: "§4Berzerker"
@@ -229,6 +264,9 @@ enchants:
           "1": 10
           "2": 20
           "3": 30
+    lore:
+      - "§8Wenn der Schädel dröhnt, wird alles andere leise."
+      - "§8Du stehst noch, wenn Vernunft schon längst gegangen ist."
 
   beat_the_spammers:
     display-name: "§aBeat the Spammers"
@@ -252,6 +290,9 @@ enchants:
           "1": 1
           "2": 2
           "3": 3
+    lore:
+      - "§8Du löschst das Rauschen der Masse mit sauber gesetzten Treffern."
+      - "§8Wer laut ist, fällt hier oft als Erstes um."
 
   shark:
     display-name: "§3Shark"
@@ -269,6 +310,9 @@ enchants:
           "1": 5
           "2": 8
           "3": 12
+    lore:
+      - "§8Du kreist, bis der erste Fehler gemacht wird."
+      - "§8Sobald jemand strauchelt, bist du schon längst da."
 
   speedy_hit:
     display-name: "§eSpeedy Hit"
@@ -286,6 +330,9 @@ enchants:
           "1": 4
           "2": 7
           "3": 10
+    lore:
+      - "§8Die Hand zuckt, bevor der Kopf versteht, was du tust."
+      - "§8Fluchtgedanken kommen zu spät, wenn dein Swing schon sitzt."
 
   gambler:
     display-name: "§5Gambler"
@@ -307,6 +354,9 @@ enchants:
           "1": 10
           "2": 20
           "3": 35
+    lore:
+      - "§8Du setzt alles auf die nächste Begegnung im Tunnel."
+      - "§8Manchmal ist ein einziger Swing der ganze Pot."
 
   healer:
     display-name: "§aHealer"
@@ -329,6 +379,9 @@ enchants:
           "1": 5
           "2": 10
           "3": 15
+    lore:
+      - "§8Du flickst Risse, die die Grube gerne behalten würde."
+      - "§8Jede überstandene Wunde macht dich schwerer zu brechen."
 
   billionaire:
     display-name: "§6Billionaire"
@@ -346,6 +399,9 @@ enchants:
           "1": 25
           "2": 50
           "3": 80
+    lore:
+      - "§8Dein Vermögen wächst auf dem Rücken derer, die unten liegen bleiben."
+      - "§8Du kennst die Namen hinter jeder einzelnen Ziffer."
 
   # ============================
   # KATEGORIE C – BOW-SPEZIAL
@@ -368,6 +424,9 @@ enchants:
           "1": 5
           "2": 10
           "3": 15
+    lore:
+      - "§8Der Rest der Welt verblasst zu einem grauen Rauschen."
+      - "§8Nur Ziel, Entfernung und der Punkt, an dem alles stoppt."
 
   eagle_eye:
     display-name: "§bEagle Eye"
@@ -383,6 +442,9 @@ enchants:
         extra-damage-percent:
           "1": 10
           "2": 20
+    lore:
+      - "§8Du siehst ihren Weg, bevor sie selbst wissen, wohin sie laufen."
+      - "§8Es gibt keinen Schatten, in dem du sie nicht findest."
 
   volley:
     display-name: "§eVolley"
@@ -400,6 +462,9 @@ enchants:
           "1": 10
           "2": 18
           "3": 28
+    lore:
+      - "§8Der Himmel wird kurz dunkel, dann still."
+      - "§8Wer im Pfeilregen steht, zählt seine Atemzüge falsch."
 
   explosive:
     display-name: "§6Explosive"
@@ -417,6 +482,9 @@ enchants:
           "1": 8
           "2": 16
           "3": 24
+    lore:
+      - "§8Ein einziger Treffer reicht, um alles neu zu sortieren."
+      - "§8Lärm, Licht, und danach diese schwere, drückende Stille."
 
   true_shot:
     display-name: "§dTrue Shot"
@@ -434,6 +502,9 @@ enchants:
           "1": 12
           "2": 18
           "3": 25
+    lore:
+      - "§8Kein Zittern, kein Zögern – nur ein gerader Strich."
+      - "§8Du triffst genau dort, wo andere nur hoffen."
 
   lucky_shot:
     display-name: "§6Lucky Shot"
@@ -451,6 +522,9 @@ enchants:
           "1": 10
           "2": 20
           "3": 35
+    lore:
+      - "§8Zufall fühlt sich anders an – das hier ist Berechnung."
+      - "§8Du erkennst Treffer, die mehr einbringen als nur Staub."
 
   devil_chicks:
     display-name: "§cDevil Chicks"
@@ -468,6 +542,9 @@ enchants:
           "1": 20
           "2": 35
           "3": 50
+    lore:
+      - "§8Kleine Schatten, die in deinem Rücken kichern."
+      - "§8Sie kommen, wenn Blut im Staub steht, und gehen erst, wenn niemand mehr aufsteht."
 
   robinhood:
     display-name: "§aRobinhood"
@@ -489,6 +566,9 @@ enchants:
           "1": 15
           "2": 25
           "3": 40
+    lore:
+      - "§8Du raubst den Reichen dort, wo sie sich sicher wähnen."
+      - "§8Niemand merkt, wie viel fehlt, bis die Stille nachzählt."
 
   # ============================
   # KATEGORIE D – PANTS-SPEZIAL
@@ -512,6 +592,9 @@ enchants:
           "1": 25
           "2": 40
           "3": 55
+    lore:
+      - "§8Der Boden kennt dein Gewicht, aber nicht dein Ende."
+      - "§8Du stehst wieder auf, als wäre Fallen nur ein Reflex."
 
   assassin:
     display-name: "§5Assassin"
@@ -529,6 +612,9 @@ enchants:
           "1": 4
           "2": 8
           "3": 12
+    lore:
+      - "§8Du hinterlässt mehr Fragen als Spuren."
+      - "§8Wenn jemand nach dir sucht, ist es meist zu spät."
 
   escape_pod:
     display-name: "§bEscape Pod"
@@ -545,6 +631,9 @@ enchants:
         damage-reduction-percent:
           "1": 15
           "2": 25
+    lore:
+      - "§8Du kennst den Weg hinaus, den andere nie zu sehen bekommen."
+      - "§8Manchmal überlebt nur, wer zuerst loslässt."
 
   martyrdom:
     display-name: "§cMartyrdom"
@@ -562,6 +651,9 @@ enchants:
           "1": 15
           "2": 25
           "3": 40
+    lore:
+      - "§8Du gehst nach vorn, obwohl du weißt, wie das endet."
+      - "§8Man erinnert sich an jene, die nicht zurückweichen."
 
   retro_gravity:
     display-name: "§dRetro Gravity"
@@ -579,6 +671,9 @@ enchants:
           "1": 6
           "2": 10
           "3": 15
+    lore:
+      - "§8Der Schacht zieht – aber du folgst nur, wenn du es willst."
+      - "§8Andere stürzen, du korrigierst nur den Winkel."
 
   solitude:
     display-name: "§5Solitude"
@@ -597,11 +692,13 @@ enchants:
           "1": 40
           "2": 55
           "3": 70
+    lore:
+      - "§8In der Tiefe hörst du nur deinen eigenen Herzschlag."
+      - "§8Alle anderen Geräusche sind bloß Kulisse."
 
   # ============================
   # KATEGORIE E – SERVER-LEGENDARIES
-  # Personalisierte Enchants (nur Name/Lore anders,
-  # Effekte bleiben im gleichen System)
+  # Personalisierte Enchants
   # ============================
 
   peaches_moctezuma:
@@ -621,6 +718,9 @@ enchants:
           "1": 18
           "2": 28
           "3": 42
+    lore:
+      - "§8Peaches’ Handel: Gold nach außen, etwas anderes nach innen."
+      - "§8Wer hier unterschreibt, versteht den Preis oft erst später."
 
   maeggies_sweaty:
     display-name: "§eMäggies Sweaty"
@@ -638,6 +738,9 @@ enchants:
           "1": 4
           "2": 7
           "3": 11
+    lore:
+      - "§8Mäggie hört erst auf, wenn der Chat schweigt."
+      - "§8Wer mithalten will, merkt schnell, wie wenig Luft bleibt."
 
   demus_legacy:
     display-name: "§5Demus’ Legacy"
@@ -662,6 +765,9 @@ enchants:
           "1": 10
           "2": 18
           "3": 25
+    lore:
+      - "§8Ein Erbe aus abgebrochenen Läufen und durchgezogenen Runden."
+      - "§8Wer es trägt, schreibt selbst ein weiteres Kapitel hinein."
 
   buhari_bulwark:
     display-name: "§6Buhari’s Bulwark"
@@ -678,6 +784,9 @@ enchants:
         damage-reduction-percent:
           "1": 22
           "2": 35
+    lore:
+      - "§8Eine Wand, an der schon viele Läufe stumpf geworden sind."
+      - "§8Wer hier anrennt, lernt schnell den Unterschied zwischen Mut und Dummheit."
 
   tabakie_tricks:
     display-name: "§fTabakies Tricks"
@@ -700,6 +809,9 @@ enchants:
           "1": 2
           "2": 3
           "3": 5
+    lore:
+      - "§8Was wie Zufall aussieht, ist meist nur gut versteckte Absicht."
+      - "§8Tabakie lacht, wenn andere noch rätseln, was passiert ist."
 
   hidden_legacy:
     display-name: "§5Hidden Legacy"
@@ -728,6 +840,9 @@ enchants:
           "1": 5
           "2": 8
           "3": 12
+    lore:
+      - "§8Nicht jede Tat steht im Log, aber die Grube vergisst nichts."
+      - "§8Dieses Erbe hängt an denen, die zu oft überlebt haben."
 
   the_king:
     display-name: "§6The King"
@@ -751,3 +866,83 @@ enchants:
           "1": 20
           "2": 30
           "3": 40
+    lore:
+      - "§8Ein König ohne Krone, aber mit Namen auf jeder Liste."
+      - "§8Solange du stehst, steht niemand über dir."
+
+  # ============================
+  # KATEGORIE F – NEUE VERBOTENE GLYPHEN
+  # Drei zusätzliche Enchants für das Mystic-System
+  # ============================
+
+  blood_pact:
+    display-name: "§4Blood Pact"
+    rarity: RARE
+    applicable:
+      - SWORD
+      - PANTS
+    max-tier: 3
+    token-values:
+      "1": 2
+      "2": 3
+      "3": 4
+    effects:
+      on-kill:
+        extra-gold:
+          "1": 8
+          "2": 14
+          "3": 22
+        extra-xp-percent:
+          "1": 10
+          "2": 18
+          "3": 28
+    lore:
+      - "§8Ein stummes Abkommen zwischen Stahl und Schatten."
+      - "§8Du zahlst mit Nerven, die Grube zahlt mit allem anderen."
+
+  shadow_stride:
+    display-name: "§5Shadow Stride"
+    rarity: EPIC
+    applicable:
+      - PANTS
+    max-tier: 3
+    token-values:
+      "1": 2
+      "2": 3
+      "3": 3
+    effects:
+      passive:
+        streak-bonus-percent:
+          "1": 5
+          "2": 9
+          "3": 14
+    lore:
+      - "§8Deine Schritte verhallen, bevor jemand sie hören kann."
+      - "§8Nur dein Kill-Log verrät, wo du wirklich warst."
+
+  grave_bloom:
+    display-name: "§dGrave Bloom"
+    rarity: LEGENDARY
+    applicable:
+      - SWORD
+      - BOW
+      - PANTS
+    max-tier: 3
+    token-values:
+      "1": 4
+      "2": 5
+      "3": 6
+    effects:
+      on-melee-hit:
+        heal-percent:
+          "1": 2
+          "2": 4
+          "3": 6
+      on-kill:
+        extra-xp-percent:
+          "1": 15
+          "2": 25
+          "3": 35
+    lore:
+      - "§8Aus jedem Sturz wächst ein leises, dunkles Aufblühen in dir."
+      - "§8Je mehr hier endet, desto schwerer wirst du zu Fall gebracht."
