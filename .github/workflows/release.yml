@@ -1,0 +1,39 @@
+name: Build & Release DasLoch
+
+on:
+  # Variante A: Release nur bei Tags (empfohlen)
+  push:
+    tags:
+      - 'v*'   # z.B. v1.0.0, v1.0.1
+
+  # Wenn du stattdessen bei jedem Push auf main releasen willst:
+  # push:
+  #   branches:
+  #     - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Build with Gradle
+        uses: gradle/gradle-build-action@v3
+        with:
+          arguments: build
+
+      - name: Create GitHub Release (if not existing) and upload JAR
+        uses: softprops/action-gh-release@v1
+        with:
+          # Pfad an dein Projekt anpassen, falls der JAR anders heißt
+          files: build/libs/dasloch-plugin-*.jar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
