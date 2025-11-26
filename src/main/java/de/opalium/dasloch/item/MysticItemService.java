@@ -2,6 +2,7 @@ package de.opalium.dasloch.item;
 
 import de.opalium.dasloch.DasLochPlugin;
 import de.opalium.dasloch.enchant.EnchantDefinition;
+import de.opalium.dasloch.enchant.EnchantEffects;
 import de.opalium.dasloch.enchant.EnchantRegistry;
 import de.opalium.dasloch.integration.VaultService;
 import de.opalium.dasloch.util.PluginKeys;
@@ -184,9 +185,10 @@ public final class MysticItemService {
 
     /**
      * Zusätzliche Lore-Zeilen für gespeicherte Mystic-Enchants.
-     * Format:
-     *   §8Mystische Verzauberungen:
-     *   §6✦ Demus’ Legacy §7[II]
+     *
+     * Zielbild:
+     *   §7§oMystische Verzauberungen:
+     *   <rarityColor><symbol> §7Name §8[Stufe]
      */
     private List<String> buildEnchantLore(Map<String, Integer> enchantTiers) {
         List<String> lines = new ArrayList<>();
@@ -194,39 +196,49 @@ public final class MysticItemService {
             return lines;
         }
 
-        lines.add("§8Mystische Verzauberungen:");
+        // Überschrift – dezent hervorgehoben
+        lines.add("§7§oMystische Verzauberungen:");
 
-        enchantTiers.entrySet().stream()
-                .sorted(Comparator.comparing(Map.Entry::getKey))
-                .forEach(entry -> {
-                    String enchantId = entry.getKey();
-                    int tier = entry.getValue();
+        // Enchants zunächst in (Definition, Tier)-Paare übersetzen
+        List<Map.Entry<EnchantDefinition, Integer>> entries = new ArrayList<>();
+        for (Map.Entry<String, Integer> entry : enchantTiers.entrySet()) {
+            EnchantDefinition def = enchantRegistry.get(entry.getKey());
+            if (def == null) {
+                continue;
+            }
+            entries.add(new AbstractMap.SimpleEntry<>(def, entry.getValue()));
+        }
 
-                    EnchantDefinition def = enchantRegistry.get(enchantId);
-                    if (def == null) {
-                        return;
-                    }
+        // Sortierung: zuerst nach Rarity, dann nach Displayname
+        entries.sort((a, b) -> {
+            int r = Integer.compare(a.getKey().rarity().ordinal(), b.getKey().rarity().ordinal());
+            if (r != 0) {
+                return r;
+            }
+            return a.getKey().displayName().compareToIgnoreCase(b.getKey().displayName());
+        });
 
-                    String rarityColor;
-                    switch (def.rarity()) {
-                        case COMMON -> rarityColor = "§7";
-                        case RARE -> rarityColor = "§9";
-                        case EPIC -> rarityColor = "§5";
-                        case LEGENDARY -> rarityColor = "§6";
-                        default -> rarityColor = "§7";
-                    }
+        for (Map.Entry<EnchantDefinition, Integer> entry : entries) {
+            EnchantDefinition def = entry.getKey();
+            int tier = entry.getValue();
 
-                    String romanTier = switch (tier) {
-                        case 1 -> "I";
-                        case 2 -> "II";
-                        case 3 -> "III";
-                        case 4 -> "IV";
-                        case 5 -> "V";
-                        default -> String.valueOf(tier);
-                    };
+            String rarityColor = colorForRarity(def.rarity());
+            String symbol = symbolForEnchant(def);
 
-                    lines.add(rarityColor + "✦ " + def.displayName() + " §7[" + romanTier + "]");
-                });
+            String romanTier = switch (tier) {
+                case 1 -> "I";
+                case 2 -> "II";
+                case 3 -> "III";
+                case 4 -> "IV";
+                case 5 -> "V";
+                default -> String.valueOf(tier);
+            };
+
+            String namePart = "§7" + def.displayName();
+            String tierPart = "§8[" + romanTier + "]";
+
+            lines.add(rarityColor + symbol + " " + namePart + " " + tierPart);
+        }
 
         return lines;
     }
@@ -527,7 +539,7 @@ public final class MysticItemService {
         // Enchants anwenden (schreibt auch Lore & enchants-PDC)
         applyEnchantRoll(definition.category(), result, wellTier, stack);
 
-        // Jetzt METADATA NOCH EINMAL NEU LESEN, DAMIT ENCHANTS ERHALTEN BLEIBEN
+        // Jetzt Metadaten noch einmal neu lesen, damit Enchants erhalten bleiben
         ItemMeta updatedMeta = stack.getItemMeta();
         if (updatedMeta != null) {
             PersistentDataContainer updatedPdc = updatedMeta.getPersistentDataContainer();
@@ -692,6 +704,74 @@ public final class MysticItemService {
             case "III" -> "tier_3";
             default -> tier.toLowerCase(Locale.ROOT);
         };
+    }
+
+    /**
+     * Farbprofil pro Rarity.
+     */
+    private String colorForRarity(EnchantDefinition.Rarity rarity) {
+        if (rarity == null) {
+            return "§7";
+        }
+        return switch (rarity) {
+            case COMMON -> "§7";      // hellgrau
+            case UNCOMMON -> "§f";    // weiß
+            case RARE -> "§b";        // hellblau
+            case EPIC -> "§5";        // violett
+            case LEGENDARY -> "§6";   // gold / orange
+        };
+    }
+
+    /**
+     * Symbolwahl nach Art des Enchants.
+     */
+    private String symbolForEnchant(EnchantDefinition def) {
+        if (def == null) {
+            return "✧";
+        }
+
+        String id = def.id().toLowerCase(Locale.ROOT);
+        String name = def.displayName().toLowerCase(Locale.ROOT);
+        EnchantEffects fx = def.effects();
+
+        // Hidden / Legacy / Cursed – Lore-Specials
+        if (id.contains("legacy") || id.contains("hidden") || id.contains("cursed")
+                || name.contains("legacy") || name.contains("versteckt")) {
+            return "✠";
+        }
+
+        if (fx != null) {
+            boolean hasHeal = fx.healPercentOnHit() != null && !fx.healPercentOnHit().isEmpty();
+            boolean hasGold = fx.goldOnKill() != null && !fx.goldOnKill().isEmpty();
+            boolean hasXp = fx.xpOnKillPercent() != null && !fx.xpOnKillPercent().isEmpty();
+            boolean hasStreak = fx.streakBonusPercent() != null && !fx.streakBonusPercent().isEmpty();
+            boolean hasBow = fx.bowExtraDamagePercent() != null && !fx.bowExtraDamagePercent().isEmpty();
+            boolean hasLastStand = fx.lastStandThresholdHearts() > 0
+                    || (fx.lastStandReductionPercent() != null && !fx.lastStandReductionPercent().isEmpty());
+
+            // Economy / Loot / XP / Streak
+            if (hasGold || hasXp || hasStreak) {
+                return "☘";
+            }
+
+            // Heilung / Sustain
+            if (hasHeal) {
+                return "♥";
+            }
+
+            // Tank / Last-Stand / Damage-Reduce
+            if (hasLastStand) {
+                return "❖";
+            }
+
+            // Offensiver Bogen-/Damage-Boost
+            if (hasBow) {
+                return "✦";
+            }
+        }
+
+        // generische „Trick“-Enchants
+        return "✧";
     }
 
     /**
