@@ -387,10 +387,12 @@ public final class MysticItemService {
             lore.addAll(enchantLore);
 
             // Glint hinzufügen, wenn Mystic-Enchants vorhanden sind
-            meta.addEnchant(Enchantment.DURABILITY, 1, true);
+            meta.addEnchant(Enchantment.UNBREAKING, 1, true);
+            meta.removeItemFlags(ItemFlag.HIDE_ENCHANTS);
         } else {
             // Glint entfernen, wenn keine Mystic-Enchants vorhanden sind
-            meta.removeEnchant(Enchantment.DURABILITY);
+            meta.removeEnchant(Enchantment.UNBREAKING);
+            meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         }
 
         meta.setLore(lore);
