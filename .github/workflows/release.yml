@@ -5,6 +5,9 @@ on:
     tags:
       - 'v*'        # z.B. v1.0.0, v1.0.1
 
+permissions:
+  contents: write   # <-- NEU: erlaubt Release/Assets zu schreiben
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -19,7 +22,6 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
-      # WICHTIG: Gradle direkt aus der Action, NICHT den Wrapper im Repo
       - name: Build with Gradle 8.7 (no wrapper)
         uses: gradle/gradle-build-action@v3
         with:
