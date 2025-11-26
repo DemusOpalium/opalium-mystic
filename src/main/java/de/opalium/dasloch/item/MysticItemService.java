@@ -675,4 +675,15 @@ public final class MysticItemService {
             default -> tier.toLowerCase(Locale.ROOT);
         };
     }
+
+    /**
+     * Name-Formatierung: Mystic-Items bekommen Prefix + Name,
+     * Legends behalten nur ihren Display-Namen.
+     */
+    private String formatItemName(LegendItemDefinition def, int tokens) {
+        if (def.kind() == ItemKind.MYSTIC) {
+            return formatPrefix(tokens) + " " + def.displayName();
+        }
+        return def.displayName();
+    }
 }
