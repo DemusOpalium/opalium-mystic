@@ -199,7 +199,7 @@ public final class MysticItemService {
         }
 
         // Überschrift dezent grau / kursiv
-        lines.add("§8§oMystische Verzauberungen:");
+        lines.add("§8§oVersiegelte Glyphen:");
 
         enchantTiers.entrySet().stream()
                 .sorted(Comparator.comparing(Map.Entry::getKey))
@@ -230,7 +230,7 @@ public final class MysticItemService {
                     }
 
                     // Symbol + Name in Rarity-Farbe, Tier dunkelgrau
-                    String headerLine = rarityColor + symbol + " " + rarityColor + plainName + " §8[" + romanTier + "]";
+                    String headerLine = "§8• " + rarityColor + symbol + " §f" + plainName + " §7[" + romanTier + "]";
                     lines.add(headerLine);
 
                     // Alle Lore-Zeilen aus der Enchant-Definition unter dem Enchant auflisten
@@ -260,11 +260,11 @@ public final class MysticItemService {
             return "§7";
         }
         return switch (rarity) {
-            case COMMON -> "§7";
-            case UNCOMMON -> "§a";
-            case RARE -> "§b";
-            case EPIC -> "§5";
-            case LEGENDARY -> "§6";
+            case COMMON -> "§7";   // gewöhnlich: grau
+            case UNCOMMON -> "§f"; // leicht hervorgehoben, aber nicht knallig
+            case RARE -> "§9";     // dunkles Blau
+            case EPIC -> "§5";     // dunkles Magenta
+            case LEGENDARY -> "§6"; // Gold
         };
     }
 
@@ -511,15 +511,15 @@ public final class MysticItemService {
 
     public String formatPrefix(int tokens) {
         if (tokens >= 8) {
-            return "§6Legendary";
+            return "§8[§6§lRelikt§8]";
         }
         if (tokens >= 5) {
-            return "§eGrand";
+            return "§8[§6Erhaben§8]";
         }
         if (tokens >= 3) {
-            return "§bRare";
+            return "§8[§9Selten§8]";
         }
-        return "§7Unenchanted";
+        return "§8[§7Ungezeichnet§8]";
     }
 
     public PluginKeys keys() {
@@ -795,3 +795,4 @@ public final class MysticItemService {
         return def.displayName();
     }
 }
+
