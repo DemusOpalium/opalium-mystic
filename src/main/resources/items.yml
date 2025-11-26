@@ -15,6 +15,10 @@ items:
       - "§7Leben: §e%lives_current%§7/§e%lives_max%"
       - "§7Seelenfragmente: §e%tokens%"
       - "%prefix_line%"
+    base-enchants:
+      lifesteal: 2       # bissig
+      executioner: 1     # macht sie zum Richtschwert
+      gold_boost: 1      # etwas Gier
 
   nightleech_bow:
     category: BOW
@@ -32,6 +36,10 @@ items:
       - "§7Leben: §e%lives_current%§7/§e%lives_max%"
       - "§7Seelenfragmente: §e%tokens%"
       - "%prefix_line%"
+    base-enchants:
+      focus: 2
+      devil_chicks: 1
+      lucky_shot: 2
 
   mystic_sword:
     category: SWORD
