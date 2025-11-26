@@ -2,11 +2,18 @@ name: DasLoch
 version: ${version}
 main: de.opalium.dasloch.DasLochPlugin
 api-version: '1.21'
+
+description: Core plugin for DasLoch mystic & legend items, well system and combat features.
 authors:
   - Opalium
+
+# Für PluginUpdater (GitHub-Integration)
+github-repo: "DemusOpalium/dasloch-plugin"
+
 softdepend:
   - Vault
   - PlaceholderAPI
+
 commands:
   dasloch:
     description: Main command for DasLoch plugin utilities
@@ -27,6 +34,18 @@ commands:
     permission: dasloch.well
 
 permissions:
+  dasloch.use:
+    description: Allows use of the /dasloch admin command
+    default: op
+
+  dasloch.legend:
+    description: Allows giving legend items with /legendgive
+    default: op
+
+  dasloch.mystic:
+    description: Allows giving mystic items with /mysticgive
+    default: op
+
   dasloch.well:
     description: Allows access to the mystic well command
     default: true
