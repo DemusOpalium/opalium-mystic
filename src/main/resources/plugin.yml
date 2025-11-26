@@ -7,8 +7,8 @@ description: Core plugin for DasLoch mystic & legend items, well system and comb
 authors:
   - Opalium
 
-# Für PluginUpdater (GitHub-Integration)
-github-repo: "DemusOpalium/dasloch-plugin"
+# wichtig für PluginUpdater:
+github-repo: "DemusOpalium/opalium-mystic"
 
 softdepend:
   - Vault
