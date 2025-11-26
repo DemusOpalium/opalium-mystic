@@ -19,9 +19,11 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
-      - name: Build with Gradle
+      # WICHTIG: Gradle direkt aus der Action, NICHT den Wrapper im Repo
+      - name: Build with Gradle 8.7 (no wrapper)
         uses: gradle/gradle-build-action@v3
         with:
+          gradle-version: 8.7
           arguments: build
 
       - name: Create GitHub Release and upload JAR
