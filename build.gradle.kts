@@ -3,7 +3,16 @@ plugins {
 }
 
 group = "de.opalium"
-version = "1.0.0"
+
+// Version automatisch aus GitHub Actions ableiten:
+// - Auf GitHub Actions ist GITHUB_RUN_NUMBER gesetzt (1,2,3,...)
+// - Lokal (IDE / kein Actions) bekommst du eine feste SNAPSHOT-Version
+val ciRunNumber = System.getenv("GITHUB_RUN_NUMBER")
+version = if (ciRunNumber != null) {
+    "1.0.$ciRunNumber"    // z.B. 1.0.96, 1.0.97 ...
+} else {
+    "1.0.0-SNAPSHOT"      // lokale Dev-Version
+}
 
 repositories {
     mavenCentral()
