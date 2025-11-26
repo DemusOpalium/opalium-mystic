@@ -7,16 +7,6 @@ import de.opalium.dasloch.integration.VaultService;
 import de.opalium.dasloch.util.PluginKeys;
 import de.opalium.dasloch.well.MysticWellService;
 import de.opalium.dasloch.well.MysticWellTier;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.StringJoiner;
-import java.util.concurrent.ThreadLocalRandom;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -29,6 +19,9 @@ import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.persistence.PersistentDataType;
+
+import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 public final class MysticItemService {
 
@@ -73,10 +66,6 @@ public final class MysticItemService {
             int baseLives = section.getInt("base-lives", 10);
             int maxLives = section.getInt("max-lives", baseLives);
             List<String> lore = section.getStringList("lore");
-            if (lore == null) {
-                lore = Collections.emptyList();
-            }
-
             Color color = null;
             ConfigurationSection dye = section.getConfigurationSection("dye-color");
             if (dye != null) {
@@ -146,7 +135,7 @@ public final class MysticItemService {
         ItemStack stack = new ItemStack(def.material());
         ItemMeta meta = stack.getItemMeta();
         if (meta == null) {
-            return new ItemStack(Material.BARRIER);
+            return stack;
         }
 
         meta.setDisplayName(formatItemName(def, 0));
@@ -166,6 +155,8 @@ public final class MysticItemService {
         meta.getPersistentDataContainer().set(keys.tokens(), PersistentDataType.INTEGER, 0);
         meta.getPersistentDataContainer().set(keys.prefix(), PersistentDataType.STRING, formatPrefix(0));
         meta.getPersistentDataContainer().set(keys.mysticTier(), PersistentDataType.STRING, "");
+        // Initial: noch keine Mystic-Enchants
+        meta.getPersistentDataContainer().set(keys.enchants(), PersistentDataType.STRING, "");
         meta.setLore(applyLore(def, def.baseLives(), def.maxLives(), 0, owner));
 
         stack.setItemMeta(meta);
@@ -189,8 +180,10 @@ public final class MysticItemService {
     }
 
     /**
-     * Baut zusätzliche Lore-Zeilen für die gespeicherten Mystic-Enchants.
-     * Zeigt für jeden Enchant: Rarity-Farbe, Name und Tier (römisch).
+     * Zusätzliche Lore-Zeilen für gespeicherte Mystic-Enchants.
+     * Format:
+     *   §8Mystische Verzauberungen:
+     *   §6✦ Demus’ Legacy §7[II]
      */
     private List<String> buildEnchantLore(Map<String, Integer> enchantTiers) {
         List<String> lines = new ArrayList<>();
@@ -198,7 +191,6 @@ public final class MysticItemService {
             return lines;
         }
 
-        // Überschrift für den Enchant-Block
         lines.add("§8Mystische Verzauberungen:");
 
         enchantTiers.entrySet().stream()
@@ -212,7 +204,6 @@ public final class MysticItemService {
                         return;
                     }
 
-                    // Rarity-Farbe bestimmen
                     String rarityColor;
                     switch (def.rarity()) {
                         case COMMON -> rarityColor = "§7";
@@ -222,7 +213,6 @@ public final class MysticItemService {
                         default -> rarityColor = "§7";
                     }
 
-                    // Tier in römische Zahl umwandeln
                     String romanTier = switch (tier) {
                         case 1 -> "I";
                         case 2 -> "II";
@@ -232,7 +222,6 @@ public final class MysticItemService {
                         default -> String.valueOf(tier);
                     };
 
-                    // ✦ Name [Tier]
                     lines.add(rarityColor + "✦ " + def.displayName() + " §7[" + romanTier + "]");
                 });
 
@@ -249,9 +238,6 @@ public final class MysticItemService {
     }
 
     public int getLives(ItemStack stack) {
-        if (stack == null) {
-            return 0;
-        }
         ItemMeta meta = stack.getItemMeta();
         if (meta == null) {
             return 0;
@@ -261,9 +247,6 @@ public final class MysticItemService {
     }
 
     public int getMaxLives(ItemStack stack) {
-        if (stack == null) {
-            return 0;
-        }
         ItemMeta meta = stack.getItemMeta();
         if (meta == null) {
             return 0;
@@ -273,9 +256,6 @@ public final class MysticItemService {
     }
 
     public int getTokens(ItemStack stack) {
-        if (stack == null) {
-            return 0;
-        }
         ItemMeta meta = stack.getItemMeta();
         if (meta == null) {
             return 0;
@@ -285,9 +265,6 @@ public final class MysticItemService {
     }
 
     public void setLives(ItemStack stack, int lives) {
-        if (stack == null) {
-            return;
-        }
         ItemMeta meta = stack.getItemMeta();
         if (meta == null) {
             return;
@@ -308,9 +285,6 @@ public final class MysticItemService {
     }
 
     public void addTokens(ItemStack stack, int delta) {
-        if (stack == null) {
-            return;
-        }
         ItemMeta meta = stack.getItemMeta();
         if (meta == null) {
             return;
@@ -323,6 +297,10 @@ public final class MysticItemService {
         refreshLore(stack, meta);
     }
 
+    /**
+     * Liest die gespeicherten Mystic-Enchants und berechnet die Token-Summe
+     * über EnchantDefinition.tokenValues.
+     */
     public int recalcTokens(ItemStack stack) {
         Map<String, Integer> enchantTiers = readEnchants(stack);
         int tokens = enchantTiers.entrySet().stream()
@@ -350,17 +328,14 @@ public final class MysticItemService {
     }
 
     public Map<String, Integer> readEnchants(ItemStack stack) {
-        Map<String, Integer> values = new HashMap<>();
-        if (stack == null) {
-            return values;
-        }
         ItemMeta meta = stack.getItemMeta();
         if (meta == null || !meta.getPersistentDataContainer()
                 .has(keys.enchants(), PersistentDataType.STRING)) {
-            return values;
+            return Collections.emptyMap();
         }
         String raw = meta.getPersistentDataContainer()
                 .get(keys.enchants(), PersistentDataType.STRING);
+        Map<String, Integer> values = new HashMap<>();
         if (raw == null || raw.isEmpty()) {
             return values;
         }
@@ -372,7 +347,6 @@ public final class MysticItemService {
                 try {
                     values.put(pair[0], Integer.parseInt(pair[1]));
                 } catch (NumberFormatException ignored) {
-                    // einfach diesen Eintrag überspringen
                 }
             }
         }
@@ -380,9 +354,6 @@ public final class MysticItemService {
     }
 
     public void writeEnchants(ItemStack stack, Map<String, Integer> enchantTiers) {
-        if (stack == null) {
-            return;
-        }
         ItemMeta meta = stack.getItemMeta();
         if (meta == null) {
             return;
@@ -399,10 +370,10 @@ public final class MysticItemService {
         refreshLore(stack, meta);
     }
 
+    /**
+     * Erneuert Basis-Lore + Mystic-Enchant-Lore + Glint.
+     */
     private void refreshLore(ItemStack stack, ItemMeta meta) {
-        if (stack == null || meta == null) {
-            return;
-        }
         String id = meta.getPersistentDataContainer()
                 .get(keys.itemId(), PersistentDataType.STRING);
         LegendItemDefinition def = definitions.get(id);
@@ -458,9 +429,6 @@ public final class MysticItemService {
     }
 
     public ItemCategory getCategory(ItemStack stack) {
-        if (stack == null) {
-            return null;
-        }
         ItemMeta meta = stack.getItemMeta();
         if (meta == null) {
             return null;
@@ -472,9 +440,6 @@ public final class MysticItemService {
     }
 
     public ItemKind getKind(ItemStack stack) {
-        if (stack == null) {
-            return null;
-        }
         ItemMeta meta = stack.getItemMeta();
         if (meta == null) {
             return null;
@@ -497,9 +462,6 @@ public final class MysticItemService {
     }
 
     public void refreshDamageable(ItemStack stack) {
-        if (stack == null) {
-            return;
-        }
         ItemMeta meta = stack.getItemMeta();
         if (meta instanceof Damageable damageable) {
             damageable.setDamage(0);
@@ -517,14 +479,7 @@ public final class MysticItemService {
     }
 
     /**
-     * Vollständiger Mystic-Roll:
-     * - prüft, ob Mystic-Item
-     * - prüft Tier-Reihenfolge
-     * - zieht Gold ab
-     * - würfelt RollResult
-     * - wendet Enchant an (applyEnchantRoll)
-     * - speichert Tier und Tokens / Prefix
-     * - aktualisiert Name und Lore
+     * Vollständiger Mystic-Roll.
      *
      * @return RollResult oder null, wenn der Roll nicht ausgeführt wurde
      */
@@ -553,8 +508,9 @@ public final class MysticItemService {
         }
 
         MysticWellService.RollResult result = wellService.roll(tier);
-        String id = meta.getPersistentDataContainer().get(keys.itemId(), PersistentDataType.STRING);
-        LegendItemDefinition definition = definitions.get(id);
+        LegendItemDefinition definition = definitions.get(
+                meta.getPersistentDataContainer().get(keys.itemId(), PersistentDataType.STRING)
+        );
         if (definition == null || definition.kind() != ItemKind.MYSTIC) {
             return null;
         }
@@ -582,15 +538,12 @@ public final class MysticItemService {
 
         final EnchantDefinition.Rarity finalRarity = rarity;
 
-        // Debug: Wie viele Enchants kennt das Registry überhaupt?
-        int totalEnchants = enchantRegistry.all().size();
+        List<EnchantDefinition> all = new ArrayList<>(enchantRegistry.all().values());
+
         plugin.getLogger().info("[MysticWell] Roll: category=" + category
                 + ", rarity=" + finalRarity
-                + ", existing=" + existing.size()
-                + ", registrySize=" + totalEnchants);
-
-        // Basis: alle bekannten Enchants
-        List<EnchantDefinition> all = new ArrayList<>(enchantRegistry.all().values());
+                + ", existingEnchants=" + existing.size()
+                + ", registrySize=" + all.size());
 
         // Kandidaten: passende Kategorie + passende Rarity
         List<EnchantDefinition> candidates = all.stream()
@@ -603,9 +556,8 @@ public final class MysticItemService {
         if (candidates.isEmpty()) {
             plugin.getLogger().warning("[MysticWell] Keine passenden Enchants für category="
                     + category + ", rarity=" + finalRarity
-                    + ". Verwende Fallback (beliebige Rarity).");
-
-            // Fallback: nur Kategorie prüfen, Rarity ignorieren
+                    + ". Fallback: ignoriere Rarity.");
+            // Fallback: nur Kategorie prüfen
             candidates = all.stream()
                     .filter(def -> def.applicable() == null
                             || def.applicable().isEmpty()
@@ -626,14 +578,12 @@ public final class MysticItemService {
         int rolledTier = Math.max(1, Math.min(rollResult.tokensAwarded(), selected.maxTier()));
 
         if (existing.containsKey(selected.id())) {
-            // vorhandenen Enchant hochstufen
             int newTier = Math.min(
                     selected.maxTier(),
                     existing.get(selected.id()) + rolledTier
             );
             existing.put(selected.id(), newTier);
         } else if (existing.size() >= 3) {
-            // wenn schon 3 Enchants drauf sind, den schwächsten buffen
             String target = existing.entrySet().stream()
                     .min(Comparator.comparingInt(Map.Entry::getValue))
                     .map(Map.Entry::getKey)
@@ -649,7 +599,6 @@ public final class MysticItemService {
                 }
             }
         } else {
-            // neuen Enchant hinzufügen
             existing.put(selected.id(), rolledTier);
         }
 
@@ -661,7 +610,6 @@ public final class MysticItemService {
             Map<String, Integer> existing,
             EnchantDefinition.Rarity rarity
     ) {
-        // Nur COMMON ist immer erlaubt, alle höheren Rarities können limitiert werden
         if (rarity == EnchantDefinition.Rarity.COMMON) {
             return false;
         }
@@ -669,7 +617,6 @@ public final class MysticItemService {
         String key = rarity.name().toLowerCase(); // "rare", "epic", "legendary", ...
         int limit = tier.rareLimits().getOrDefault(key, Integer.MAX_VALUE);
         if (limit == Integer.MAX_VALUE) {
-            // kein Limit gesetzt
             return false;
         }
 
@@ -685,12 +632,11 @@ public final class MysticItemService {
         if (rarity == null || rarity.isBlank()) {
             return EnchantDefinition.Rarity.COMMON;
         }
-        String normalized = rarity.trim().toUpperCase();
+        String normalized = rarity.trim().toUpperCase(Locale.ROOT);
         try {
-            // Erwartet Enum-Namen wie COMMON, RARE, EPIC, LEGENDARY ...
             return EnchantDefinition.Rarity.valueOf(normalized);
         } catch (IllegalArgumentException ex) {
-            // Fallback, wenn well.yml etwas Unerwartetes liefert
+            // z.B. "UNCOMMON" -> fällt zurück auf COMMON
             return EnchantDefinition.Rarity.COMMON;
         }
     }
@@ -713,7 +659,7 @@ public final class MysticItemService {
         if (tier == null) {
             return null;
         }
-        return switch (tier.toUpperCase()) {
+        return switch (tier.toUpperCase(Locale.ROOT)) {
             case "T1", "TIER_1", "1", "I" -> "I";
             case "T2", "TIER_2", "2", "II" -> "II";
             case "T3", "TIER_3", "3", "III" -> "III";
@@ -726,14 +672,7 @@ public final class MysticItemService {
             case "I" -> "tier_1";
             case "II" -> "tier_2";
             case "III" -> "tier_3";
-            default -> tier.toLowerCase();
+            default -> tier.toLowerCase(Locale.ROOT);
         };
-    }
-
-    private String formatItemName(LegendItemDefinition def, int tokens) {
-        if (def.kind() == ItemKind.MYSTIC) {
-            return formatPrefix(tokens) + " " + def.displayName();
-        }
-        return def.displayName();
     }
 }
