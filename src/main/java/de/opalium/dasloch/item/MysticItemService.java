@@ -21,6 +21,7 @@ import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -175,6 +176,57 @@ public final class MysticItemService {
         return result;
     }
 
+    /**
+     * Baut zusätzliche Lore-Zeilen für die gespeicherten Mystic-Enchants.
+     * Zeigt für jeden Enchant: Rarity-Farbe, Name und Tier (römisch).
+     */
+    private List<String> buildEnchantLore(Map<String, Integer> enchantTiers) {
+        List<String> lines = new ArrayList<>();
+        if (enchantTiers == null || enchantTiers.isEmpty()) {
+            return lines;
+        }
+
+        // Überschrift für den Enchant-Block
+        lines.add("§8Mystische Verzauberungen:");
+
+        enchantTiers.entrySet().stream()
+                .sorted(Comparator.comparing(Map.Entry::getKey))
+                .forEach(entry -> {
+                    String enchantId = entry.getKey();
+                    int tier = entry.getValue();
+
+                    EnchantDefinition def = enchantRegistry.get(enchantId);
+                    if (def == null) {
+                        return;
+                    }
+
+                    // Rarity-Farbe bestimmen
+                    String rarityColor;
+                    switch (def.rarity()) {
+                        case COMMON -> rarityColor = "§7";
+                        case RARE -> rarityColor = "§9";
+                        case EPIC -> rarityColor = "§5";
+                        case LEGENDARY -> rarityColor = "§6";
+                        default -> rarityColor = "§7";
+                    }
+
+                    // Tier in römische Zahl umwandeln
+                    String romanTier = switch (tier) {
+                        case 1 -> "I";
+                        case 2 -> "II";
+                        case 3 -> "III";
+                        case 4 -> "IV";
+                        case 5 -> "V";
+                        default -> String.valueOf(tier);
+                    };
+
+                    // ✦ Name [Tier]
+                    lines.add(rarityColor + "✦ " + def.displayName() + " §7[" + romanTier + "]");
+                });
+
+        return lines;
+    }
+
     public boolean isCustomItem(ItemStack stack) {
         if (stack == null) {
             return false;
@@ -324,7 +376,24 @@ public final class MysticItemService {
         int tokens = meta.getPersistentDataContainer()
                 .getOrDefault(keys.tokens(), PersistentDataType.INTEGER, 0);
 
-        meta.setLore(applyLore(def, lives, maxLives, tokens, null));
+        // Basis-Lore aus items.yml
+        List<String> lore = applyLore(def, lives, maxLives, tokens, null);
+
+        // Enchants lesen und zusätzliche Lore-Zeilen anhängen
+        Map<String, Integer> enchantTiers = readEnchants(stack);
+        List<String> enchantLore = buildEnchantLore(enchantTiers);
+        if (!enchantLore.isEmpty()) {
+            lore.add("");
+            lore.addAll(enchantLore);
+
+            // Glint hinzufügen, wenn Mystic-Enchants vorhanden sind
+            meta.addEnchant(Enchantment.DURABILITY, 1, true);
+        } else {
+            // Glint entfernen, wenn keine Mystic-Enchants vorhanden sind
+            meta.removeEnchant(Enchantment.DURABILITY);
+        }
+
+        meta.setLore(lore);
         meta.setDisplayName(formatItemName(def, tokens));
         stack.setItemMeta(meta);
     }
