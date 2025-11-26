@@ -534,12 +534,40 @@ public final class MysticItemService {
 
         final EnchantDefinition.Rarity finalRarity = rarity;
 
-        List<EnchantDefinition> candidates = enchantRegistry.all().values().stream()
-                .filter(def -> def.applicable().contains(category))
+        // Debug: Wie viele Enchants kennt das Registry überhaupt?
+        int totalEnchants = enchantRegistry.all().size();
+        plugin.getLogger().info("[MysticWell] Roll: category=" + category
+                + ", rarity=" + finalRarity
+                + ", existing=" + existing.size()
+                + ", registrySize=" + totalEnchants);
+
+        // Basis: alle bekannten Enchants
+        List<EnchantDefinition> all = new ArrayList<>(enchantRegistry.all().values());
+
+        // Kandidaten: passende Kategorie + passende Rarity
+        List<EnchantDefinition> candidates = all.stream()
+                .filter(def -> def.applicable() == null
+                        || def.applicable().isEmpty()
+                        || def.applicable().contains(category))
                 .filter(def -> def.rarity() == finalRarity)
                 .toList();
 
         if (candidates.isEmpty()) {
+            plugin.getLogger().warning("[MysticWell] Keine passenden Enchants für category="
+                    + category + ", rarity=" + finalRarity
+                    + ". Verwende Fallback (beliebige Rarity).");
+
+            // Fallback: nur Kategorie prüfen, Rarity ignorieren
+            candidates = all.stream()
+                    .filter(def -> def.applicable() == null
+                            || def.applicable().isEmpty()
+                            || def.applicable().contains(category))
+                    .toList();
+        }
+
+        if (candidates.isEmpty()) {
+            plugin.getLogger().severe("[MysticWell] Immer noch keine Enchant-Kandidaten! "
+                    + "Prüfe enchants.yml und EnchantRegistry-Initialisierung.");
             return;
         }
 
