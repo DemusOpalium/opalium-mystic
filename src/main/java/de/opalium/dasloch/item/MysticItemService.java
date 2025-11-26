@@ -145,7 +145,7 @@ public final class MysticItemService {
             meta.setCustomModelData(def.customModelData());
         }
 
-        // Nur Enchants verstecken – Attribute sollen sichtbar bleiben
+        // Nur Enchants verstecken – Attribute ruhig sichtbar lassen
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 
         if (meta instanceof LeatherArmorMeta leather && def.dyeColor() != null) {
@@ -188,8 +188,8 @@ public final class MysticItemService {
     /**
      * Zusätzliche Lore-Zeilen für gespeicherte Mystic-Enchants.
      * Layout:
-     *   §8§oMystische Verzauberungen:
-     *   <rarityColor><symbol> <rarityColor><Name> §8[Tier]
+     *   §8§oVersiegelte Glyphen:
+     *   §8• <rarityColor><symbol> §f<Name> §7[Tier]
      *   + optionale Extra-Lore-Zeilen aus EnchantDefinition.getLore()
      */
     private List<String> buildEnchantLore(Map<String, Integer> enchantTiers) {
@@ -260,11 +260,11 @@ public final class MysticItemService {
             return "§7";
         }
         return switch (rarity) {
-            case COMMON -> "§7";   // gewöhnlich: grau
-            case UNCOMMON -> "§f"; // leicht hervorgehoben, aber nicht knallig
-            case RARE -> "§9";     // dunkles Blau
-            case EPIC -> "§5";     // dunkles Magenta
-            case LEGENDARY -> "§6"; // Gold
+            case COMMON -> "§7";     // gewöhnlich: grau
+            case UNCOMMON -> "§f";   // leicht hervorgehoben
+            case RARE -> "§9";       // dunkles Blau
+            case EPIC -> "§5";       // dunkles Magenta
+            case LEGENDARY -> "§6";  // Gold
         };
     }
 
@@ -298,24 +298,20 @@ public final class MysticItemService {
 
         // Defensive / Tank / Shield / Guard
         if (id.contains("tank") || id.contains("shield") || id.contains("guard")
-                || id.contains("defense") || id.contains("resist")) {
+                || id.contains("defense") || id.contains("resist") || id.contains("bulwark")) {
             return "❖";
         }
 
         // Offensiv / Crit / Strike / Blood
         if (id.contains("crit") || id.contains("strike") || id.contains("bleed")
-                || id.contains("sharp") || id.contains("shark")) {
+                || id.contains("sharp") || id.contains("shark") || id.contains("executioner")) {
             return "✦";
         }
 
-        // Verflucht / Dark / Void
-        if (id.contains("curse") || id.contains("cursed") || id.contains("dark") || id.contains("void")) {
+        // Verflucht / Dark / Legacy / Hidden / Relikt
+        if (id.contains("curse") || id.contains("cursed") || id.contains("dark")
+                || id.contains("void") || id.contains("legacy") || id.contains("hidden")) {
             return "☠";
-        }
-
-        // Hidden / Legacy / Relikt
-        if (id.contains("hidden") || id.contains("legacy") || id.contains("relic")) {
-            return "✠";
         }
 
         // Fallback: generischer Kristall
@@ -393,7 +389,7 @@ public final class MysticItemService {
 
     /**
      * Liest die gespeicherten Mystic-Enchants und berechnet die Token-Summe
-     * über EnchantDefinition.tokenValues.
+     * über EnchantDefinition.tokensForTier.
      */
     public int recalcTokens(ItemStack stack) {
         Map<String, Integer> enchantTiers = readEnchants(stack);
@@ -618,7 +614,7 @@ public final class MysticItemService {
         // Enchants anwenden (schreibt auch Lore & enchants-PDC)
         applyEnchantRoll(definition.category(), result, wellTier, stack);
 
-        // Jetzt METADATA NOCH EINMAL NEU LESEN, DAMIT ENCHANTS ERHALTEN BLEIBEN
+        // Jetzt Metadaten noch einmal neu lesen, damit Enchants erhalten bleiben
         ItemMeta updatedMeta = stack.getItemMeta();
         if (updatedMeta != null) {
             PersistentDataContainer updatedPdc = updatedMeta.getPersistentDataContainer();
@@ -795,4 +791,3 @@ public final class MysticItemService {
         return def.displayName();
     }
 }
-
