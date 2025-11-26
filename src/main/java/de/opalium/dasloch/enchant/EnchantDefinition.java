@@ -17,6 +17,7 @@ import java.util.Set;
  *  - maxTier
  *  - tokenValues pro Tier
  *  - EnchantEffects (Heilung, Gold, XP, usw.)
+ *  - tierLore: Lore-Zeilen pro Tier (1..N) für Item-Anzeige
  *
  * Enthält sowohl „record-artige“ Getter (id(), rarity(), …)
  * als auch klassische getX()-Methoden und die Legacy-Methoden
@@ -52,6 +53,13 @@ public final class EnchantDefinition {
     private final String displayName;
     private final String description;
     private final List<String> lore;
+
+    /**
+     * Pro-Tier-Lore für die Item-Anzeige:
+     * key = Tier (1..N), value = Lore-Zeile (inkl. Farbcodes).
+     */
+    private final Map<Integer, String> tierLore;
+
     private final Rarity rarity;
     private final Set<ItemCategory> applicable;
     private final int maxTier;
@@ -60,6 +68,7 @@ public final class EnchantDefinition {
 
     /**
      * Vereinfachter Konstruktor ohne Beschreibung/Lore.
+     * Verwendet keine tierLore.
      */
     public EnchantDefinition(
             String id,
@@ -70,11 +79,26 @@ public final class EnchantDefinition {
             Map<Integer, Integer> tokenValues,
             EnchantEffects effects
     ) {
-        this(id, displayName, "", List.of(), rarity, applicable, maxTier, tokenValues, effects);
+        this(
+                id,
+                displayName,
+                "",
+                List.of(),
+                rarity,
+                applicable,
+                maxTier,
+                tokenValues,
+                effects,
+                null
+        );
     }
 
     /**
-     * Voller Konstruktor mit allen Feldern.
+     * Voller Konstruktor mit Beschreibung + normaler Lore,
+     * aber ohne tierLore (Kompatibilität).
+     *
+     * Parser, die noch kein tierLore kennen, können weiterhin
+     * diesen Konstruktor benutzen.
      */
     public EnchantDefinition(
             String id,
@@ -87,6 +111,38 @@ public final class EnchantDefinition {
             Map<Integer, Integer> tokenValues,
             EnchantEffects effects
     ) {
+        this(
+                id,
+                displayName,
+                description,
+                lore,
+                rarity,
+                applicable,
+                maxTier,
+                tokenValues,
+                effects,
+                null
+        );
+    }
+
+    /**
+     * Neuer Voll-Konstruktor inklusive tierLore-Map.
+     *
+     * Dieser Konstruktor ist für den erweiterten Parser gedacht,
+     * der das "lore:"-Mapping pro Tier aus enchants.yml liest.
+     */
+    public EnchantDefinition(
+            String id,
+            String displayName,
+            String description,
+            List<String> lore,
+            Rarity rarity,
+            Set<ItemCategory> applicable,
+            int maxTier,
+            Map<Integer, Integer> tokenValues,
+            EnchantEffects effects,
+            Map<Integer, String> tierLore
+    ) {
         this.id = Objects.requireNonNull(id, "id");
         this.displayName = Objects.requireNonNull(displayName, "displayName");
         this.description = description != null ? description : "";
@@ -96,6 +152,7 @@ public final class EnchantDefinition {
         this.maxTier = Math.max(1, maxTier);
         this.tokenValues = tokenValues != null ? Map.copyOf(tokenValues) : Map.of();
         this.effects = effects;
+        this.tierLore = tierLore != null ? Map.copyOf(tierLore) : Map.of();
     }
 
     // ---------------------------------------------------------------------
@@ -110,6 +167,11 @@ public final class EnchantDefinition {
     public Map<Integer, Integer> tokenValues() { return tokenValues; }
     public EnchantEffects effects() { return effects; }
 
+    /**
+     * Lore-Zeilen nach Tier.
+     */
+    public Map<Integer, String> tierLore() { return tierLore; }
+
     // ---------------------------------------------------------------------
     // Klassische Getter
     // ---------------------------------------------------------------------
@@ -122,6 +184,11 @@ public final class EnchantDefinition {
     public Set<ItemCategory> getApplicable() { return applicable; }
     public int getMaxTier() { return maxTier; }
     public Map<Integer, Integer> getTokenValues() { return tokenValues; }
+
+    /**
+     * Klassischer Getter für tierLore.
+     */
+    public Map<Integer, String> getTierLore() { return tierLore; }
 
     // ---------------------------------------------------------------------
     // Kompatibilitäts-Methoden für ältere Services
@@ -159,6 +226,17 @@ public final class EnchantDefinition {
      */
     public int tokensForTier(Integer tier) {
         return (tier == null) ? 0 : tokensForTier(tier.intValue());
+    }
+
+    /**
+     * Gibt die (optionale) Lore-Zeile für ein bestimmtes Tier zurück.
+     * Wenn keine spezifische Lore definiert ist, wird null geliefert.
+     */
+    public String loreForTier(int tier) {
+        if (tierLore.isEmpty()) {
+            return null;
+        }
+        return tierLore.get(tier);
     }
 
     // ---------------------------------------------------------------------
