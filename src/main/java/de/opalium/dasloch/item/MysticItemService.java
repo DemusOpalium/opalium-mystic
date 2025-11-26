@@ -185,15 +185,38 @@ public final class MysticItemService {
 
     /**
      * Zusätzliche Lore-Zeilen für gespeicherte Mystic-Enchants.
+     *
      * Layout:
+     *   [optional Banner]
      *   §7§oMystische Verzauberungen:
      *   <rarityColor><symbol> §7<Name> §8[Tier]
-     *   <optionale zweite Zeile aus EnchantDefinition.getLore()>
+     *     <Tier-1-Lore>
+     *     <Tier-2-Lore>
+     *     <Tier-3-Lore>
      */
     private List<String> buildEnchantLore(Map<String, Integer> enchantTiers) {
         List<String> lines = new ArrayList<>();
         if (enchantTiers == null || enchantTiers.isEmpty()) {
             return lines;
+        }
+
+        // Vor-Scan: gibt es Legendary oder Tier >= 3?
+        boolean showBanner = false;
+        for (Map.Entry<String, Integer> entry : enchantTiers.entrySet()) {
+            EnchantDefinition def = enchantRegistry.get(entry.getKey());
+            if (def == null) {
+                continue;
+            }
+            int tier = entry.getValue();
+            if (def.rarity() == EnchantDefinition.Rarity.LEGENDARY || tier >= 3) {
+                showBanner = true;
+                break;
+            }
+        }
+
+        if (showBanner) {
+            // Dezentes Ornament – kann später verändert werden
+            lines.add("§8꧁§5✠ §dVerzerrte Runen des Lochs §5✠§8꧂");
         }
 
         lines.add("§7§oMystische Verzauberungen:");
@@ -230,16 +253,32 @@ public final class MysticItemService {
                     String headerLine = rarityColor + symbol + " §7" + plainName + " §8[" + romanTier + "]";
                     lines.add(headerLine);
 
-                    // Zweite Zeile aus EnchantDefinition-Lore (falls vorhanden)
-                    List<String> extraLore = def.getLore();
-                    if (extraLore != null && !extraLore.isEmpty()) {
-                        String detail = extraLore.get(0);
-                        if (detail != null && !detail.isBlank()) {
-                            // Wenn noch keine Farbe gesetzt ist, dezent grau-kursiv davor
+                    // Tier-basierte Lore (staffelt hoch je Stufe)
+                    Map<Integer, String> tierLore = def.tierLore();
+                    if (tierLore != null && !tierLore.isEmpty()) {
+                        for (int i = 1; i <= tier; i++) {
+                            String rawLore = tierLore.get(i);
+                            if (rawLore == null || rawLore.isBlank()) {
+                                continue;
+                            }
+                            String detail = rawLore;
                             if (!detail.startsWith("§")) {
                                 detail = "§8§o" + detail;
                             }
-                            lines.add(detail);
+                            // leicht eingerückt unter der Titelzeile
+                            lines.add("  " + detail);
+                        }
+                    } else {
+                        // Fallback: erste normale Lore-Zeile, wenn keine tierLore definiert ist
+                        List<String> extraLore = def.getLore();
+                        if (extraLore != null && !extraLore.isEmpty()) {
+                            String detail = extraLore.get(0);
+                            if (detail != null && !detail.isBlank()) {
+                                if (!detail.startsWith("§")) {
+                                    detail = "§8§o" + detail;
+                                }
+                                lines.add("  " + detail);
+                            }
                         }
                     }
                 });
@@ -265,7 +304,7 @@ public final class MysticItemService {
 
     /**
      * Symbolwahl nach Enchant-Typ (heuristisch über die ID).
-     * Kann später noch feiner getuned werden.
+     * Kann später noch feiner abgestimmt werden.
      */
     private String symbolForEnchant(EnchantDefinition def) {
         String id = def.id().toLowerCase(Locale.ROOT);
