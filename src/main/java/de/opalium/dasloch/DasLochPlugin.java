@@ -1,8 +1,6 @@
 package de.opalium.dasloch;
 
 import de.opalium.dasloch.command.DasLochCommand;
-import de.opalium.dasloch.command.LegendGiveCommand;
-import de.opalium.dasloch.command.MysticGiveCommand;
 import de.opalium.dasloch.command.MysticWellCommand;
 import de.opalium.dasloch.config.EnchantsConfig;
 import de.opalium.dasloch.config.ItemsConfig;
@@ -89,33 +87,26 @@ public class DasLochPlugin extends JavaPlugin {
         // Zentrale Well-Command-Instanz für /mysticwell und /dasloch well ...
         MysticWellCommand wellCommand = new MysticWellCommand(itemService);
 
-        // /dasloch (Basis-Command mit /dasloch reload, /dasloch debug, /dasloch well …)
-        PluginCommand dasloch = getCommand("dasloch");
-        if (dasloch != null) {
-            dasloch.setExecutor(new DasLochCommand(this, itemsConfig, lifeTokenService, wellCommand));
-        }
-
-        // /legendgive – nutzt Template-System (ItemsConfig + ItemFactory)
-        PluginCommand legend = getCommand("legendgive");
-        if (legend != null) {
-            LegendGiveCommand executor = new LegendGiveCommand(itemsConfig, itemFactory);
-            legend.setExecutor(executor);
-            legend.setTabCompleter(executor);
-        }
-
-        // /mysticgive – gibt Mystic-Rohlinge aus dem Template-System
-        PluginCommand mystic = getCommand("mysticgive");
-        if (mystic != null) {
-            MysticGiveCommand executor = new MysticGiveCommand(itemsConfig, itemFactory);
-            mystic.setExecutor(executor);
-            mystic.setTabCompleter(executor);
-        }
-
-        // /mysticwell (direkter Zugriff auf den Brunnen – alte MysticItemService-Schiene)
+        // /mysticwell (Spieler-Zugriff auf den Brunnen)
         PluginCommand well = getCommand("mysticwell");
         if (well != null) {
             well.setExecutor(wellCommand);
             well.setTabCompleter(wellCommand);
+        }
+
+        // /dasloch (Basis-Command mit reload, debug, well, legend, mystic)
+        PluginCommand dasloch = getCommand("dasloch");
+        if (dasloch != null) {
+            DasLochCommand executor = new DasLochCommand(
+                    this,
+                    itemsConfig,
+                    lifeTokenService,
+                    wellCommand,
+                    itemFactory
+            );
+            dasloch.setExecutor(executor);
+            // Optional: Tab-Completer, wenn später benötigt
+            // dasloch.setTabCompleter(executor);
         }
     }
 
