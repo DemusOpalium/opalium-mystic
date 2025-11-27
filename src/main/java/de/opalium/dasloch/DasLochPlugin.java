@@ -95,23 +95,23 @@ public class DasLochPlugin extends JavaPlugin {
             dasloch.setExecutor(new DasLochCommand(this, itemsConfig, lifeTokenService, wellCommand));
         }
 
-        // /legendgive – erwartet MysticItemService
+        // /legendgive – nutzt Template-System (ItemsConfig + ItemFactory)
         PluginCommand legend = getCommand("legendgive");
         if (legend != null) {
-            LegendGiveCommand executor = new LegendGiveCommand(itemService);
+            LegendGiveCommand executor = new LegendGiveCommand(itemsConfig, itemFactory);
             legend.setExecutor(executor);
             legend.setTabCompleter(executor);
         }
 
-        // /mysticgive – erwartet ebenfalls MysticItemService
+        // /mysticgive – gibt Mystic-Rohlinge aus dem Template-System
         PluginCommand mystic = getCommand("mysticgive");
         if (mystic != null) {
-            MysticGiveCommand executor = new MysticGiveCommand(itemService);
+            MysticGiveCommand executor = new MysticGiveCommand(itemsConfig, itemFactory);
             mystic.setExecutor(executor);
             mystic.setTabCompleter(executor);
         }
 
-        // /mysticwell (direkter Zugriff auf den Brunnen)
+        // /mysticwell (direkter Zugriff auf den Brunnen – alte MysticItemService-Schiene)
         PluginCommand well = getCommand("mysticwell");
         if (well != null) {
             well.setExecutor(wellCommand);
