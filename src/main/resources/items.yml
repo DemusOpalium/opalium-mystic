@@ -15,6 +15,19 @@ items:
     category: SWORD
     type: MYSTIC
     material: DIAMOND_SWORD
+
+    # Rohling-Zustand (dormant)
+    display-name-dormant: "§7Verhüllte Bruchklinge"
+    custom-model-data-dormant: 1000
+    lore-dormant:
+      - "§8Ein schwerer Splitter, dessen Licht sich weigert, ganz zu dir zu gehören."
+      - "§8Zwischen den Rissen lauert etwas, das dich prüfend mustert – und schweigt."
+      - ""
+      - "§8Leben: §7%lives_current%§8/§7%lives_max%"
+      - "§8Seelenfragmente: §7%tokens%"
+      - "§8%prefix_line%"
+
+    # Erwachter Zustand (heute aktiv)
     display-name: "§aSmaragdene Bruchklinge"
     custom-model-data: 1001
     base-lives: 45
@@ -32,6 +45,20 @@ items:
     category: BOW
     type: MYSTIC
     material: BOW
+
+    # Rohling-Zustand
+    display-name-dormant: "§7Verhüllter Nachtschlund"
+    custom-model-data-dormant: 1001
+    lore-dormant:
+      - "§8Ein stummer Bogen, dessen Sehne sich anfühlt, als hätte sie das Schreien verlernt."
+      - "§8Wer ihn spannt, spürt nur ein lauerndes Lauschen im Dunkel – noch ohne Stimme."
+      - ""
+      - "꧁§3§n~ ─ ─ ─ ─ ─ ~╰·╯~ ─ ─ ─ ─ ─ ~§3§n꧂"
+      - "§8Leben: §7%lives_current%§8/§7%lives_max%"
+      - "§8Seelenfragmente: §7%tokens%"
+      - "§8%prefix_line%"
+
+    # Erwachter Zustand
     display-name: "§5Nachtschlund-Bogen"
     custom-model-data: 1002
     base-lives: 40
@@ -49,6 +76,19 @@ items:
     category: SWORD
     type: MYSTIC
     material: DIAMOND_SWORD
+
+    # Rohling-Zustand
+    display-name-dormant: "§7Verhüllte Rissklinge"
+    custom-model-data-dormant: 1100
+    lore-dormant:
+      - "§8Ein dumpfer Stahl, in dem nur manchmal ein blasser Schimmer aufflackert."
+      - "§8Wenn du ihn drehst, scheint ein Gedanke aufzusteigen – und versickert wieder."
+      - ""
+      - "§8Leben: §7%lives_current%§8/§7%lives_max%"
+      - "§8Seelenfragmente: §7%tokens%"
+      - "§8%prefix_line%"
+
+    # Erwachter Zustand
     display-name: "§dRissklinge des Flüsterns"
     custom-model-data: 1101
     base-lives: 30
@@ -66,6 +106,20 @@ items:
     category: PANTS
     type: MYSTIC
     material: DIAMOND_LEGGINGS
+
+    # Rohling-Zustand
+    display-name-dormant: "§7Verstaubte Schachtplatten"
+    custom-model-data-dormant: 1101
+    lore-dormant:
+      - "§8Schwere Platten, stumpf und stumm, mit Staub aus Schächten, die niemand mehr benennt."
+      - "§8Die Kratzer darin wirken wie Worte, denen ihr Echo genommen wurde."
+      - ""
+      - "꧁§2§l║═║═║═║═║✞═║═║═║═║§2§l꧂"
+      - "§8Leben: §7%lives_current%§8/§7%lives_max%"
+      - "§8Seelenfragmente: §7%tokens%"
+      - "§8%prefix_line%"
+
+    # Erwachter Zustand
     display-name: "§dSchachtläufer-Beinplatten"
     custom-model-data: 1102
     base-lives: 35
@@ -83,6 +137,20 @@ items:
     category: PANTS      # teilt sich den Defensiv-Pool mit Hosen
     type: MYSTIC
     material: DIAMOND_HELMET
+
+    # Rohling-Zustand
+    display-name-dormant: "§7Verhüllter Leerenhelm"
+    custom-model-data-dormant: 1200
+    lore-dormant:
+      - "§8Ein leerer Helm, in dessen Innerem das Licht sofort zu erlöschen scheint."
+      - "§8Wenn du ihn anhebst, klingt die Welt für einen Herzschlag lang ein Stück weiter weg."
+      - ""
+      - "꧁§2§l║═║═║═║═║✞═║═║═║═║§2§l꧂"
+      - "§8Leben: §7%lives_current%§8/§7%lives_max%"
+      - "§8Seelenfragmente: §7%tokens%"
+      - "§8%prefix_line%"
+
+    # Erwachter Zustand
     display-name: "§5Leerenfluch-Helm"
     custom-model-data: 1201
     base-lives: 30
@@ -100,6 +168,20 @@ items:
     category: PANTS      # defensive Kategorie
     type: MYSTIC
     material: DIAMOND_CHESTPLATE
+
+    # Rohling-Zustand
+    display-name-dormant: "§7Verstummte Brustplatte"
+    custom-model-data-dormant: 1201
+    lore-dormant:
+      - "§8Eine kalte Platte, unter der es seltsam still bleibt – selbst, wenn dein Herz rast."
+      - "§8Man hat das Gefühl, als warte darunter ein anderer Schlag darauf, zu erwachen."
+      - ""
+      - "꧁§2§l║═║═║═║═║✞═║═║═║═║§2§l꧂"
+      - "§8Leben: §7%lives_current%§8/§7%lives_max%"
+      - "§8Seelenfragmente: §7%tokens%"
+      - "§8%prefix_line%"
+
+    # Erwachter Zustand
     display-name: "§cHerzkäfig-Brustplatte"
     custom-model-data: 1202
     base-lives: 40
@@ -117,6 +199,20 @@ items:
     category: PANTS
     type: MYSTIC
     material: DIAMOND_LEGGINGS
+
+    # Rohling-Zustand
+    display-name-dormant: "§7Vergrabene Gamaschen"
+    custom-model-data-dormant: 1202
+    lore-dormant:
+      - "§8Schwere Gamaschen, deren Gewicht sich anfühlt, als würdest du schon halb im Boden stecken."
+      - "§8Bei jedem Schritt scheint der Untergrund einen Moment zu zögern, dich wieder loszulassen."
+      - ""
+      - "꧁§2§l║═║═║═║═║✞═║═║═║═║§2§l꧂"
+      - "§8Leben: §7%lives_current%§8/§7%lives_max%"
+      - "§8Seelenfragmente: §7%tokens%"
+      - "§8%prefix_line%"
+
+    # Erwachter Zustand
     display-name: "§8Grabrand-Gamaschen"
     custom-model-data: 1203
     base-lives: 35
@@ -134,6 +230,20 @@ items:
     category: PANTS
     type: MYSTIC
     material: DIAMOND_BOOTS
+
+    # Rohling-Zustand
+    display-name-dormant: "§7Verflachte Fallstiefel"
+    custom-model-data-dormant: 1203
+    lore-dormant:
+      - "§8Stiefel, in denen jeder Schritt dumpfer klingt, als wäre der Boden weiter weg als sonst."
+      - "§8Ab und zu hörst du ein zweites, leiseres Auftreten – wie ein Schatten, der noch übt."
+      - ""
+      - "꧁§2§l║═║═║═║═║✞═║═║═║═║§2§l꧂"
+      - "§8Leben: §7%lives_current%§8/§7%lives_max%"
+      - "§8Seelenfragmente: §7%tokens%"
+      - "§8%prefix_line%"
+
+    # Erwachter Zustand
     display-name: "§dEchofall-Stiefel"
     custom-model-data: 1204
     base-lives: 30
@@ -151,6 +261,20 @@ items:
     category: SWORD
     type: MYSTIC
     material: DIAMOND_SWORD
+
+    # Rohling-Zustand
+    display-name-dormant: "§7Splitterte Chronik"
+    custom-model-data-dormant: 1300
+    lore-dormant:
+      - "§8Eine Klinge, in der feine Linien wie abgebrochene Randnotizen verlaufen."
+      - "§8Die Geschichte darin scheint noch zu entscheiden, ob sie überhaupt erzählt werden will."
+      - ""
+      - "꧁§f§l✦◆✦◆✦◆✦◆❈◆✦◆✦◆✦◆§f§l꧂"
+      - "§8Leben: §7%lives_current%§8/§7%lives_max%"
+      - "§8Seelenfragmente: §7%tokens%"
+      - "§8%prefix_line%"
+
+    # Erwachter Zustand
     display-name: "§9Splitterchronik-Klinge"
     custom-model-data: 1301
     base-lives: 35
@@ -168,6 +292,20 @@ items:
     category: SWORD
     type: MYSTIC
     material: DIAMOND_AXE
+
+    # Rohling-Zustand
+    display-name-dormant: "§7Verstumpfte Bruchaxt"
+    custom-model-data-dormant: 1301
+    lore-dormant:
+      - "§8Eine schwere Axt, deren Kerben eher nach alten Fehlern als nach Ruhm aussehen."
+      - "§8Sie wirkt, als hielte sie den Schlag noch zurück – nur um ihn später doppelt zu fordern."
+      - ""
+      - "꧁§c§l▬▬▬▬▬▬▬▬♠♠♠▬▬▬▬▬▬▬▬§c§l꧂"
+      - "§8Leben: §7%lives_current%§8/§7%lives_max%"
+      - "§8Seelenfragmente: §7%tokens%"
+      - "§8%prefix_line%"
+
+    # Erwachter Zustand
     display-name: "§4Schädelbruch-Axt"
     custom-model-data: 1302
     base-lives: 35
@@ -185,6 +323,20 @@ items:
     category: BOW
     type: MYSTIC
     material: CROSSBOW
+
+    # Rohling-Zustand
+    display-name-dormant: "§7Verhüllte Rissarmbrust"
+    custom-model-data-dormant: 1302
+    lore-dormant:
+      - "§8Eine schwere Armbrust, deren Schiene nur ein dumpfes, mattes Flimmern zeigt."
+      - "§8Geladene Bolzen wirken, als würden sie sich das Ziel noch offenhalten."
+      - ""
+      - "꧁§3§n~ ─ ─ ─ ─ ─ ~╰·╯~ ─ ─ ─ ─ ─ ~§3§n꧂"
+      - "§8Leben: §7%lives_current%§8/§7%lives_max%"
+      - "§8Seelenfragmente: §7%tokens%"
+      - "§8%prefix_line%"
+
+    # Erwachter Zustand
     display-name: "§5Rissbolzen-Armbrust"
     custom-model-data: 1303
     base-lives: 38
