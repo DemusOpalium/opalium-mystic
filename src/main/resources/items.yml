@@ -1,4 +1,16 @@
 items:
+  # -------------------------------------------------
+  # Trenner-Legende:
+  #   [O1] Mystic Offense (SWORD/AXE):
+  #        ꧁§c§l▬▬▬▬▬▬▬▬♠♠♠▬▬▬▬▬▬▬▬§c§l꧂
+  #   [R1] Mystic Ranged (BOW/CROSSBOW):
+  #        ꧁§3§n~ ─ ─ ─ ─ ─ ~╰☆╮~ ─ ─ ─ ─ ─ ~§3§n꧂
+  #   [D1] Mystic Defense (PANTS-Pool: Helm/Chest/Legs/Boots):
+  #        ꧁§2§l║═║═║═║═║✞═║═║═║═║§2§l꧂
+  #   [S1] Mystic Chronik/Splitter (Sonderwaffe):
+  #        ꧁§f§l✦◆✦◆✦◆✦◆❈◆✦◆✦◆✦◆§f§l꧂
+  # -------------------------------------------------
+
   emerald_forge_blade:
     category: SWORD
     type: MYSTIC
@@ -11,7 +23,7 @@ items:
       - "§7Eine Klinge, als hätte jemand einen Stern im Stein erstickt."
       - "§7Grüne Risse flimmern darin, als würden sie leise weiteratmen."
       - ""
-      - "꧁§4§l▲▼▲▼▲▼▲▼⚝§6§n▼▲▼▲▼▲▼▲§4§l꧂"
+      - "꧁§c§l▬▬▬▬▬▬▬▬♠♠♠▬▬▬▬▬▬▬▬§c§l꧂" # [O1] Mystic Offense
       - "§7Leben: §e%lives_current%§7/§e%lives_max%"
       - "§7Seelenfragmente: §e%tokens%"
       - "%prefix_line%"
@@ -28,7 +40,7 @@ items:
       - "§7Der Schaft wirkt staubtrocken, doch die Sehne zittert wie ein verschluckter Schrei."
       - "§7Wer ihn spannt, spürt, wie etwas Unsichtbares im Dunkeln dagegenhält."
       - ""
-      - "꧁§3§n~ ─ ─ ─ ─ ─ ~╰☆╮~ ─ ─ ─ ─ ─ ~§3§n꧂"
+      - "꧁§3§n~ ─ ─ ─ ─ ─ ~╰☆╮~ ─ ─ ─ ─ ─ ~§3§n꧂" # [R1] Mystic Ranged
       - "§7Leben: §e%lives_current%§7/§e%lives_max%"
       - "§7Seelenfragmente: §e%tokens%"
       - "%prefix_line%"
@@ -45,7 +57,7 @@ items:
       - "§7Wenn du die Klinge drehst, wandert ein blasser Schimmer wie ein Gedanke über den Stahl."
       - "§7Ab und zu scheint jemand deinen Namen im Metall zu flüstern – nur wenn du allein bist."
       - ""
-      - "꧁§5◤◥◤◥◤◥◤◥⚚◤◥◤◥◤◥◤◥§5꧂"
+      - "꧁§c§l▬▬▬▬▬▬▬▬♠♠♠▬▬▬▬▬▬▬▬§c§l꧂" # [O1] Mystic Offense
       - "§7Leben: §e%lives_current%§7/§e%lives_max%"
       - "§7Seelenfragmente: §e%tokens%"
       - "%prefix_line%"
@@ -62,7 +74,7 @@ items:
       - "§7Diamantplatten, innen fein zerkratzt, als hätte jemand im Fallen Gebete eingeritzt."
       - "§7Alter Schachtdampf klebt in den Fugen und weigert sich, ganz zu verfliegen."
       - ""
-      - "꧁§2§m── ── ── ── ──✞── ── ── ── ──§2§m꧂"
+      - "꧁§2§l║═║═║═║═║✞═║═║═║═║§2§l꧂" # [D1] Mystic Defense
       - "§7Leben: §e%lives_current%§7/§e%lives_max%"
       - "§7Seelenfragmente: §e%tokens%"
       - "%prefix_line%"
@@ -79,7 +91,7 @@ items:
       - "§7Innen bleibt er schwarz, egal wie viel Licht du hineinpresst."
       - "§7Unter dem Helm klingt die Welt, als hätte jemand die Lautstärke ein Stück zu weit heruntergedreht."
       - ""
-      - "꧁§1§m│││││││││⛧┼┼┼§1§m│││││││││꧂"
+      - "꧁§2§l║═║═║═║═║✞═║═║═║═║§2§l꧂" # [D1] Mystic Defense
       - "§7Leben: §e%lives_current%§7/§e%lives_max%"
       - "§7Seelenfragmente: §e%tokens%"
       - "%prefix_line%"
@@ -96,7 +108,7 @@ items:
       - "§7Zwischen den Rissen dieser Platte flimmert etwas im Takt deines eigenen Pulses."
       - "§7Wer sie trägt, schwört, hin und wieder ein fremdes Herz darunter schlagen zu fühlen."
       - ""
-      - "꧁§2§l║═║═║═║═║✞═║═║═║═║§2§l꧂"
+      - "꧁§2§l║═║═║═║═║✞═║═║═║═║§2§l꧂" # [D1] Mystic Defense
       - "§7Leben: §e%lives_current%§7/§e%lives_max%"
       - "§7Seelenfragmente: §e%tokens%"
       - "%prefix_line%"
@@ -113,7 +125,7 @@ items:
       - "§7Der Stahl knirscht leise, als würdest du ständig über Kies und alt gewordene Knochen laufen."
       - "§7Jeder Schritt wirft für einen Herzschlag einen Schatten mehr, als du eigentlich hast."
       - ""
-      - "꧁§7─ ─ ─ ─ ─ ─ ─ ─⛧┼┼┼┼§7─ ─ ─ ─ ─ ─ ─ ─꧂"
+      - "꧁§2§l║═║═║═║═║✞═║═║═║═║§2§l꧂" # [D1] Mystic Defense
       - "§7Leben: §e%lives_current%§7/§e%lives_max%"
       - "§7Seelenfragmente: §e%tokens%"
       - "%prefix_line%"
@@ -130,7 +142,7 @@ items:
       - "§7Jeder Sprung klingt, als würdest du tiefer fallen, als der Boden je zulassen dürfte."
       - "§7Manchmal hörst du Schritte im eigenen Rhythmus hinter dir, obwohl dort niemand geht."
       - ""
-      - "꧁§b▬▬▬▬⚝▬▬▬▬▬§a⚝▬▬▬▬▬⚝▬▬▬▬꧂"
+      - "꧁§2§l║═║═║═║═║✞═║═║═║═║§2§l꧂" # [D1] Mystic Defense
       - "§7Leben: §e%lives_current%§7/§e%lives_max%"
       - "§7Seelenfragmente: §e%tokens%"
       - "%prefix_line%"
@@ -147,7 +159,7 @@ items:
       - "§7Feine Linien im Stahl wirken wie eingeritzte Randnotizen vergessener Gefechte."
       - "§7Beim Schwung steigen alte Duelle kurz durch deinen Arm zurück in die Klinge."
       - ""
-      - "꧁§f§l✦◆✦◆✦◆✦◆❈◆✦◆✦◆✦◆§f§l꧂"
+      - "꧁§f§l✦◆✦◆✦◆✦◆❈◆✦◆✦◆✦◆§f§l꧂" # [S1] Chronik/Sonderwaffe
       - "§7Leben: §e%lives_current%§7/§e%lives_max%"
       - "§7Seelenfragmente: §e%tokens%"
       - "%prefix_line%"
@@ -164,7 +176,7 @@ items:
       - "§7Die Schneide trägt stumpfe Kerben, jede davon fühlt sich an wie ein abgerissener Schlag."
       - "§7In der Stille wirkt es, als würde etwas in der Axt darauf warten, dass du endlich wieder triffst."
       - ""
-      - "꧁§c§l▬▬▬▬▬▬▬▬♠♠♠▬▬▬▬▬▬▬▬§c§l꧂"
+      - "꧁§c§l▬▬▬▬▬▬▬▬♠♠♠▬▬▬▬▬▬▬▬§c§l꧂" # [O1] Mystic Offense
       - "§7Leben: §e%lives_current%§7/§e%lives_max%"
       - "§7Seelenfragmente: §e%tokens%"
       - "%prefix_line%"
@@ -181,7 +193,7 @@ items:
       - "§7Zwischen Sehne und Schiene flimmert ein schmaler Spalt, der kein Licht zu kennen scheint."
       - "§7Geladene Bolzen flackern einen Herzschlag lang, als wären sie kurz woanders gewesen – und ungern zurück."
       - ""
-      - "꧁§9§m║║═════════════❇║═════════════║║§9§m꧂"
+      - "꧁§3§n~ ─ ─ ─ ─ ─ ~╰☆╮~ ─ ─ ─ ─ ─ ~§3§n꧂" # [R1] Mystic Ranged
       - "§7Leben: §e%lives_current%§7/§e%lives_max%"
       - "§7Seelenfragmente: §e%tokens%"
       - "%prefix_line%"
