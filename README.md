@@ -1,4 +1,5 @@
 
+
 ---
 
 <p align="center">
@@ -6,108 +7,111 @@
 </p>
 
 <h1 align="center">DasLoch – Mystic Item Framework</h1>
-<p align="center"><strong>Mystic Items • Custom Enchants • Mystic Well • Token & Life System</strong></p>
+<p align="center"><strong>Mystic Items • Eigene Verzauberungen • Mystic-Brunnen • Token- & Life-System</strong></p>
 <p align="center">PaperMC 1.21.10 • Java 21 • Vault Economy • Opalium Haven</p>
 
 ---
 
 ## ⭐ Überblick
 
-**DasLoch** ist ein modulares, vollständig konfigurierbares Item-Framework für
-**Opalium Haven (Paper 1.21.10)**.
+**DasLoch** ist ein modulares Item-Framework für den Server **Opalium Haven**.
+Es erweitert Minecraft um ein vollständig eigenes System für **Mystic Items**, **Custom Enchants**, **Token-Rolls**, ein **Life-System** und einen mehrstufigen **Mystic-Brunnen**.
 
-Das Plugin erweitert Minecraft um ein vollständiges **Mystic-Item-Ökosystem**, bestehend aus:
+Der gesamte Funktionsumfang wird über YML-Dateien gesteuert:
 
-* **Mystic Items** (Rohlinge, Upgrades, Token)
-* **Custom-Enchant-System**
-* **Token-basierter Mystic Well (Tier I–III)**
-* **Life-System pro Item**
-* **komplett konfigurierbare Items, Enchants und Well-Tiers**
-* **Integration mit NPC-Shops und DeluxeMenus / zMenu**
+* `items.yml` – definiert alle Mystic-Rohlinge
+* `enchants.yml` – definiert alle Custom-Verzauberungen
+* `well.yml` – konfiguriert Tier I–III Rolls, Chancen & Kosten
+* `config.yml` – globale Einstellungen
 
-Die gesamte Item-Logik, Enchants, Token-Werte und Rollen sind vollständig in YML-Dateien steuerbar
-(`items.yml`, `enchants.yml`, `well.yml`).
-
+Das Plugin ist **einsatzbereit**, aber offiziell noch **ALPHA**, da das Legend-Item-System noch nicht fertiggestellt wurde.
 
 ---
 
-## 🎯 Features
+## 🎯 Hauptfunktionen
 
 ### 🗡️ Mystic Items (Rohlinge & Upgrades)
 
-Mystic-Items sind vollständig konfigurierbare Spezialwaffen:
+Mystic-Items sind vollständig konfigurierbare Spezial-Items:
 
-* besitzen **Token-Kosten**, **Tier**, **Lives**, **Enchant-Pools**
-* kommen **ungeprägt (0 Tokens)** aus Shops / Commands
-* können über den **Mystic Well** hochgerollt werden
-* funktionieren in allen Item-Slots (Swords, Axe, Bow, Armor)
+* besitzen **Token-Kosten**, **Tier**, **Lives** und **eigenen Enchant-Pool**
+* starten immer **ungeprägt (0 Tokens)**
+* werden durch den **Mystic-Brunnen** aufgewertet
+* existieren für:
 
-Mystic-Items werden in `items.yml` definiert.
+  * Schwerter
+  * Äxte
+  * Bögen / Armbrüste
+  * Rüstungen (Helm, Brust, Legs, Boots)
+
+Definition aller Items:
+**`resources/items.yml`**
 
 ---
 
 ### ✨ Custom-Enchants
 
-DasLoch besitzt ein eigenes Enchant-Framework:
+Das Plugin besitzt ein eigenes, serverseitiges Enchant-System:
 
-* jede Mystic-Waffe nutzt einen individuellen **Enchant-Pool**
 * Enchants besitzen:
 
-  * **Rarity**
+  * **Seltenheit (Rarity)**
   * **maxTier**
-  * **Token-Costs pro Upgrade**
-  * **Lore-Effekte**
-* alle Enchants werden in `enchants.yml` definiert
+  * **Token-Kosten pro Stufe**
+  * **Effekte & Lore**
+* Mystic-Items können nur Enchants aus ihrem **Enchantment-Pool** erhalten
+* Vanilla-Verzauberungen sind unabhängig davon
 
+Config-Datei:
+**`resources/enchants.yml`**
 
-Das Enchant-System ist **serverseitig** und unabhängig von Vanilla-Enchants.
 
 ---
 
-### ⚙️ Mystic Well (Tier I–III)
+### ⚙️ Mystic-Brunnen (Tier I–III)
 
-Das Herzstück des Plugins.
+Der Mystic-Brunnen ist das Herzstück von *DasLoch*.
 
-Der Mystic Well:
+Er ermöglicht das **Roll-System**:
 
-* rollt Mystic-Items auf Basis ihres Enchant-Pools
-* besitzt **3 Tiers** (I, II, III)
-* Tier bestimmt:
+* **Tier I** – günstige Einstiegs-Rolls
+* **Tier II** – bessere Enchants, teurer
+* **Tier III** – Endgame-Rolls, höchste Rarity-Chancen
 
-  * Wahrscheinlichkeit
-  * Token-Cost
-  * Rarity-Chance
-* alle Werte werden in `well.yml` konfiguriert
+Jede Stufe hat:
 
-Jede Roll-Stufe entspricht einem echten Progressions-Step.
+* eigene Token-Kosten
+* eigene Rarity-Verteilungen
+* eigene Wahrscheinlichkeiten
 
-**Tiers:**
+Konfiguration:
+**`resources/well.yml`**
 
-| Tier    | Beschreibung                                   |
-| ------- | ---------------------------------------------- |
-| **I**   | Start-Rolls, günstiger, niedrige Rarity-Chance |
-| **II**  | Mid-Rolls, höhere Qualität, teurer             |
-| **III** | Endgame-Rolls, maximale Rarity-Chancen         |
+Der Brunnen kann per **Menu (zMenu/DeluxeMenus)** oder **Command** genutzt werden.
 
 ---
 
 ### ❤️ Life-System
 
-Jedes Mystic-Item besitzt:
+Mystic-Items besitzen:
 
-* **maxLives**
-* **currentLives**
-* **Life Tokens** zum Reparieren
+* **maxLives** (z. B. 10)
+* **currentLives** (nimmt durch Nutzung / Kämpfe ab)
+* Lebensreparatur nur durch **Life Tokens**
 
-Lives werden in den **PDC-Tags** gespeichert und über das `LifeTokenService` verwaltet.
+Lives werden über PDC gespeichert und durch den `LifeTokenService` verwaltet.
 
 ---
 
-### 📦 Rohling-Shops (zMenu / DeluxeMenus / NPC)
+### 📦 Shops & Menüs (zMenu, DeluxeMenus, NPC)
 
-DasLoch ist so designed, dass Shops extrem einfach eingebunden werden können:
+Das Plugin ist vollständig kompatibel mit:
 
-#### Shop per zMenu / DeluxeMenus
+* **zMenu**
+* **DeluxeMenus**
+* **Citizens NPCs**
+
+Ein Shop-Eintrag für Mystic-Rohlinge:
 
 ```yml
 actions:
@@ -119,41 +123,40 @@ actions:
       - "eco take %player% 550"
 ```
 
-#### Shop per Citizens-NPC
+NPC-Beispiel:
 
 ```mc
-/npc command add --console dasloch mystic mystic_axe_sunder
+/npc command add --console dasloch mystic emerald_forge_blade
 ```
-
-Das Plugin ist 100% menu-kompatibel.
 
 ---
 
 ### 👑 Legend Items (geplant)
 
-Legend-Items werden erst verfügbar, wenn ein Mystic-Item vollständig:
+Legend-Items sind bereits im Code vorbereitet, jedoch noch **nicht finalisiert**.
 
-* **maximales Tier**
-* **alle Enchants**
-* **komplett gelevelt**
+Sie sollen entstehen, wenn:
 
-… erreicht hat.
-Das System ist **implementiert aber noch nicht aktiviert** (ALPHA-Status).
+* ein Mystic-Item auf maximaler Stufe ist
+* alle Enchants besitzt
+* alle Token vollständig ausgeprägt sind
+
+Aktuell deaktiviert – **ALPHA-Status**.
 
 ---
 
-## 📂 Dateistruktur
+## 📂 Projektstruktur
 
 ```
 src/
 ├── main/java/de/opalium/dasloch/
-│   ├── command/       # Commands (legendgive, mysticgive, well, reload)
-│   ├── config/        # Items, Enchants, Well Config Loader
-│   ├── enchant/       # Enchant registry + definition system
-│   ├── item/          # MysticItemService, ItemFactory, PDC handler
-│   ├── listener/      # Combat, lifecycle, item interactions
-│   ├── service/       # Token, Life, EnchantParser
-│   ├── well/          # MysticWellService, Roll logic
+│   ├── command/       # Commands (mysticgive, legendgive, well, reload)
+│   ├── config/        # Laden und Validieren der YML-Dateien
+│   ├── enchant/       # Enchant-Registry, Wirkungen, Definition
+│   ├── item/          # MysticItemService, ItemFactory, Token/Life-Handling
+│   ├── listener/      # Kampf & Item Lifecycle Listener
+│   ├── service/       # Parser, Token, Life, Verarbeitung
+│   ├── well/          # MysticWellService + Roll-Logik (Tier I–III)
 │   └── DasLochPlugin.java
 └── main/resources/
     ├── items.yml
@@ -173,39 +176,39 @@ cd dasloch-plugin
 ./gradlew build
 ```
 
-Das fertige JAR findest du unter:
+Das fertige Plugin befindet sich in:
 
 ```
 build/libs/dasloch-plugin.jar
 ```
 
-Voraussetzungen:
+**Benötigt:**
 
-* **Java 21**
-* **Paper 1.21.10**
-* **Vault + Economy Plugin**
+* Java 21
+* Paper 1.21.10
+* Vault + Economy-Plugin (EssentialsX empfohlen)
 
 ---
 
-## 🧱 Commands
+## 🧱 Befehle
 
-### 📌 Mystic Items
+### Mystic Items
 
 ```
-/mysticgive <id> <player>
+/mysticgive <id> <spieler>
 ```
 
 Gibt einen Mystic-Rohling aus `items.yml`.
 
-### 📌 Legend Items
+### Legend Items
 
 ```
-/legendgive <id> <player>
+/legendgive <id> <spieler>
 ```
 
-Noch ALPHA – nur intern für Dev-Tests.
+(ALPHA – nur für Tests)
 
-### 📌 Mystic Well
+### Mystic-Brunnen
 
 ```
 /dasloch well roll I
@@ -213,9 +216,7 @@ Noch ALPHA – nur intern für Dev-Tests.
 /dasloch well roll III
 ```
 
-Rollt das Item in der Hand.
-
-### 📌 Reload (Config)
+### Reload
 
 ```
 /dasloch reload
@@ -225,16 +226,16 @@ Rollt das Item in der Hand.
 
 ## 🔧 Rechte (LuckPerms)
 
-### Für Spieler (Default)
+### Spieler / Default
 
 ```
 dasloch.use
 zmenu.open.mystic_brunnen
 ```
 
-Damit kann jeder den Brunnen nutzen (Economy-Check kommt aus `well.yml`).
+Damit kann jeder Spieler den Brunnen nutzen, wenn er genug Geld besitzt.
 
-### Für Admins
+### Administratoren
 
 ```
 dasloch.mystic.give
@@ -244,54 +245,49 @@ dasloch.reload
 
 ---
 
-## ⚙️ API (Java)
+## ⚙️ Java-API (Kurz)
 
 ```java
 MysticItem item = itemFactory.createMystic("mystic_sword");
-mysticItemService.applyTokenCost(item);
 
 int lives = lifeTokenService.getLives(stack);
-Map<String, Integer> ench = enchantParser.readEnchantLevels(stack);
+Map<String, Integer> enchants = enchantParser.readEnchantLevels(stack);
 
-MysticWellService.RollResult roll =
-        mysticWellService.roll(player, stack, MysticWellService.Tier.THREE);
+MysticWellService.RollResult result =
+    mysticWellService.roll(player, stack, MysticWellService.Tier.THREE);
 ```
 
-Alle Services sind sauber im Plugin registriert und über DI abrufbar.
+Die Services können direkt über den Plugin-Context bezogen werden.
 
 ---
 
 ## 🧩 Erweiterbarkeit
 
-Das Framework ist modular und erlaubt:
+Das Framework unterstützt:
 
-* neue Mystic-Item-Typen
-* neue Enchants
-* neue Well-Tiers
-* neue Roll-Wahrscheinlichkeiten
-* Item-Prefixe, Token-Skalierung
-* integration mit:
-
-  * NPC Shops
-  * DeluxeMenus / zMenu
-  * Loot-Tables
-  * Custom Boss Drops
+* neue Mystic-Item-Kategorien
+* neue Custom-Enchants
+* neue Mystic-Well-Tiers
+* Token-basiertes Balancing
+* eigene Shops (NPC / Menü / GUI)
+* benutzerdefinierte Drop-Tables
+* serverexklusive Waffen & Rüstungen
 
 ---
 
 ## ⚠️ Alpha-Status
 
-Das Plugin ist:
+DasLoch ist:
 
-* **einsatzbereit**
+* **einsatzfähig**
 * **stabil**
-* aber offiziell noch **ALPHA**
+* aber offiziell **ALPHA**
 
-Folgende Systeme sind geplant aber noch nicht fertig:
+Folgende Systeme sind noch in Entwicklung:
 
 * Legend-Item-Finalisierung
-* Lore-Automatisierung
-* Integration für externe API-Plugins
+* automatische Lore-Generierung
+* externe Plugin-API
 
 ---
 
@@ -299,9 +295,9 @@ Folgende Systeme sind geplant aber noch nicht fertig:
 
 **Projekt:** DasLoch
 **Server:** Opalium Haven
-**Lead:** Demus
-**Systemdesign:** GPT-Opalium
-**Enchants & Symbolsystem:**
+**Entwicklung:** Demus
+**Systemdesign & Dokumentation:** GPT-Opalium
+**Symbole & Trenner:** interne Symboldateien (Symbol_Liste.json, Trenner_Symbole-Legende.txt)
  
 
 ---
