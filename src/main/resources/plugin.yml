@@ -7,7 +7,6 @@ description: Core plugin for DasLoch mystic & legend items, well system and comb
 authors:
   - Opalium
 
-# wichtig für PluginUpdater:
 github-repo: "DemusOpalium/opalium-mystic"
 
 softdepend:
@@ -16,21 +15,15 @@ softdepend:
 
 commands:
   dasloch:
-    description: Main command for DasLoch plugin utilities
-    usage: /<command> <reload|debug>
+    description: Admin command for DasLoch plugin utilities
+    usage: "/dasloch <reload|debug|well|legend|mystic> ..."
+    aliases: [dl]
     permission: dasloch.use
-  legendgive:
-    description: Gives a configured legend item to a player
-    usage: /<command> <id> <player>
-    permission: dasloch.legend
-  mysticgive:
-    description: Gives a configured mystic item to a player
-    usage: /<command> <id> <player>
-    permission: dasloch.mystic
+
   mysticwell:
     description: Access the mystic well for rolling mystic items
     aliases: [well]
-    usage: /<command> [roll <tier> [player]]
+    usage: "/mysticwell [roll <tier> [player]]"
     permission: dasloch.well
 
 permissions:
@@ -38,12 +31,12 @@ permissions:
     description: Allows use of the /dasloch admin command
     default: op
 
-  dasloch.legend:
-    description: Allows giving legend items with /legendgive
+  dasloch.legend.give:
+    description: Allows giving legend items with /dasloch legend ...
     default: op
 
-  dasloch.mystic:
-    description: Allows giving mystic items with /mysticgive
+  dasloch.mystic.give:
+    description: Allows giving mystic items with /dasloch mystic ...
     default: op
 
   dasloch.well:
