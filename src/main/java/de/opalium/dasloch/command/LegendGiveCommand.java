@@ -5,6 +5,7 @@ import de.opalium.dasloch.model.ItemTemplate;
 import de.opalium.dasloch.model.ItemType;
 import de.opalium.dasloch.service.ItemFactory;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -16,12 +17,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class MysticGiveCommand implements CommandExecutor, TabCompleter {
+public class LegendGiveCommand implements CommandExecutor, TabCompleter {
 
     private final ItemsConfig itemsConfig;
     private final ItemFactory itemFactory;
 
-    public MysticGiveCommand(ItemsConfig itemsConfig, ItemFactory itemFactory) {
+    public LegendGiveCommand(ItemsConfig itemsConfig, ItemFactory itemFactory) {
         this.itemsConfig = itemsConfig;
         this.itemFactory = itemFactory;
     }
@@ -33,49 +34,41 @@ public class MysticGiveCommand implements CommandExecutor, TabCompleter {
             String label,
             String[] args
     ) {
-        if (!sender.hasPermission("dasloch.mystic.give")) {
+        if (!sender.hasPermission("dasloch.legend.give")) {
             sender.sendMessage("§cDafür hast du keine Berechtigung.");
             return true;
         }
 
-        if (args.length < 1 || args.length > 2) {
-            sender.sendMessage("§cVerwendung: /mysticgive <id> [spieler]");
+        if (args.length != 2) {
+            sender.sendMessage("§cVerwendung: /legendgive <id> <spieler>");
             return true;
         }
 
         String id = args[0].toLowerCase(Locale.ROOT);
 
         ItemTemplate template = itemsConfig.getTemplate(id)
-                .filter(t -> t.getType() == ItemType.MYSTIC)
+                .filter(t -> t.getType() == ItemType.LEGEND)
                 .orElse(null);
 
         if (template == null) {
-            sender.sendMessage("§cUnbekanntes mystisches Item: §f" + id);
+            sender.sendMessage("§cUnbekanntes legendäres Item: §f" + id);
             return true;
         }
 
-        Player target;
-        if (args.length == 2) {
-            target = Bukkit.getPlayerExact(args[1]);
-            if (target == null) {
-                sender.sendMessage("§cSpieler nicht gefunden: §f" + args[1]);
-                return true;
-            }
-        } else {
-            if (!(sender instanceof Player p)) {
-                sender.sendMessage("§cBitte gib einen Spieler an.");
-                return true;
-            }
-            target = p;
+        Player target = Bukkit.getPlayerExact(args[1]);
+        if (target == null) {
+            sender.sendMessage("§cSpieler nicht gefunden: §f" + args[1]);
+            return true;
         }
 
-        // Rohling-Item über ItemFactory erzeugen
-        ItemStack item = itemFactory.createMysticItem(template);
+        OfflinePlayer owner = target; // Owner = Zielspieler
+        ItemStack item = itemFactory.createLegendItem(template, owner);
+
         target.getInventory().addItem(item);
 
-        sender.sendMessage("§aMystic-Rohling §f" + id + " §aan §f" + target.getName() + " §agegeben.");
+        sender.sendMessage("§6Legend-Item §f" + id + " §aan §f" + target.getName() + " §agegeben.");
         if (sender != target) {
-            target.sendMessage("§aDu hast ein mystisches Rohling-Item erhalten: §f" + id);
+            target.sendMessage("§6Du hast ein legendäres Item erhalten: §f" + id);
         }
         return true;
     }
@@ -92,7 +85,7 @@ public class MysticGiveCommand implements CommandExecutor, TabCompleter {
         if (args.length == 1) {
             String prefix = args[0].toLowerCase(Locale.ROOT);
             for (ItemTemplate template : itemsConfig.getTemplates().values()) {
-                if (template.getType() == ItemType.MYSTIC) {
+                if (template.getType() == ItemType.LEGEND) {
                     String tid = template.getId().toLowerCase(Locale.ROOT);
                     if (tid.startsWith(prefix)) {
                         completions.add(tid);
