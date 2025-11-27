@@ -1,57 +1,49 @@
 items:
   emerald_forge_blade:
     category: SWORD
-    type: LEGEND
+    type: MYSTIC
     material: DIAMOND_SWORD
-    display-name: "§aEmerald Forge Blade"
+    display-name: "§aSmaragdene Bruchklinge"
     custom-model-data: 1001
-    base-lives: 50
-    max-lives: 100
+    base-lives: 45
+    max-lives: 90
     lore:
-      - "§7Eine Klinge aus den Tiefen von §aOpalium."
-      - "§7Sie speichert das Echo alter Schlachten."
+      - "§7Eine Klinge, als hätte jemand einen Stern im Stein erstickt."
+      - "§7Feine Risse flimmern grün, als würden sie leise atmen."
       - ""
       - "§8§m────────────§0§m┼§8§m────────────"
       - "§7Leben: §e%lives_current%§7/§e%lives_max%"
       - "§7Seelenfragmente: §e%tokens%"
       - "%prefix_line%"
-    base-enchants:
-      lifesteal: 2       # bissig
-      executioner: 1     # macht sie zum Richtschwert
-      gold_boost: 1      # etwas Gier
 
   nightleech_bow:
     category: BOW
-    type: LEGEND
+    type: MYSTIC
     material: BOW
-    display-name: "§5Nightleech Bow"
+    display-name: "§5Nachtschlund-Bogen"
     custom-model-data: 1002
     base-lives: 40
     max-lives: 80
     lore:
-      - "§7Ein Bogen, der im §8Schwarz der Tiefe"
-      - "§7jede Regung des Feindes aufsaugt."
+      - "§7Der Schaft wirkt trocken, doch die Sehne zittert wie ein verschluckter Schrei."
+      - "§7Wer ihn spannt, hat das Gefühl, dass etwas im Dunkeln zurückzieht."
       - ""
       - "§8§m────────────§0§m┼§8§m────────────"
       - "§7Leben: §e%lives_current%§7/§e%lives_max%"
       - "§7Seelenfragmente: §e%tokens%"
       - "%prefix_line%"
-    base-enchants:
-      focus: 2
-      devil_chicks: 1
-      lucky_shot: 2
 
   mystic_sword:
     category: SWORD
     type: MYSTIC
-    material: GOLDEN_SWORD
-    display-name: "§dVerzerrte Klinge"
+    material: DIAMOND_SWORD
+    display-name: "§dRissklinge des Flüsterns"
     custom-model-data: 1101
-    base-lives: 10
-    max-lives: 50
+    base-lives: 30
+    max-lives: 70
     lore:
-      - "§7Ein instabiles Schwert aus §5Rissenergie."
-      - "§7Nur der Brunnen kann es wirklich erwecken."
+      - "§7Wenn du die Klinge drehst, wandert ein blasser Schimmer wie ein Gedanke darüber."
+      - "§7Manchmal klingt es, als würde jemand deinen Namen in den Stahl murmeln."
       - ""
       - "§8§m────────────§0§m┼§8§m────────────"
       - "§7Leben: §e%lives_current%§7/§e%lives_max%"
@@ -61,18 +53,133 @@ items:
   mystic_pants:
     category: PANTS
     type: MYSTIC
-    material: LEATHER_LEGGINGS
-    display-name: "§dFlackernde Beinkleider"
+    material: DIAMOND_LEGGINGS
+    display-name: "§dSchachtläufer-Beinplatten"
     custom-model-data: 1102
-    base-lives: 15
-    max-lives: 60
-    dye-color:
-      red: 120
-      green: 40
-      blue: 150
+    base-lives: 35
+    max-lives: 80
     lore:
-      - "§7Schwer wie Nebel, leuchten im §5Schacht."
-      - "§7Sie reagieren auf jede Opfergabe im Brunnen."
+      - "§7Diamantplatten, innen fein zerkratzt, als hätte jemand im Fallen gebetet."
+      - "§7Staub aus alten Schächten hängt noch in den Fugen und weigert sich zu gehen."
+      - ""
+      - "§8§m────────────§0§m┼§8§m────────────"
+      - "§7Leben: §e%lives_current%§7/§e%lives_max%"
+      - "§7Seelenfragmente: §e%tokens%"
+      - "%prefix_line%"
+
+  mystic_helm_voidveil:
+    category: HELMET
+    type: MYSTIC
+    material: DIAMOND_HELMET
+    display-name: "§5Leerenfluch-Helm"
+    custom-model-data: 1201
+    base-lives: 30
+    max-lives: 70
+    lore:
+      - "§7Die Innenseite ist dunkel, egal wie viel Licht du hineinhältst."
+      - "§7Wer ihn trägt, hört die Welt einen Hauch leiser atmen."
+      - ""
+      - "§8§m────────────§0§m┼§8§m────────────"
+      - "§7Leben: §e%lives_current%§7/§e%lives_max%"
+      - "§7Seelenfragmente: §e%tokens%"
+      - "%prefix_line%"
+
+  mystic_chest_heartcage:
+    category: CHESTPLATE
+    type: MYSTIC
+    material: DIAMOND_CHESTPLATE
+    display-name: "§cHerzkäfig-Brustplatte"
+    custom-model-data: 1202
+    base-lives: 40
+    max-lives: 90
+    lore:
+      - "§7In den Rissen dieser Platte scheint etwas im Takt deines Pulses zu flimmern."
+      - "§7Man schwört, ab und zu ein fremdes Klopfen darunter zu spüren."
+      - ""
+      - "§8§m────────────§0§m┼§8§m────────────"
+      - "§7Leben: §e%lives_current%§7/§e%lives_max%"
+      - "§7Seelenfragmente: §e%tokens%"
+      - "%prefix_line%"
+
+  mystic_legs_gravewalk:
+    category: PANTS
+    type: MYSTIC
+    material: DIAMOND_LEGGINGS
+    display-name: "§8Grabrand-Gamaschen"
+    custom-model-data: 1203
+    base-lives: 35
+    max-lives: 80
+    lore:
+      - "§7Der Stahl knirscht leise, als würdest du ständig über Kies und Knochen laufen."
+      - "§7Jeder Schritt hinterlässt für eine Sekunde einen Schatten zu viel."
+      - ""
+      - "§8§m────────────§0§m┼§8§m────────────"
+      - "§7Leben: §e%lives_current%§7/§e%lives_max%"
+      - "§7Seelenfragmente: §e%tokens%"
+      - "%prefix_line%"
+
+  mystic_boots_echo:
+    category: BOOTS
+    type: MYSTIC
+    material: DIAMOND_BOOTS
+    display-name: "§dEchofall-Stiefel"
+    custom-model-data: 1204
+    base-lives: 30
+    max-lives: 70
+    lore:
+      - "§7Jeder Sprung klingt, als würdest du viel tiefer fallen, als der Boden erlaubt."
+      - "§7Manchmal hörst du Schritte hinter dir, obwohl niemand da ist."
+      - ""
+      - "§8§m────────────§0§m┼§8§m────────────"
+      - "§7Leben: §e%lives_current%§7/§e%lives_max%"
+      - "§7Seelenfragmente: §e%tokens%"
+      - "%prefix_line%"
+
+  mystic_blade_shards:
+    category: SWORD
+    type: MYSTIC
+    material: DIAMOND_SWORD
+    display-name: "§9Splitterchronik-Klinge"
+    custom-model-data: 1301
+    base-lives: 35
+    max-lives: 85
+    lore:
+      - "§7Im Stahl liegen feine Linien, als hätte jemand Geschichten hinein geritzt."
+      - "§7Beim Schwingen spürst du das Ziehen längst vergessener Duelle."
+      - ""
+      - "§8§m────────────§0§m┼§8§m────────────"
+      - "§7Leben: §e%lives_current%§7/§e%lives_max%"
+      - "§7Seelenfragmente: §e%tokens%"
+      - "%prefix_line%"
+
+  mystic_axe_sunder:
+    category: AXE
+    type: MYSTIC
+    material: DIAMOND_AXE
+    display-name: "§4Schädelbruch-Axt"
+    custom-model-data: 1302
+    base-lives: 35
+    max-lives: 80
+    lore:
+      - "§7Die Schneide trägt stumpfe Kerben, doch du fühlst bei jeder davon ein leises Ziehen."
+      - "§7Als würde etwas in ihr warten, dass du endlich wieder triffst."
+      - ""
+      - "§8§m────────────§0§m┼§8§m────────────"
+      - "§7Leben: §e%lives_current%§7/§e%lives_max%"
+      - "§7Seelenfragmente: §e%tokens%"
+      - "%prefix_line%"
+
+  mystic_crossbow_rift:
+    category: BOW
+    type: MYSTIC
+    material: CROSSBOW
+    display-name: "§5Rissbolzen-Armbrust"
+    custom-model-data: 1303
+    base-lives: 38
+    max-lives: 82
+    lore:
+      - "§7Zwischen Sehne und Schiene flimmert ein dünner Spalt im Nichts."
+      - "§7Geladene Bolzen scheinen für einen Herzschlag zu flackern und woanders zu sein."
       - ""
       - "§8§m────────────§0§m┼§8§m────────────"
       - "§7Leben: §e%lives_current%§7/§e%lives_max%"
