@@ -9,9 +9,9 @@ items:
     max-lives: 90
     lore:
       - "§7Eine Klinge, als hätte jemand einen Stern im Stein erstickt."
-      - "§7Feine Risse flimmern grün, als würden sie leise atmen."
+      - "§7Grüne Risse flimmern darin, als würden sie leise weiteratmen."
       - ""
-      - "§8§m────────────§0§m┼§8§m────────────"
+      - "꧁§4§l▲▼▲▼▲▼▲▼⚝§6§n▼▲▼▲▼▲▼▲§4§l꧂"
       - "§7Leben: §e%lives_current%§7/§e%lives_max%"
       - "§7Seelenfragmente: §e%tokens%"
       - "%prefix_line%"
@@ -25,10 +25,10 @@ items:
     base-lives: 40
     max-lives: 80
     lore:
-      - "§7Der Schaft wirkt trocken, doch die Sehne zittert wie ein verschluckter Schrei."
-      - "§7Wer ihn spannt, hat das Gefühl, dass etwas im Dunkeln zurückzieht."
+      - "§7Der Schaft wirkt staubtrocken, doch die Sehne zittert wie ein verschluckter Schrei."
+      - "§7Wer ihn spannt, spürt, wie etwas Unsichtbares im Dunkeln dagegenhält."
       - ""
-      - "§8§m────────────§0§m┼§8§m────────────"
+      - "꧁§3§n~ ─ ─ ─ ─ ─ ~╰☆╮~ ─ ─ ─ ─ ─ ~§3§n꧂"
       - "§7Leben: §e%lives_current%§7/§e%lives_max%"
       - "§7Seelenfragmente: §e%tokens%"
       - "%prefix_line%"
@@ -42,10 +42,10 @@ items:
     base-lives: 30
     max-lives: 70
     lore:
-      - "§7Wenn du die Klinge drehst, wandert ein blasser Schimmer wie ein Gedanke darüber."
-      - "§7Manchmal klingt es, als würde jemand deinen Namen in den Stahl murmeln."
+      - "§7Wenn du die Klinge drehst, wandert ein blasser Schimmer wie ein Gedanke über den Stahl."
+      - "§7Ab und zu scheint jemand deinen Namen im Metall zu flüstern – nur wenn du allein bist."
       - ""
-      - "§8§m────────────§0§m┼§8§m────────────"
+      - "꧁§5◤◥◤◥◤◥◤◥⚚◤◥◤◥◤◥◤◥§5꧂"
       - "§7Leben: §e%lives_current%§7/§e%lives_max%"
       - "§7Seelenfragmente: §e%tokens%"
       - "%prefix_line%"
@@ -59,16 +59,16 @@ items:
     base-lives: 35
     max-lives: 80
     lore:
-      - "§7Diamantplatten, innen fein zerkratzt, als hätte jemand im Fallen gebetet."
-      - "§7Staub aus alten Schächten hängt noch in den Fugen und weigert sich zu gehen."
+      - "§7Diamantplatten, innen fein zerkratzt, als hätte jemand im Fallen Gebete eingeritzt."
+      - "§7Alter Schachtdampf klebt in den Fugen und weigert sich, ganz zu verfliegen."
       - ""
-      - "§8§m────────────§0§m┼§8§m────────────"
+      - "꧁§2§m── ── ── ── ──✞── ── ── ── ──§2§m꧂"
       - "§7Leben: §e%lives_current%§7/§e%lives_max%"
       - "§7Seelenfragmente: §e%tokens%"
       - "%prefix_line%"
 
   mystic_helm_voidveil:
-    category: PANTS      # war HELMET – muss ein gültiger ItemCategory-Wert sein
+    category: PANTS      # teilt sich den Defensiv-Pool mit Hosen
     type: MYSTIC
     material: DIAMOND_HELMET
     display-name: "§5Leerenfluch-Helm"
@@ -76,16 +76,16 @@ items:
     base-lives: 30
     max-lives: 70
     lore:
-      - "§7Die Innenseite ist dunkel, egal wie viel Licht du hineinhältst."
-      - "§7Wer ihn trägt, hört die Welt einen Hauch leiser atmen."
+      - "§7Innen bleibt er schwarz, egal wie viel Licht du hineinpresst."
+      - "§7Unter dem Helm klingt die Welt, als hätte jemand die Lautstärke ein Stück zu weit heruntergedreht."
       - ""
-      - "§8§m────────────§0§m┼§8§m────────────"
+      - "꧁§1§m│││││││││⛧┼┼┼§1§m│││││││││꧂"
       - "§7Leben: §e%lives_current%§7/§e%lives_max%"
       - "§7Seelenfragmente: §e%tokens%"
       - "%prefix_line%"
 
   mystic_chest_heartcage:
-    category: PANTS      # war CHESTPLATE
+    category: PANTS      # defensive Kategorie
     type: MYSTIC
     material: DIAMOND_CHESTPLATE
     display-name: "§cHerzkäfig-Brustplatte"
@@ -93,10 +93,10 @@ items:
     base-lives: 40
     max-lives: 90
     lore:
-      - "§7In den Rissen dieser Platte scheint etwas im Takt deines Pulses zu flimmern."
-      - "§7Man schwört, ab und zu ein fremdes Klopfen darunter zu spüren."
+      - "§7Zwischen den Rissen dieser Platte flimmert etwas im Takt deines eigenen Pulses."
+      - "§7Wer sie trägt, schwört, hin und wieder ein fremdes Herz darunter schlagen zu fühlen."
       - ""
-      - "§8§m────────────§0§m┼§8§m────────────"
+      - "꧁§2§l║═║═║═║═║✞═║═║═║═║§2§l꧂"
       - "§7Leben: §e%lives_current%§7/§e%lives_max%"
       - "§7Seelenfragmente: §e%tokens%"
       - "%prefix_line%"
@@ -110,16 +110,16 @@ items:
     base-lives: 35
     max-lives: 80
     lore:
-      - "§7Der Stahl knirscht leise, als würdest du ständig über Kies und Knochen laufen."
-      - "§7Jeder Schritt hinterlässt für eine Sekunde einen Schatten zu viel."
+      - "§7Der Stahl knirscht leise, als würdest du ständig über Kies und alt gewordene Knochen laufen."
+      - "§7Jeder Schritt wirft für einen Herzschlag einen Schatten mehr, als du eigentlich hast."
       - ""
-      - "§8§m────────────§0§m┼§8§m────────────"
+      - "꧁§7─ ─ ─ ─ ─ ─ ─ ─⛧┼┼┼┼§7─ ─ ─ ─ ─ ─ ─ ─꧂"
       - "§7Leben: §e%lives_current%§7/§e%lives_max%"
       - "§7Seelenfragmente: §e%tokens%"
       - "%prefix_line%"
 
   mystic_boots_echo:
-    category: PANTS      # war BOOTS
+    category: PANTS
     type: MYSTIC
     material: DIAMOND_BOOTS
     display-name: "§dEchofall-Stiefel"
@@ -127,10 +127,10 @@ items:
     base-lives: 30
     max-lives: 70
     lore:
-      - "§7Jeder Sprung klingt, als würdest du viel tiefer fallen, als der Boden erlaubt."
-      - "§7Manchmal hörst du Schritte hinter dir, obwohl niemand da ist."
+      - "§7Jeder Sprung klingt, als würdest du tiefer fallen, als der Boden je zulassen dürfte."
+      - "§7Manchmal hörst du Schritte im eigenen Rhythmus hinter dir, obwohl dort niemand geht."
       - ""
-      - "§8§m────────────§0§m┼§8§m────────────"
+      - "꧁§b▬▬▬▬⚝▬▬▬▬▬§a⚝▬▬▬▬▬⚝▬▬▬▬꧂"
       - "§7Leben: §e%lives_current%§7/§e%lives_max%"
       - "§7Seelenfragmente: §e%tokens%"
       - "%prefix_line%"
@@ -144,16 +144,16 @@ items:
     base-lives: 35
     max-lives: 85
     lore:
-      - "§7Im Stahl liegen feine Linien, als hätte jemand Geschichten hinein geritzt."
-      - "§7Beim Schwingen spürst du das Ziehen längst vergessener Duelle."
+      - "§7Feine Linien im Stahl wirken wie eingeritzte Randnotizen vergessener Gefechte."
+      - "§7Beim Schwung steigen alte Duelle kurz durch deinen Arm zurück in die Klinge."
       - ""
-      - "§8§m────────────§0§m┼§8§m────────────"
+      - "꧁§f§l✦◆✦◆✦◆✦◆❈◆✦◆✦◆✦◆§f§l꧂"
       - "§7Leben: §e%lives_current%§7/§e%lives_max%"
       - "§7Seelenfragmente: §e%tokens%"
       - "%prefix_line%"
 
   mystic_axe_sunder:
-    category: SWORD      # war AXE – Enum kennt nur SWORD/BOW/PANTS/ARMOR
+    category: SWORD
     type: MYSTIC
     material: DIAMOND_AXE
     display-name: "§4Schädelbruch-Axt"
@@ -161,10 +161,10 @@ items:
     base-lives: 35
     max-lives: 80
     lore:
-      - "§7Die Schneide trägt stumpfe Kerben, doch du fühlst bei jeder davon ein leises Ziehen."
-      - "§7Als würde etwas in ihr warten, dass du endlich wieder triffst."
+      - "§7Die Schneide trägt stumpfe Kerben, jede davon fühlt sich an wie ein abgerissener Schlag."
+      - "§7In der Stille wirkt es, als würde etwas in der Axt darauf warten, dass du endlich wieder triffst."
       - ""
-      - "§8§m────────────§0§m┼§8§m────────────"
+      - "꧁§c§l▬▬▬▬▬▬▬▬♠♠♠▬▬▬▬▬▬▬▬§c§l꧂"
       - "§7Leben: §e%lives_current%§7/§e%lives_max%"
       - "§7Seelenfragmente: §e%tokens%"
       - "%prefix_line%"
@@ -178,10 +178,10 @@ items:
     base-lives: 38
     max-lives: 82
     lore:
-      - "§7Zwischen Sehne und Schiene flimmert ein dünner Spalt im Nichts."
-      - "§7Geladene Bolzen scheinen für einen Herzschlag zu flackern und woanders zu sein."
+      - "§7Zwischen Sehne und Schiene flimmert ein schmaler Spalt, der kein Licht zu kennen scheint."
+      - "§7Geladene Bolzen flackern einen Herzschlag lang, als wären sie kurz woanders gewesen – und ungern zurück."
       - ""
-      - "§8§m────────────§0§m┼§8§m────────────"
+      - "꧁§9§m║║═════════════❇║═════════════║║§9§m꧂"
       - "§7Leben: §e%lives_current%§7/§e%lives_max%"
       - "§7Seelenfragmente: §e%tokens%"
       - "%prefix_line%"
