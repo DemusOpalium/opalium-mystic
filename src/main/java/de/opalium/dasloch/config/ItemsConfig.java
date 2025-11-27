@@ -48,24 +48,43 @@ public class ItemsConfig {
             ItemCategory category = ItemCategory.fromString(section.getString("category", "SWORD"));
             ItemType type = ItemType.fromString(section.getString("type", "MYSTIC"));
             Material material = Material.valueOf(section.getString("material", "STONE_SWORD"));
+
+            // Erwachter Zustand
             String displayName = section.getString("display-name", id);
             int customModelData = section.getInt("custom-model-data", 0);
             int baseLives = section.getInt("base-lives", 1);
             int maxLives = section.getInt("max-lives", baseLives);
             List<String> lore = section.getStringList("lore");
+
+            // Rohling-Zustand (optional, für Mystic-Rohlinge)
+            String displayNameDormant = section.getString("display-name-dormant", null);
+
+            Integer customModelDataDormant = null;
+            if (section.contains("custom-model-data-dormant")) {
+                customModelDataDormant = section.getInt("custom-model-data-dormant");
+            }
+
+            List<String> loreDormant = section.getStringList("lore-dormant");
+            if (loreDormant == null) {
+                loreDormant = Collections.emptyList();
+            }
+
             Color dye = readColor(section.getConfigurationSection("dye-color"));
 
             ItemTemplate template = new ItemTemplate(
-                id,
-                category,
-                type,
-                material,
-                displayName,
-                customModelData,
-                baseLives,
-                maxLives,
-                lore,
-                dye
+                    id,
+                    category,
+                    type,
+                    material,
+                    displayName,
+                    displayNameDormant,
+                    customModelData,
+                    customModelDataDormant,
+                    baseLives,
+                    maxLives,
+                    lore,
+                    loreDormant,
+                    dye
             );
             loaded.put(id.toLowerCase(), template);
         }
