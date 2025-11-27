@@ -38,11 +38,34 @@ public class ItemFactory {
         if (meta == null) {
             return;
         }
-        List<String> lore = buildLore(template, null,
-            lifeTokenService.getLives(stack),
-            lifeTokenService.getMaxLives(stack),
-            lifeTokenService.getTokens(stack));
+
+        int lives = lifeTokenService.getLives(stack);
+        int maxLives = lifeTokenService.getMaxLives(stack);
+        int tokens = lifeTokenService.getTokens(stack);
+
+        // Basis-Lore abhängig vom Zustand (Rohling vs Erwacht)
+        List<String> baseLore = selectBaseLore(template, tokens);
+        List<String> lore = buildLore(
+                template,
+                null,
+                lives,
+                maxLives,
+                tokens,
+                baseLore
+        );
         meta.setLore(lore);
+
+        // Anzeige-Name und Model je nach Rohling/Erwacht umschalten
+        String displayName = selectDisplayName(template, tokens);
+        if (displayName != null) {
+            meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', displayName));
+        }
+
+        Integer model = selectModel(template, tokens);
+        if (model != null && model > 0) {
+            meta.setCustomModelData(model);
+        }
+
         stack.setItemMeta(meta);
     }
 
@@ -53,25 +76,93 @@ public class ItemFactory {
             return stack;
         }
 
-        meta.setDisplayName(template.getDisplayName());
-        template.getCustomModelData().ifPresent(meta::setCustomModelData);
+        int lives = template.getBaseLives();
+        int maxLives = template.getMaxLives();
+        int tokens = 0; // frisch erstellt = Rohling
+
+        // Name & Model nach Zustand auswählen (Rohling vs Erwacht)
+        String displayName = selectDisplayName(template, tokens);
+        if (displayName != null) {
+            meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', displayName));
+        }
+
+        Integer model = selectModel(template, tokens);
+        if (model != null && model > 0) {
+            meta.setCustomModelData(model);
+        }
+
         if (meta instanceof LeatherArmorMeta leather && template.getDyeColor().isPresent()) {
             leather.setColor(template.getDyeColor().get());
         }
 
-        List<String> lore = buildLore(template, owner != null ? owner.getUniqueId() : null,
-            template.getBaseLives(), template.getMaxLives(), 0);
+        List<String> baseLore = selectBaseLore(template, tokens);
+        List<String> lore = buildLore(
+                template,
+                owner != null ? owner.getUniqueId() : null,
+                lives,
+                maxLives,
+                tokens,
+                baseLore
+        );
         meta.setLore(lore);
         stack.setItemMeta(meta);
 
+        // PDC-Basiswerte (Lives/Tokens/ID etc.) über LifeTokenService setzen
         lifeTokenService.applyBase(stack, template);
         return stack;
     }
 
-    private List<String> buildLore(ItemTemplate template, UUID owner, int lives, int maxLives, int tokens) {
+    /**
+     * Wählt den angezeigten Namen abhängig vom Zustand.
+     * Mystic + 0 Tokens -> Rohling, sonst erwacht.
+     */
+    private String selectDisplayName(ItemTemplate template, int tokens) {
+        if (template.getType() == ItemType.MYSTIC && tokens == 0) {
+            // Rohling-Name (Optional), wenn vorhanden, sonst normaler Name
+            return template.getDisplayNameDormant()
+                    .orElse(template.getDisplayName());
+        }
+        // Legends / erwachte Mystics
+        return template.getDisplayName();
+    }
+
+    /**
+     * Wählt das CustomModelData abhängig vom Zustand.
+     */
+    private Integer selectModel(ItemTemplate template, int tokens) {
+        if (template.getType() == ItemType.MYSTIC && tokens == 0) {
+            // Rohling-Model (Optional)
+            return template.getCustomModelDataDormant().orElse(null);
+        }
+        return template.getCustomModelData().orElse(null);
+    }
+
+    /**
+     * Basis-Lore für Rohling vs Erwacht.
+     */
+    private List<String> selectBaseLore(ItemTemplate template, int tokens) {
+        if (template.getType() == ItemType.MYSTIC && tokens == 0) {
+            List<String> dormant = template.getLoreDormant();
+            if (dormant != null && !dormant.isEmpty()) {
+                return dormant;
+            }
+        }
+        return template.getLore();
+    }
+
+    private List<String> buildLore(ItemTemplate template,
+                                   UUID owner,
+                                   int lives,
+                                   int maxLives,
+                                   int tokens,
+                                   List<String> baseLore) {
         List<String> lore = new ArrayList<>();
+
+        // einfacher Typ-Prefix, wie bisher
         String prefix = template.getType() == ItemType.LEGEND ? "§6Legendary" : "§dMystic Item";
-        for (String line : template.getLore()) {
+
+        List<String> source = baseLore != null ? baseLore : template.getLore();
+        for (String line : source) {
             String applied = line
                 .replace("%lives_current%", String.valueOf(lives))
                 .replace("%lives_max%", String.valueOf(maxLives))
