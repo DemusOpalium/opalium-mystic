@@ -1,9 +1,11 @@
-package de.opalium.dasloch.item;
-
 public enum ItemCategory {
     SWORD,
     BOW,
-    PANTS,
+    AXE,
+    HELMET,
+    CHESTPLATE,
+    LEGGINGS,
+    BOOTS,
     ARMOR;
 
     public static ItemCategory fromString(String raw) {
