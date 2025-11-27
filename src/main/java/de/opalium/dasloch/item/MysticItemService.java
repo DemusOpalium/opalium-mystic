@@ -29,6 +29,12 @@ public final class MysticItemService {
 
     private final DasLochPlugin plugin;
     private final Map<String, LegendItemDefinition> definitions = new HashMap<>();
+
+    // NEU: Rohling-Daten aus items.yml
+    private final Map<String, String> dormantDisplayNames = new HashMap<>();
+    private final Map<String, Integer> dormantModelData = new HashMap<>();
+    private final Map<String, List<String>> dormantLore = new HashMap<>();
+
     private final PluginKeys keys;
     private final EnchantRegistry enchantRegistry;
     private final MysticWellService wellService;
@@ -48,6 +54,10 @@ public final class MysticItemService {
 
     private void load(YamlConfiguration config) {
         definitions.clear();
+        dormantDisplayNames.clear();
+        dormantModelData.clear();
+        dormantLore.clear();
+
         ConfigurationSection items = config.getConfigurationSection("items");
         if (items == null) {
             return;
@@ -77,6 +87,22 @@ public final class MysticItemService {
                         dye.getInt("blue")
                 );
             }
+
+            // NEU: Rohling-Felder lesen (optional)
+            String dormantName = section.getString("display-name-dormant", null);
+            if (dormantName != null && !dormantName.isBlank()) {
+                dormantDisplayNames.put(id, dormantName);
+            }
+
+            if (section.contains("custom-model-data-dormant")) {
+                dormantModelData.put(id, section.getInt("custom-model-data-dormant"));
+            }
+
+            List<String> loreDormant = section.getStringList("lore-dormant");
+            if (loreDormant != null && !loreDormant.isEmpty()) {
+                dormantLore.put(id, new ArrayList<>(loreDormant));
+            }
+
             LegendItemDefinition def = new LegendItemDefinition(
                     id,
                     category,
@@ -140,9 +166,18 @@ public final class MysticItemService {
             return stack;
         }
 
-        meta.setDisplayName(formatItemName(def, 0));
-        if (def.customModelData() > 0) {
-            meta.setCustomModelData(def.customModelData());
+        int lives = def.baseLives();
+        int maxLives = def.maxLives();
+        int tokens = 0;
+
+        // Rohling / Erwacht-Auswahl nach Tokens (0 = Rohling)
+        String baseName = selectDisplayName(def, tokens);
+        int model = selectModel(def, tokens);
+        List<String> baseLore = selectBaseLore(def, tokens);
+
+        meta.setDisplayName(formatItemName(def, tokens, baseName));
+        if (model > 0) {
+            meta.setCustomModelData(model);
         }
 
         // Nur Enchants verstecken – Attribute ruhig sichtbar lassen
@@ -155,23 +190,72 @@ public final class MysticItemService {
         PersistentDataContainer pdc = meta.getPersistentDataContainer();
         pdc.set(keys.itemId(), PersistentDataType.STRING, def.id());
         pdc.set(keys.itemType(), PersistentDataType.STRING, def.kind().name());
-        pdc.set(keys.livesCurrent(), PersistentDataType.INTEGER, def.baseLives());
-        pdc.set(keys.livesMax(), PersistentDataType.INTEGER, def.maxLives());
-        pdc.set(keys.tokens(), PersistentDataType.INTEGER, 0);
-        pdc.set(keys.prefix(), PersistentDataType.STRING, formatPrefix(0));
+        pdc.set(keys.livesCurrent(), PersistentDataType.INTEGER, lives);
+        pdc.set(keys.livesMax(), PersistentDataType.INTEGER, maxLives);
+        pdc.set(keys.tokens(), PersistentDataType.INTEGER, tokens);
+        pdc.set(keys.prefix(), PersistentDataType.STRING, formatPrefix(tokens));
         pdc.set(keys.mysticTier(), PersistentDataType.STRING, "");
         // Initial: noch keine Mystic-Enchants
         pdc.set(keys.enchants(), PersistentDataType.STRING, "");
 
-        meta.setLore(applyLore(def, def.baseLives(), def.maxLives(), 0, owner));
+        meta.setLore(applyLore(def, baseLore, lives, maxLives, tokens, owner));
 
         stack.setItemMeta(meta);
         return stack;
     }
 
-    private List<String> applyLore(LegendItemDefinition def, int lives, int maxLives, int tokens, String owner) {
+    // ------------------------------
+    // Rohling/Erwacht-Helfer
+    // ------------------------------
+
+    /**
+     * Auswahl des angezeigten Namens abhängig vom Token-Stand.
+     * 0 Tokens -> Rohling (falls vorhanden)
+     * >0 Tokens -> Erwacht
+     */
+    private String selectDisplayName(LegendItemDefinition def, int tokens) {
+        boolean awakened = tokens > 0;
+        if (!awakened) {
+            String dormant = dormantDisplayNames.get(def.id());
+            if (dormant != null && !dormant.isBlank()) {
+                return dormant;
+            }
+        }
+        return def.displayName();
+    }
+
+    /**
+     * Auswahl des CustomModelData abhängig vom Token-Stand.
+     */
+    private int selectModel(LegendItemDefinition def, int tokens) {
+        boolean awakened = tokens > 0;
+        if (!awakened && dormantModelData.containsKey(def.id())) {
+            return dormantModelData.get(def.id());
+        }
+        return def.customModelData();
+    }
+
+    /**
+     * Auswahl der Basis-Lore abhängig vom Token-Stand (Rohling vs Erwacht).
+     */
+    private List<String> selectBaseLore(LegendItemDefinition def, int tokens) {
+        boolean awakened = tokens > 0;
+        if (!awakened && dormantLore.containsKey(def.id())) {
+            return dormantLore.get(def.id());
+        }
+        return def.lore();
+    }
+
+    private List<String> applyLore(LegendItemDefinition def,
+                                   List<String> baseLore,
+                                   int lives,
+                                   int maxLives,
+                                   int tokens,
+                                   String owner) {
         List<String> result = new ArrayList<>();
-        for (String line : def.lore()) {
+        List<String> source = baseLore != null ? baseLore : Collections.emptyList();
+
+        for (String line : source) {
             String replaced = line
                     .replace("%lives_current%", String.valueOf(lives))
                     .replace("%lives_max%", String.valueOf(maxLives))
@@ -468,7 +552,7 @@ public final class MysticItemService {
     }
 
     /**
-     * Erneuert Basis-Lore + Mystic-Enchant-Lore + Glint.
+     * Erneuert Basis-Lore (Rohling vs Erwacht) + Mystic-Enchant-Lore + Glint.
      */
     private void refreshLore(ItemStack stack, ItemMeta meta) {
         PersistentDataContainer pdc = meta.getPersistentDataContainer();
@@ -481,8 +565,9 @@ public final class MysticItemService {
         int maxLives = pdc.getOrDefault(keys.livesMax(), PersistentDataType.INTEGER, lives);
         int tokens = pdc.getOrDefault(keys.tokens(), PersistentDataType.INTEGER, 0);
 
-        // Basis-Lore aus items.yml
-        List<String> lore = applyLore(def, lives, maxLives, tokens, null);
+        // Basis-Lore aus items.yml (Rohling oder Erwacht)
+        List<String> baseLore = selectBaseLore(def, tokens);
+        List<String> lore = applyLore(def, baseLore, lives, maxLives, tokens, null);
 
         // Enchants lesen und zusätzliche Lore-Zeilen anhängen
         Map<String, Integer> enchantTiers = readEnchants(stack);
@@ -501,7 +586,10 @@ public final class MysticItemService {
         }
 
         meta.setLore(lore);
-        meta.setDisplayName(formatItemName(def, tokens));
+
+        String baseName = selectDisplayName(def, tokens);
+        meta.setDisplayName(formatItemName(def, tokens, baseName));
+
         stack.setItemMeta(meta);
     }
 
@@ -622,7 +710,7 @@ public final class MysticItemService {
             stack.setItemMeta(updatedMeta);
         }
 
-        // Tokens aus Enchants neu berechnen
+        // Tokens aus Enchants neu berechnen -> schaltet auch von Rohling auf Erwacht um
         recalcTokens(stack);
         return result;
     }
@@ -784,10 +872,15 @@ public final class MysticItemService {
      * Name-Formatierung: Mystic-Items bekommen Prefix + Name,
      * Legends behalten nur ihren Display-Namen.
      */
-    private String formatItemName(LegendItemDefinition def, int tokens) {
+    private String formatItemName(LegendItemDefinition def, int tokens, String baseName) {
         if (def.kind() == ItemKind.MYSTIC) {
-            return formatPrefix(tokens) + " " + def.displayName();
+            return formatPrefix(tokens) + " " + baseName;
         }
-        return def.displayName();
+        return baseName;
+    }
+
+    // Kompatible alte Variante (falls noch irgendwo aufgerufen)
+    private String formatItemName(LegendItemDefinition def, int tokens) {
+        return formatItemName(def, tokens, def.displayName());
     }
 }
