@@ -1,14 +1,14 @@
 items:
   # -------------------------------------------------
-  # Trenner-Legende:
+  # Trenner-Legende (kompakte Skull-Variante):
   #   [O1] Mystic Offense (SWORD/AXE):
-  #        ꧁§c§l▬▬▬▬▬▬▬▬♠♠♠▬▬▬▬▬▬▬▬§c§l꧂
+  #        ꧁§c§l══════☠♠☠══════§c§l꧂
   #   [R1] Mystic Ranged (BOW/CROSSBOW):
-  #        ꧁§3§n~ ─ ─ ─ ─ ─ ~╰☆╮~ ─ ─ ─ ─ ─ ~§3§n꧂
+  #        ꧁§3§n~───~╰☠╯~───~§3§n꧂
   #   [D1] Mystic Defense (PANTS-Pool: Helm/Chest/Legs/Boots):
-  #        ꧁§2§l║═║═║═║═║✞═║═║═║═║§2§l꧂
+  #        ꧁§2§l║═║☠✞☠║═║§2§l꧂
   #   [S1] Mystic Chronik/Splitter (Sonderwaffe):
-  #        ꧁§f§l✦◆✦◆✦◆✦◆❈◆✦◆✦◆✦◆§f§l꧂
+  #        ꧁§f§l✦☠◆❈◆☠✦§f§l꧂
   # -------------------------------------------------
 
   emerald_forge_blade:
@@ -20,11 +20,11 @@ items:
     display-name-dormant: "§7Verhüllte Bruchklinge"
     custom-model-data-dormant: 1000
     lore-dormant:
-      - "§8Ein schwerer Splitter, dessen Licht sich weigert, ganz zu dir zu gehören."
-      - "§8Zwischen den Rissen lauert etwas, das dich prüfend mustert – und schweigt."
+      - "§8Ein schwerer Splitter mit erloschenem Schein."
+      - "§8Zwischen den Rissen starrt etwas still zurück."
       - ""
-      - "§8Leben: §7%lives_current%§8/§7%lives_max%"
-      - "§8Seelenfragmente: §7%tokens%"
+      - "§8☠ Leben: §7%lives_current%§8/§7%lives_max%"
+      - "§8⚰ Seelenfragmente: §7%tokens%"
       - "§8%prefix_line%"
 
     # Erwachter Zustand (heute aktiv)
@@ -33,12 +33,12 @@ items:
     base-lives: 45
     max-lives: 90
     lore:
-      - "§7Eine Klinge, als hätte jemand einen Stern im Stein erstickt."
-      - "§7Grüne Risse flimmern darin, als würden sie leise weiteratmen."
+      - "§7Eine Klinge wie ein erstickter Stern."
+      - "§7Smaragdgrüne Risse atmen leise unter der Haut."
       - ""
-      - "꧁§c§l▬▬▬▬▬▬▬▬♠♠♠▬▬▬▬▬▬▬▬§c§l꧂" # [O1] Mystic Offense
-      - "§7Leben: §e%lives_current%§7/§e%lives_max%"
-      - "§7Seelenfragmente: §e%tokens%"
+      - "꧁§c§l══════☠♠☠══════§c§l꧂" # [O1] Mystic Offense
+      - "§7☠ Leben: §e%lives_current%§7/§e%lives_max%"
+      - "§7⚰ Seelenfragmente: §e%tokens%"
       - "%prefix_line%"
 
   nightleech_bow:
@@ -50,12 +50,12 @@ items:
     display-name-dormant: "§7Verhüllter Nachtschlund"
     custom-model-data-dormant: 1001
     lore-dormant:
-      - "§8Ein stummer Bogen, dessen Sehne sich anfühlt, als hätte sie das Schreien verlernt."
-      - "§8Wer ihn spannt, spürt nur ein lauerndes Lauschen im Dunkel – noch ohne Stimme."
+      - "§8Ein stummer Bogen mit schläfriger Sehne."
+      - "§8Im Holz sitzt ein leises Lauschen ohne Stimme."
       - ""
-      - "꧁§3§n~ ─ ─ ─ ─ ─ ~╰·╯~ ─ ─ ─ ─ ─ ~§3§n꧂"
-      - "§8Leben: §7%lives_current%§8/§7%lives_max%"
-      - "§8Seelenfragmente: §7%tokens%"
+      - "꧁§3§n~───~╰☠╯~───~§3§n꧂"
+      - "§8☠ Leben: §7%lives_current%§8/§7%lives_max%"
+      - "§8⚰ Seelenfragmente: §7%tokens%"
       - "§8%prefix_line%"
 
     # Erwachter Zustand
@@ -64,12 +64,12 @@ items:
     base-lives: 40
     max-lives: 80
     lore:
-      - "§7Der Schaft wirkt staubtrocken, doch die Sehne zittert wie ein verschluckter Schrei."
-      - "§7Wer ihn spannt, spürt, wie etwas Unsichtbares im Dunkeln dagegenhält."
+      - "§7Trockener Schaft, Sehne wie ein geschluckter Schrei."
+      - "§7Beim Spannen kriecht Nachtluft knöchern über deine Finger."
       - ""
-      - "꧁§3§n~ ─ ─ ─ ─ ─ ~╰☆╮~ ─ ─ ─ ─ ─ ~§3§n꧂" # [R1] Mystic Ranged
-      - "§7Leben: §e%lives_current%§7/§e%lives_max%"
-      - "§7Seelenfragmente: §e%tokens%"
+      - "꧁§3§n~───~╰☠╯~───~§3§n꧂" # [R1] Mystic Ranged
+      - "§7☠ Leben: §e%lives_current%§7/§e%lives_max%"
+      - "§7⚰ Seelenfragmente: §e%tokens%"
       - "%prefix_line%"
 
   mystic_sword:
@@ -81,11 +81,11 @@ items:
     display-name-dormant: "§7Verhüllte Rissklinge"
     custom-model-data-dormant: 1100
     lore-dormant:
-      - "§8Ein dumpfer Stahl, in dem nur manchmal ein blasser Schimmer aufflackert."
-      - "§8Wenn du ihn drehst, scheint ein Gedanke aufzusteigen – und versickert wieder."
+      - "§8Dumpfer Stahl mit flackerndem Restlicht."
+      - "§8Ein Gedanke steigt auf, bricht wie ein Knochen und fällt zurück."
       - ""
-      - "§8Leben: §7%lives_current%§8/§7%lives_max%"
-      - "§8Seelenfragmente: §7%tokens%"
+      - "§8☠ Leben: §7%lives_current%§8/§7%lives_max%"
+      - "§8⚰ Seelenfragmente: §7%tokens%"
       - "§8%prefix_line%"
 
     # Erwachter Zustand
@@ -94,12 +94,12 @@ items:
     base-lives: 30
     max-lives: 70
     lore:
-      - "§7Wenn du die Klinge drehst, wandert ein blasser Schimmer wie ein Gedanke über den Stahl."
-      - "§7Ab und zu scheint jemand deinen Namen im Metall zu flüstern – nur wenn du allein bist."
+      - "§7Ein Schimmer wandert wie ein Gedanke über den Stahl."
+      - "§7Allein hörst du deinen Namen knöchern im Metall murmeln."
       - ""
-      - "꧁§c§l▬▬▬▬▬▬▬▬♠♠♠▬▬▬▬▬▬▬▬§c§l꧂" # [O1] Mystic Offense
-      - "§7Leben: §e%lives_current%§7/§e%lives_max%"
-      - "§7Seelenfragmente: §e%tokens%"
+      - "꧁§c§l══════☠♠☠══════§c§l꧂" # [O1] Mystic Offense
+      - "§7☠ Leben: §e%lives_current%§7/§e%lives_max%"
+      - "§7⚰ Seelenfragmente: §e%tokens%"
       - "%prefix_line%"
 
   mystic_pants:
@@ -111,12 +111,12 @@ items:
     display-name-dormant: "§7Verstaubte Schachtplatten"
     custom-model-data-dormant: 1101
     lore-dormant:
-      - "§8Schwere Platten, stumpf und stumm, mit Staub aus Schächten, die niemand mehr benennt."
-      - "§8Die Kratzer darin wirken wie Worte, denen ihr Echo genommen wurde."
+      - "§8Stumpfe Platten mit Staub aus namenlosen Schächten."
+      - "§8Kratzer lesen sich wie verstummte Gebeine im Metall."
       - ""
-      - "꧁§2§l║═║═║═║═║✞═║═║═║═║§2§l꧂"
-      - "§8Leben: §7%lives_current%§8/§7%lives_max%"
-      - "§8Seelenfragmente: §7%tokens%"
+      - "꧁§2§l║═║☠✞☠║═║§2§l꧂"
+      - "§8☠ Leben: §7%lives_current%§8/§7%lives_max%"
+      - "§8⚰ Seelenfragmente: §7%tokens%"
       - "§8%prefix_line%"
 
     # Erwachter Zustand
@@ -125,12 +125,12 @@ items:
     base-lives: 35
     max-lives: 80
     lore:
-      - "§7Diamantplatten, innen fein zerkratzt, als hätte jemand im Fallen Gebete eingeritzt."
-      - "§7Alter Schachtdampf klebt in den Fugen und weigert sich, ganz zu verfliegen."
+      - "§7Innen feine Ritzungen, als wären Sturzgebete eingeritzt."
+      - "§7Schachtdampf klebt wie kalter Knochenstaub in den Fugen."
       - ""
-      - "꧁§2§l║═║═║═║═║✞═║═║═║═║§2§l꧂" # [D1] Mystic Defense
-      - "§7Leben: §e%lives_current%§7/§e%lives_max%"
-      - "§7Seelenfragmente: §e%tokens%"
+      - "꧁§2§l║═║☠✞☠║═║§2§l꧂" # [D1] Mystic Defense
+      - "§7☠ Leben: §e%lives_current%§7/§e%lives_max%"
+      - "§7⚰ Seelenfragmente: §e%tokens%"
       - "%prefix_line%"
 
   mystic_helm_voidveil:
@@ -142,12 +142,12 @@ items:
     display-name-dormant: "§7Verhüllter Leerenhelm"
     custom-model-data-dormant: 1200
     lore-dormant:
-      - "§8Ein leerer Helm, in dessen Innerem das Licht sofort zu erlöschen scheint."
-      - "§8Wenn du ihn anhebst, klingt die Welt für einen Herzschlag lang ein Stück weiter weg."
+      - "§8Ein Helm, der jedes Licht sofort verschluckt."
+      - "§8Für einen Herzschlag klingt die Welt dumpf wie unter Erde."
       - ""
-      - "꧁§2§l║═║═║═║═║✞═║═║═║═║§2§l꧂"
-      - "§8Leben: §7%lives_current%§8/§7%lives_max%"
-      - "§8Seelenfragmente: §7%tokens%"
+      - "꧁§2§l║═║☠✞☠║═║§2§l꧂"
+      - "§8☠ Leben: §7%lives_current%§8/§7%lives_max%"
+      - "§8⚰ Seelenfragmente: §7%tokens%"
       - "§8%prefix_line%"
 
     # Erwachter Zustand
@@ -156,12 +156,12 @@ items:
     base-lives: 30
     max-lives: 70
     lore:
-      - "§7Innen bleibt er schwarz, egal wie viel Licht du hineinpresst."
-      - "§7Unter dem Helm klingt die Welt, als hätte jemand die Lautstärke ein Stück zu weit heruntergedreht."
+      - "§7Innen bleibt nur Schwarz, egal wie viel Licht du zwingst."
+      - "§7Unter dem Helm hallt alles fern, wie Stimmen hinter Knochen."
       - ""
-      - "꧁§2§l║═║═║═║═║✞═║═║═║═║§2§l꧂" # [D1] Mystic Defense
-      - "§7Leben: §e%lives_current%§7/§e%lives_max%"
-      - "§7Seelenfragmente: §e%tokens%"
+      - "꧁§2§l║═║☠✞☠║═║§2§l꧂" # [D1] Mystic Defense
+      - "§7☠ Leben: §e%lives_current%§7/§e%lives_max%"
+      - "§7⚰ Seelenfragmente: §e%tokens%"
       - "%prefix_line%"
 
   mystic_chest_heartcage:
@@ -173,12 +173,12 @@ items:
     display-name-dormant: "§7Verstummte Brustplatte"
     custom-model-data-dormant: 1201
     lore-dormant:
-      - "§8Eine kalte Platte, unter der es seltsam still bleibt – selbst, wenn dein Herz rast."
-      - "§8Man hat das Gefühl, als warte darunter ein anderer Schlag darauf, zu erwachen."
+      - "§8Kalte Platte, unter der jedes Rasen dumpf wird."
+      - "§8Als warte darunter ein fremder Puls im Käfig."
       - ""
-      - "꧁§2§l║═║═║═║═║✞═║═║═║═║§2§l꧂"
-      - "§8Leben: §7%lives_current%§8/§7%lives_max%"
-      - "§8Seelenfragmente: §7%tokens%"
+      - "꧁§2§l║═║☠✞☠║═║§2§l꧂"
+      - "§8☠ Leben: §7%lives_current%§8/§7%lives_max%"
+      - "§8⚰ Seelenfragmente: §7%tokens%"
       - "§8%prefix_line%"
 
     # Erwachter Zustand
@@ -187,12 +187,12 @@ items:
     base-lives: 40
     max-lives: 90
     lore:
-      - "§7Zwischen den Rissen dieser Platte flimmert etwas im Takt deines eigenen Pulses."
-      - "§7Wer sie trägt, schwört, hin und wieder ein fremdes Herz darunter schlagen zu fühlen."
+      - "§7Risse flimmern im Takt deines Herzschlags."
+      - "§7Manchmal pocht darunter etwas, das nicht zu dir gehört."
       - ""
-      - "꧁§2§l║═║═║═║═║✞═║═║═║═║§2§l꧂" # [D1] Mystic Defense
-      - "§7Leben: §e%lives_current%§7/§e%lives_max%"
-      - "§7Seelenfragmente: §e%tokens%"
+      - "꧁§2§l║═║☠✞☠║═║§2§l꧂" # [D1] Mystic Defense
+      - "§7☠ Leben: §e%lives_current%§7/§e%lives_max%"
+      - "§7⚰ Seelenfragmente: §e%tokens%"
       - "%prefix_line%"
 
   mystic_legs_gravewalk:
@@ -204,12 +204,12 @@ items:
     display-name-dormant: "§7Vergrabene Gamaschen"
     custom-model-data-dormant: 1202
     lore-dormant:
-      - "§8Schwere Gamaschen, deren Gewicht sich anfühlt, als würdest du schon halb im Boden stecken."
-      - "§8Bei jedem Schritt scheint der Untergrund einen Moment zu zögern, dich wieder loszulassen."
+      - "§8Schweres Metall, als stecktest du schon halb im Boden."
+      - "§8Jeder Schritt löst sich, als ließe die Erde dich ungern los."
       - ""
-      - "꧁§2§l║═║═║═║═║✞═║═║═║═║§2§l꧂"
-      - "§8Leben: §7%lives_current%§8/§7%lives_max%"
-      - "§8Seelenfragmente: §7%tokens%"
+      - "꧁§2§l║═║☠✞☠║═║§2§l꧂"
+      - "§8☠ Leben: §7%lives_current%§8/§7%lives_max%"
+      - "§8⚰ Seelenfragmente: §7%tokens%"
       - "§8%prefix_line%"
 
     # Erwachter Zustand
@@ -218,12 +218,12 @@ items:
     base-lives: 35
     max-lives: 80
     lore:
-      - "§7Der Stahl knirscht leise, als würdest du ständig über Kies und alt gewordene Knochen laufen."
-      - "§7Jeder Schritt wirft für einen Herzschlag einen Schatten mehr, als du eigentlich hast."
+      - "§7Der Stahl knirscht wie Kies über alten Knochen."
+      - "§7Jeder Schritt wirft kurz einen Schatten zu viel."
       - ""
-      - "꧁§2§l║═║═║═║═║✞═║═║═║═║§2§l꧂" # [D1] Mystic Defense
-      - "§7Leben: §e%lives_current%§7/§e%lives_max%"
-      - "§7Seelenfragmente: §e%tokens%"
+      - "꧁§2§l║═║☠✞☠║═║§2§l꧂" # [D1] Mystic Defense
+      - "§7☠ Leben: §e%lives_current%§7/§e%lives_max%"
+      - "§7⚰ Seelenfragmente: §e%tokens%"
       - "%prefix_line%"
 
   mystic_boots_echo:
@@ -235,12 +235,12 @@ items:
     display-name-dormant: "§7Verflachte Fallstiefel"
     custom-model-data-dormant: 1203
     lore-dormant:
-      - "§8Stiefel, in denen jeder Schritt dumpfer klingt, als wäre der Boden weiter weg als sonst."
-      - "§8Ab und zu hörst du ein zweites, leiseres Auftreten – wie ein Schatten, der noch übt."
+      - "§8Jeder Schritt klingt, als lägest du tiefer als der Boden."
+      - "§8Ein zweites, leiseres Auftreten stolpert hinterher."
       - ""
-      - "꧁§2§l║═║═║═║═║✞═║═║═║═║§2§l꧂"
-      - "§8Leben: §7%lives_current%§8/§7%lives_max%"
-      - "§8Seelenfragmente: §7%tokens%"
+      - "꧁§2§l║═║☠✞☠║═║§2§l꧂"
+      - "§8☠ Leben: §7%lives_current%§8/§7%lives_max%"
+      - "§8⚰ Seelenfragmente: §7%tokens%"
       - "§8%prefix_line%"
 
     # Erwachter Zustand
@@ -249,12 +249,12 @@ items:
     base-lives: 30
     max-lives: 70
     lore:
-      - "§7Jeder Sprung klingt, als würdest du tiefer fallen, als der Boden je zulassen dürfte."
-      - "§7Manchmal hörst du Schritte im eigenen Rhythmus hinter dir, obwohl dort niemand geht."
+      - "§7Jeder Sprung zieht dich tiefer, als der Boden erlaubt."
+      - "§7Hinter dir trampelt ein Echo, das keinen Körper hat."
       - ""
-      - "꧁§2§l║═║═║═║═║✞═║═║═║═║§2§l꧂" # [D1] Mystic Defense
-      - "§7Leben: §e%lives_current%§7/§e%lives_max%"
-      - "§7Seelenfragmente: §e%tokens%"
+      - "꧁§2§l║═║☠✞☠║═║§2§l꧂" # [D1] Mystic Defense
+      - "§7☠ Leben: §e%lives_current%§7/§e%lives_max%"
+      - "§7⚰ Seelenfragmente: §e%tokens%"
       - "%prefix_line%"
 
   mystic_blade_shards:
@@ -266,12 +266,12 @@ items:
     display-name-dormant: "§7Splitterte Chronik"
     custom-model-data-dormant: 1300
     lore-dormant:
-      - "§8Eine Klinge, in der feine Linien wie abgebrochene Randnotizen verlaufen."
-      - "§8Die Geschichte darin scheint noch zu entscheiden, ob sie überhaupt erzählt werden will."
+      - "§8Feine Linien ziehen wie Randnotizen über die Klinge."
+      - "§8Die Geschichte darin klappert wie lose Knochen im Griff."
       - ""
-      - "꧁§f§l✦◆✦◆✦◆✦◆❈◆✦◆✦◆✦◆§f§l꧂"
-      - "§8Leben: §7%lives_current%§8/§7%lives_max%"
-      - "§8Seelenfragmente: §7%tokens%"
+      - "꧁§f§l✦☠◆❈◆☠✦§f§l꧂"
+      - "§8☠ Leben: §7%lives_current%§8/§7%lives_max%"
+      - "§8⚰ Seelenfragmente: §7%tokens%"
       - "§8%prefix_line%"
 
     # Erwachter Zustand
@@ -280,12 +280,12 @@ items:
     base-lives: 35
     max-lives: 85
     lore:
-      - "§7Feine Linien im Stahl wirken wie eingeritzte Randnotizen vergessener Gefechte."
-      - "§7Beim Schwung steigen alte Duelle kurz durch deinen Arm zurück in die Klinge."
+      - "§7Linien im Stahl lesen sich wie gefetzte Kampfnotizen."
+      - "§7Mit jedem Schwung klirren alte Duelle kurz in deinen Knochen."
       - ""
-      - "꧁§f§l✦◆✦◆✦◆✦◆❈◆✦◆✦◆✦◆§f§l꧂" # [S1] Chronik/Sonderwaffe
-      - "§7Leben: §e%lives_current%§7/§e%lives_max%"
-      - "§7Seelenfragmente: §e%tokens%"
+      - "꧁§f§l✦☠◆❈◆☠✦§f§l꧂" # [S1] Chronik/Sonderwaffe
+      - "§7☠ Leben: §e%lives_current%§7/§e%lives_max%"
+      - "§7⚰ Seelenfragmente: §e%tokens%"
       - "%prefix_line%"
 
   mystic_axe_sunder:
@@ -297,12 +297,12 @@ items:
     display-name-dormant: "§7Verstumpfte Bruchaxt"
     custom-model-data-dormant: 1301
     lore-dormant:
-      - "§8Eine schwere Axt, deren Kerben eher nach alten Fehlern als nach Ruhm aussehen."
-      - "§8Sie wirkt, als hielte sie den Schlag noch zurück – nur um ihn später doppelt zu fordern."
+      - "§8Schwere Axt, Kerben wie alte Fehlhiebe."
+      - "§8Der Stahl hält den Schlag zurück wie gebrochene Rippen."
       - ""
-      - "꧁§c§l▬▬▬▬▬▬▬▬♠♠♠▬▬▬▬▬▬▬▬§c§l꧂"
-      - "§8Leben: §7%lives_current%§8/§7%lives_max%"
-      - "§8Seelenfragmente: §7%tokens%"
+      - "꧁§c§l══════☠♠☠══════§c§l꧂"
+      - "§8☠ Leben: §7%lives_current%§8/§7%lives_max%"
+      - "§8⚰ Seelenfragmente: §7%tokens%"
       - "§8%prefix_line%"
 
     # Erwachter Zustand
@@ -311,12 +311,12 @@ items:
     base-lives: 35
     max-lives: 80
     lore:
-      - "§7Die Schneide trägt stumpfe Kerben, jede davon fühlt sich an wie ein abgerissener Schlag."
-      - "§7In der Stille wirkt es, als würde etwas in der Axt darauf warten, dass du endlich wieder triffst."
+      - "§7Kerben in der Schneide fühlen sich an wie aufgerissene Schädelränder."
+      - "§7In der Stille zuckt etwas im Holz, bis du wieder triffst."
       - ""
-      - "꧁§c§l▬▬▬▬▬▬▬▬♠♠♠▬▬▬▬▬▬▬▬§c§l꧂" # [O1] Mystic Offense
-      - "§7Leben: §e%lives_current%§7/§e%lives_max%"
-      - "§7Seelenfragmente: §e%tokens%"
+      - "꧁§c§l══════☠♠☠══════§c§l꧂" # [O1] Mystic Offense
+      - "§7☠ Leben: §e%lives_current%§7/§e%lives_max%"
+      - "§7⚰ Seelenfragmente: §e%tokens%"
       - "%prefix_line%"
 
   mystic_crossbow_rift:
@@ -328,12 +328,12 @@ items:
     display-name-dormant: "§7Verhüllte Rissarmbrust"
     custom-model-data-dormant: 1302
     lore-dormant:
-      - "§8Eine schwere Armbrust, deren Schiene nur ein dumpfes, mattes Flimmern zeigt."
-      - "§8Geladene Bolzen wirken, als würden sie sich das Ziel noch offenhalten."
+      - "§8Schwere Armbrust mit mattem, rußigem Flimmern."
+      - "§8Bolzen liegen darin, als suchten sie noch ihr Grab."
       - ""
-      - "꧁§3§n~ ─ ─ ─ ─ ─ ~╰·╯~ ─ ─ ─ ─ ─ ~§3§n꧂"
-      - "§8Leben: §7%lives_current%§8/§7%lives_max%"
-      - "§8Seelenfragmente: §7%tokens%"
+      - "꧁§3§n~───~╰☠╯~───~§3§n꧂"
+      - "§8☠ Leben: §7%lives_current%§8/§7%lives_max%"
+      - "§8⚰ Seelenfragmente: §7%tokens%"
       - "§8%prefix_line%"
 
     # Erwachter Zustand
@@ -342,10 +342,10 @@ items:
     base-lives: 38
     max-lives: 82
     lore:
-      - "§7Zwischen Sehne und Schiene flimmert ein schmaler Spalt, der kein Licht zu kennen scheint."
-      - "§7Geladene Bolzen flackern einen Herzschlag lang, als wären sie kurz woanders gewesen – und ungern zurück."
+      - "§7Zwischen Schiene und Sehne flimmert ein lichtloser Spalt."
+      - "§7Geladene Bolzen wirken, als kämen sie aus fremden Knochenfeldern zurück."
       - ""
-      - "꧁§3§n~ ─ ─ ─ ─ ─ ~╰☆╮~ ─ ─ ─ ─ ─ ~§3§n꧂" # [R1] Mystic Ranged
-      - "§7Leben: §e%lives_current%§7/§e%lives_max%"
-      - "§7Seelenfragmente: §e%tokens%"
+      - "꧁§3§n~───~╰☠╯~───~§3§n꧂" # [R1] Mystic Ranged
+      - "§7☠ Leben: §e%lives_current%§7/§e%lives_max%"
+      - "§7⚰ Seelenfragmente: §e%tokens%"
       - "%prefix_line%"
